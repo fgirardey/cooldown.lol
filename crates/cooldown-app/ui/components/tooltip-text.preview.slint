@@ -1,0 +1,59 @@
+// Previews of TooltipText: `just preview components/tooltip-text`.
+
+import { Theme } from "../theme.slint";
+import { TooltipText } from "tooltip-text.slint";
+import { PreviewCase } from "../preview-kit/preview-case.slint";
+import { PreviewPlayground } from "../preview-kit/preview-playground.slint";
+
+// Pencil frame `Tooltip` (story not named `Tooltip`: that is Slint's own element).
+export component TooltipDefault inherits Rectangle {
+    width: 240px;
+    height: 60px;
+    background: Theme.background;
+
+    TooltipText {
+        x: 0;
+        y: 0;
+        text: "Read your latest games from the League client now. History also updates on its own after each game.";
+    }
+}
+
+// Edit the knobs in the live preview's Data tab.
+export component TooltipTextPlayground inherits Window {
+    in-out property <string> text: "Open the League client to refresh History.";
+
+    background: Theme.background;
+    preferred-width: 300px;
+
+    PreviewPlayground {
+        HorizontalLayout {
+            alignment: start;
+            TooltipText { text: root.text; }
+        }
+    }
+}
+
+// Gallery of every variant (default component of the file).
+export component Preview inherits Window {
+    title: "TooltipText";
+    background: Theme.background;
+
+    VerticalLayout {
+        padding: Theme.space-m;
+        spacing: Theme.space-m;
+        alignment: start;
+
+        PreviewCase {
+            label: "Tooltip, wrapped at 220 px";
+            TooltipDefault { }
+        }
+
+        PreviewCase {
+            label: "One short line";
+            HorizontalLayout {
+                alignment: start;
+                TooltipText { text: "Open the League client to refresh History."; }
+            }
+        }
+    }
+}

@@ -12,19 +12,38 @@ use cooldown_lol::LolClient;
 use crate::history_store::HistoryStore;
 
 /// Imports the past games as soon as the client can give them, retrying every [`RETRY_DELAY`]
-/// until it does. The client answers before the player is logged in (and fails in other ways
+/// until it does, and telling `waiting` why before each wait. The client answers before the player is logged in (and fails in other ways
 /// while it starts), so a single attempt at connection time may find nothing. Returns how many
 /// games were stored, and for whom. Runs for as long as it takes: the caller stops it when the
 /// client goes away.
-pub async fn import_when_ready(client: &impl LolClient, store: &HistoryStore) -> Imported {
+pub async fn import_when_ready(
+    client: &impl LolClient,
+    store: &HistoryStore,
+    waiting: impl Fn(Waiting),
+) -> Imported {
     loop {
         match import_past_games(client, store).await {
             Ok(Some(imported)) => return imported,
-            Ok(None) => tracing::debug!("nobody is logged into the client yet: will retry"),
-            Err(error) => tracing::debug!(%error, "cannot import the past games yet: will retry"),
+            Ok(None) => {
+                tracing::debug!("nobody is logged into the client yet: will retry");
+                waiting(Waiting::Login);
+            }
+            Err(error) => {
+                tracing::debug!(%error, "cannot import the past games yet: will retry");
+                waiting(Waiting::Client);
+            }
         }
         tokio::time::sleep(RETRY_DELAY).await;
     }
+}
+
+/// Why an import waits before trying again.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Waiting {
+    /// Nobody is logged into the client yet.
+    Login,
+    /// The client failed to answer.
+    Client,
 }
 
 /// The result of an import.
@@ -416,7 +435,10 @@ mod tests {
             inner: FakeClient::with_games(5),
             failures_left: AtomicU32::new(3),
         };
-        assert_eq!(import_when_ready(&client, &store).await.stored, 5);
+        let waits = std::sync::Mutex::new(Vec::new());
+        let imported = import_when_ready(&client, &store, |why| waits.lock().unwrap().push(why));
+        assert_eq!(imported.await.stored, 5);
+        assert_eq!(*waits.lock().unwrap(), [Waiting::Login; 3]);
         assert_eq!(store.games("p1").unwrap().len(), 5);
     }
 }

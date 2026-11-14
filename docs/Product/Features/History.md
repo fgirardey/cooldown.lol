@@ -34,6 +34,15 @@ At the right end of the title row, after the legend and a short divider: when Hi
 - While a read runs (from the button, at connection or after a game): "Updating…", button disabled.
 - Without the League client: button disabled, the label stays.
 - History also refreshes on its own, so the button is for when the player does not want to wait (or doubts it worked). There is no timer: nothing counts down to the next read.
+- The button's **tooltip** always says why it is in its state, disabled or not ([[Tokens#Tooltip]]):
+
+| State | Tooltip |
+|---|---|
+| Idle | "Read your latest games from the League client now. History also updates on its own after each game." |
+| Reading | "Reading your latest games from the League client…" |
+| Waiting for the player to log in (the read tries again every 10 s) | "Waiting for you to log in to the League client. Trying again every 10 s." |
+| The client failed to answer (same) | "The League client isn't answering. Trying again every 10 s." |
+| No League client | "Open the League client to refresh History." |
 
 ### Session header
 Each session starts with a **header** line, not a panel: the label (display font, e.g. "TODAY · #1") on the left, then chips on the right:
@@ -90,7 +99,7 @@ When cooldown.lol connects to the League client, it reads the **active summoner*
 - Sessions are computed from the stored games (pure function in `cooldown-core`), never stored.
 
 ## Design
-The refresh is the `History refresh` component and its `/ Updating`, `/ Offline` and `/ Hover` variants (`History components`), placed in every title row. Pencil frames `History / Main / Before cooldown.lol`, `History / Main / Empty`, `History / Main / Nominal`, `History / Main / Game expanded`, `History / Main / Computing`, `History / Main / No workout`, and the `History / Main / … (desktop)` frames of both views, built from the `Session header / *` and `Game row / *` components and the `Stat icon / *` pictograms. See [[Screens#Frames]].
+The refresh is the `History refresh` component and its `/ Updating`, `/ Offline` and `/ Hover` variants (`History components`), placed in every title row; its tooltips are the `History refresh / Tooltip / *` frames. Pencil frames `History / Main / Before cooldown.lol`, `History / Main / Empty`, `History / Main / Nominal`, `History / Main / Game expanded`, `History / Main / Computing`, `History / Main / No workout`, and the `History / Main / … (desktop)` frames of both views, built from the `Session header / *` and `Game row / *` components and the `Stat icon / *` pictograms. See [[Screens#Frames]].
 
 ## Compliance
 Only the local player's own games, after they end (live ones and the client's match history of the active summoner). Never other players' games or names, nothing during a game, no call to the Riot API.
@@ -106,6 +115,7 @@ Only the local player's own games, after they end (live ones and the client's ma
 - [ ] Reconnecting the client does not duplicate them
 - [ ] A game played while cooldown.lol is open appears after the end-of-game screen, without restarting anything
 - [ ] The refresh button shows "Updating…", then "Updated just now", and is disabled without the client
+- [ ] Resting the pointer on the refresh button opens its tooltip after half a second, also when it is disabled, under the button and inside the window, and the button still takes clicks while it is shown
 - [ ] How many past games the client really returns (see open questions)
 
 ## Open questions

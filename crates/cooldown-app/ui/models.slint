@@ -1,6 +1,28 @@
 // Structs shared by the screens and the previews; Rust fills them (see src/history_view.rs).
 // Slint resolves names in declaration order: each struct comes after the ones it uses.
 
+/// Where the History refresh stands (see src/history_refresh.rs).
+export enum RefreshState {
+    /// Nothing running: History shows what was read last.
+    idle,
+    /// Reading the client's match history.
+    reading,
+    /// Waiting for the player to log into the client, to try again.
+    waiting-for-login,
+    /// The client failed to answer: waiting to try again.
+    client-silent,
+}
+
+/// A tooltip to show: its text and the control it explains, in window coordinates (see
+/// `tooltips.slint`).
+export struct TooltipRequest {
+    text: string,
+    x: length,
+    y: length,
+    width: length,
+    height: length,
+}
+
 /// A stat behind an exercise, for its pictogram.
 export enum StatKind {
     cs-per-minute,

@@ -1,0 +1,83 @@
+// The window's tooltip, drawn by app-window.slint above everything: never clipped by a scroll
+// view, never takes the pointer. Fed by the `Tooltips` UI global (docs/Decisions/ADR-0017).
+//
+// Timing and placement follow Material Design's tooltip (docs/Design/Tokens.md, Tooltip):
+// opens 500ms after the pointer rests on the control, stays 600ms after it leaves (so moving to
+// a neighbour switches the text at once), centered under the control with a 4px gap, above it
+// when there is no room below, 8px from the window edges, narrowed to fit a narrow window.
+//
+// Pencil frames `History refresh / Tooltip / *` (placement under the History refresh).
+
+import { Theme } from "../theme.slint";
+import { TooltipRequest } from "../models.slint";
+import { TooltipText } from "../components/tooltip-text.slint";
+
+export component TooltipLayer inherits Rectangle {
+    in property <bool> hovering;
+    in property <bool> dismissed;
+    in property <TooltipRequest> request;
+    /// Previews and screenshots: shown at once, without the delays.
+    in property <bool> always-open;
+
+    property <bool> open: root.always-open;
+
+    property <length> w: panel.width;
+    property <length> h: panel.height;
+    property <length> margin: Theme.tooltip-window-margin;
+
+    // Below the control when it fits, else above when that fits, else below.
+    property <length> below-y: root.request.y + root.request.height + Theme.tooltip-gap;
+    property <length> above-y: root.request.y - Theme.tooltip-gap - root.h;
+    property <bool> above: root.below-y + root.h + root.margin > root.height && root.above-y >= root.margin;
+
+    // Centered on the control, else aligned with its start, then its end, else kept off the edges.
+    property <length> center-x: root.request.x + (root.request.width - root.w) / 2;
+    property <length> start-x: root.request.x;
+    property <length> end-x: root.request.x + root.request.width - root.w;
+    property <length> max-x: root.width - root.w - root.margin;
+
+    show-timer := Timer {
+        interval: Theme.tooltip-show-delay;
+        running: root.hovering && !root.open && !root.dismissed;
+        triggered => { root.open = true; }
+    }
+
+    hide-timer := Timer {
+        interval: Theme.tooltip-hide-delay;
+        running: !root.hovering && root.open && !root.always-open;
+        triggered => { root.open = false; }
+    }
+
+    changed dismissed => {
+        if root.dismissed && !root.always-open {
+            root.open = false;
+        }
+    }
+
+    panel := TooltipText {
+        x: root.center-x >= root.margin && root.center-x <= root.max-x ? root.center-x
+            : root.start-x >= root.margin && root.start-x <= root.max-x ? root.start-x
+            : root.end-x >= root.margin && root.end-x <= root.max-x ? root.end-x
+            : max(root.margin, min(root.center-x, root.max-x));
+        y: root.above ? root.above-y : root.below-y;
+        text: root.request.text;
+        // A window narrower than the tooltip: it wraps to fit between the margins.
+        max-content-width: max(0px, min(Theme.tooltip-max-width, root.width - 2 * root.margin - 2 * self.horizontal-padding));
+        visible: self.opacity > 0;
+        opacity: root.open ? 1 : 0;
+        // Grows from the control's side while it fades in; only fades out.
+        transform-origin: { x: self.width / 2, y: root.above ? self.height : 0 };
+        transform-scale: root.open ? 1 : Theme.tooltip-enter-scale;
+
+        animate opacity {
+            duration: root.open ? Theme.tooltip-enter : Theme.tooltip-exit;
+            // Material's deceleration curve in, acceleration curve out.
+            easing: root.open ? cubic-bezier(0, 0, 0.2, 1) : cubic-bezier(0.4, 0, 1, 1);
+        }
+        animate transform-scale {
+            duration: root.open ? Theme.tooltip-enter : 0ms;
+            delay: root.open ? 0ms : Theme.tooltip-exit;
+            easing: cubic-bezier(0, 0, 0.2, 1);
+        }
+    }
+}

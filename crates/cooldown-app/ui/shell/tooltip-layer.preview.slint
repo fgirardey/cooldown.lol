@@ -1,0 +1,91 @@
+// Previews of TooltipLayer: `just preview shell/tooltip-layer`. Its placement under the History
+// refresh is in `screens/history-refresh.preview.slint` (the `History refresh / Tooltip / *`
+// frames); here, the other rules: centered, above at the bottom edge, kept off the side edges.
+
+import { Theme } from "../theme.slint";
+import { TooltipLayer } from "tooltip-layer.slint";
+import { PreviewCase } from "../preview-kit/preview-case.slint";
+import { PreviewPlayground } from "../preview-kit/preview-playground.slint";
+
+// A control at (x, y) and the tooltip held open for it.
+component Placed inherits Rectangle {
+    in property <length> anchor-x;
+    in property <length> anchor-y;
+    in property <string> text: "Read your latest games from the League client now.";
+    in property <length> frame-width: 360px;
+
+    width: root.frame-width;
+    height: 120px;
+    background: Theme.background;
+    border-width: 1px;
+    border-color: Theme.border;
+
+    Rectangle {
+        x: root.anchor-x;
+        y: root.anchor-y;
+        width: 32px;
+        height: 32px;
+        background: Theme.surface;
+        border-radius: Theme.radius-m;
+    }
+
+    TooltipLayer {
+        always-open: true;
+        request: { text: root.text, x: root.anchor-x, y: root.anchor-y, width: 32px, height: 32px };
+    }
+}
+
+// Edit the knobs in the live preview's Data tab: move the control around the window.
+export component TooltipLayerPlayground inherits Window {
+    in-out property <length> anchor-x: 164px;
+    in-out property <length> anchor-y: 20px;
+    in-out property <string> text: "Read your latest games from the League client now.";
+
+    background: Theme.background;
+    preferred-width: 400px;
+
+    PreviewPlayground {
+        Placed {
+            anchor-x: root.anchor-x;
+            anchor-y: root.anchor-y;
+            text: root.text;
+        }
+    }
+}
+
+// Gallery of every variant (default component of the file).
+export component Preview inherits Window {
+    title: "TooltipLayer";
+    background: Theme.background;
+
+    VerticalLayout {
+        padding: Theme.space-m;
+        spacing: Theme.space-m;
+        alignment: start;
+
+        PreviewCase {
+            label: "Centered under the control, 4 px gap";
+            Placed { anchor-x: 164px; anchor-y: 12px; }
+        }
+
+        PreviewCase {
+            label: "Above it, no room below";
+            Placed { anchor-x: 164px; anchor-y: 80px; }
+        }
+
+        PreviewCase {
+            label: "Near the left edge: aligned with its start";
+            Placed { anchor-x: 4px; anchor-y: 12px; }
+        }
+
+        PreviewCase {
+            label: "Near the right edge: aligned with its end";
+            Placed { anchor-x: 324px; anchor-y: 12px; }
+        }
+
+        PreviewCase {
+            label: "Window narrower than the tooltip: it wraps to fit, 8 px from both edges";
+            Placed { frame-width: 150px; anchor-x: 59px; anchor-y: 12px; }
+        }
+    }
+}

@@ -155,7 +155,10 @@ async fn poll_until_disconnected(
 fn spawn_past_games_import(client: impl LolClient + 'static, history: HistoryScreen) -> ImportTask {
     history.refresh().started();
     ImportTask(tokio::spawn(async move {
-        let imported = history_import::import_when_ready(&client, history.store()).await;
+        let imported = history_import::import_when_ready(&client, history.store(), |why| {
+            history.refresh().waiting(why);
+        })
+        .await;
         tracing::info!(
             imported = imported.stored,
             "past games imported from the client"

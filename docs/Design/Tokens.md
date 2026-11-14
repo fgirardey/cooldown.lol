@@ -35,7 +35,7 @@ Colours come from the brand direction chosen in Pencil (see [[Brand]]): a K/DA r
 ## Radius
 | Token | Value |
 |---|---|
-| `radius-chip` | 4px (session header chips) |
+| `radius-chip` | 4px (session header chips, tooltip) |
 | `radius-s` | 6px (view switch segments, row chevron) |
 | `radius-m` | 8px |
 | `radius-dialog` | 16px |
@@ -78,6 +78,35 @@ Hover, pressed, focus, disabled and selected states. Buttons, icon buttons and t
 The state layer colour is the control's content colour: `background` on `accent` buttons and on the "on" switch track, `text-primary` everywhere else. Text links have no layer: they turn `text-primary` on hover and drop to 60% opacity while pressed. In Pencil the durations are plain numbers in milliseconds.
 
 In Slint, `components/state-layer.slint` (`StateLayer`) draws the layer: every interactive control lays one over its background, fed by its `TouchArea`'s `has-hover` and `pressed`.
+
+## Tooltip
+A control whose state needs a reason (a disabled button, a running task) explains it in a **tooltip**. In Pencil it is the `Tooltip` component of `History components`. In code ([[ADR-0017 Tooltips drawn by the window]]):
+- wrap the control in `TooltipAnchor` (`components/tooltip-anchor.slint`) with its `tooltip` text;
+- the window's `TooltipLayer` (`shell/tooltip-layer.slint`) draws it as `TooltipText` (`components/tooltip-text.slint`), a text in a `TooltipPanel`.
+
+Disabled controls show it too: the anchor goes around the faded part.
+
+Look: `surface` panel, 1px `border` outline, `radius-chip`, padding 6px × 10px, text in `font-size-caption` and `text-primary`, wrapped at `tooltip-max-width`.
+
+Timing and placement follow Material Design's tooltip (MDC Web values):
+
+| Token | Value | Usage |
+|---|---|---|
+| `tooltip-show-delay` | 500ms | The pointer rests this long on the control before the tooltip opens |
+| `tooltip-hide-delay` | 600ms | The tooltip stays this long after the pointer leaves; moving to another control meanwhile switches the text at once |
+| `tooltip-enter` | 150ms | Fades in and grows from `tooltip-enter-scale`, from the control's side (deceleration curve `cubic-bezier(0, 0, 0.2, 1)`) |
+| `tooltip-exit` | 75ms | Fades out (acceleration curve `cubic-bezier(0.4, 0, 1, 1)`) |
+| `tooltip-enter-scale` | 0.8 | Scale the tooltip grows from |
+| `tooltip-gap` | 4px | Between the control and the tooltip |
+| `tooltip-window-margin` | 8px | The tooltip keeps this far from the window edges |
+| `tooltip-max-width` | 220px | Width of the text before it wraps |
+
+Placement:
+- **Vertically:** under the control; above it when there is no room below, keeping `tooltip-window-margin` from the edges.
+- **Horizontally:** centered on the control. When centering would get closer to a window edge than the margin, aligned with the control's start, then with its end. As a last resort, kept off the edges.
+- **Narrow window:** when the window is narrower than the tooltip plus both margins, the tooltip narrows to fit between them and its text wraps more.
+
+The tooltip stays inside the window. It never takes clicks or hover, and it closes when the pointer leaves the window or the screen changes.
 
 ## Typography
 | Token | Size | Usage |

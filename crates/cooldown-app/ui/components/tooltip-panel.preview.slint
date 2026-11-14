@@ -1,0 +1,80 @@
+// Previews of TooltipPanel: `just preview components/tooltip-panel`. The text tooltip, the usual
+// content, has its own preview (`tooltip-text.preview.slint`); this one shows richer content.
+
+import { Theme } from "../theme.slint";
+import { TooltipPanel } from "tooltip-panel.slint";
+import { PreviewCase } from "../preview-kit/preview-case.slint";
+import { PreviewPlayground } from "../preview-kit/preview-playground.slint";
+
+// Edit the knobs in the live preview's Data tab.
+export component TooltipPanelPlayground inherits Window {
+    in-out property <string> heading: "Ashe · Bot";
+    in-out property <string> detail: "Sample details: any content goes in the panel, wrapped at its width.";
+    in-out property <length> max-content-width: 220px;
+
+    background: Theme.background;
+    preferred-width: 300px;
+
+    PreviewPlayground {
+        HorizontalLayout {
+            alignment: start;
+
+            TooltipPanel {
+                max-content-width: root.max-content-width;
+
+                Text {
+                    font-family: Theme.font-body;
+                    text: root.heading;
+                    color: Theme.text-primary;
+                    font-size: Theme.font-size-caption;
+                    font-weight: 600;
+                }
+
+                Text {
+                    font-family: Theme.font-body;
+                    text: root.detail;
+                    color: Theme.text-secondary;
+                    font-size: Theme.font-size-caption;
+                    wrap: word-wrap;
+                }
+            }
+        }
+    }
+}
+
+// Gallery of every variant (default component of the file).
+export component Preview inherits Window {
+    title: "TooltipPanel";
+    background: Theme.background;
+
+    VerticalLayout {
+        padding: Theme.space-m;
+        spacing: Theme.space-m;
+        alignment: start;
+
+        PreviewCase {
+            label: "Two lines, the second one wrapped";
+            HorizontalLayout {
+                alignment: start;
+
+                TooltipPanel {
+                    Text {
+                        font-family: Theme.font-body;
+                        text: "Ashe · Bot";
+                        color: Theme.text-primary;
+                        font-size: Theme.font-size-caption;
+                        font-weight: 600;
+                    }
+
+                    Text {
+                        font-family: Theme.font-body;
+                        text: "Sample details: any content goes in the panel, wrapped at its width.";
+                        color: Theme.text-secondary;
+                        font-size: Theme.font-size-caption;
+                        wrap: word-wrap;
+                    }
+                }
+            }
+        }
+    }
+}

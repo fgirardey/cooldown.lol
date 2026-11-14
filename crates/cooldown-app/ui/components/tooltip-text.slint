@@ -1,0 +1,20 @@
+// A tooltip that is a short text, the usual case: it explains a control's state (why a button
+// is disabled, what a running task waits for). The window's `TooltipLayer` draws it; controls
+// ask for it with `TooltipAnchor`.
+//
+// `Tooltip` component of `History components` in design/cooldown.pen.
+
+import { Theme } from "../theme.slint";
+import { TooltipPanel } from "tooltip-panel.slint";
+
+export component TooltipText inherits TooltipPanel {
+    in property <string> text;
+
+    Text {
+        font-family: Theme.font-body;
+        text: root.text;
+        color: Theme.text-primary;
+        font-size: Theme.font-size-caption;
+        wrap: word-wrap;
+    }
+}

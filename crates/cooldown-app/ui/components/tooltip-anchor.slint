@@ -1,0 +1,49 @@
+// A control that has a tooltip: wrap the control in it. When the pointer rests on it, the
+// window's `TooltipLayer` shows `tooltip` next to it (timing and placement:
+// docs/Design/Tokens.md, Tooltip).
+//
+//     TooltipAnchor {
+//         tooltip: "Open the League client to refresh History.";
+//         width: 32px;
+//         height: 32px;
+//
+//         Rectangle { … the control … }
+//     }
+//
+// It only watches the pointer: clicks and hover still reach the control, disabled or not.
+// It writes the `Tooltips` UI global (docs/Decisions/ADR-0017), the one exception to pure
+// components.
+
+import { Tooltips } from "../tooltips.slint";
+
+export component TooltipAnchor inherits TouchArea {
+    /// Empty: no tooltip.
+    in property <string> tooltip;
+
+    property <int> ticket;
+
+    changed has-hover => {
+        if self.has-hover && root.tooltip != "" {
+            root.ticket = Tooltips.enter({
+                text: root.tooltip,
+                x: root.absolute-position.x,
+                y: root.absolute-position.y,
+                width: root.width,
+                height: root.height,
+            });
+        } else {
+            Tooltips.leave(root.ticket);
+        }
+    }
+
+    // A state change under the pointer (a refresh starts): the shown text follows.
+    changed tooltip => {
+        if root.tooltip == "" {
+            Tooltips.leave(root.ticket);
+        } else {
+            Tooltips.update(root.ticket, root.tooltip);
+        }
+    }
+
+    @children
+}
