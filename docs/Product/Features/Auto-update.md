@@ -43,6 +43,8 @@ Development happens on macOS against the simulator ([[ADR-0003 macOS-first devel
 | Ready | `Build 58 is ready. It starts the next time you open cooldown.lol.` | enabled |
 | Failed | `Couldn't update: <short reason>. Next try in an hour.` | enabled |
 
+**Check now**'s tooltip ([[Tokens#Tooltip]]): "Look for a new alpha build now." when enabled, "A check or a download is running. Wait for it to finish." when disabled.
+
 The build number comes from the package version (`0.1.0-alpha.58` → build 58); a stable package reads `Version 0.2.0` instead of `Build 58`.
 
 Short reasons: `no connection` (network error, GitHub down or limiting requests: 60 an hour without a token), `no alpha build published yet` (no alpha feed on the releases), `update error` (anything else, such as a corrupted download; details in the log).
@@ -58,7 +60,7 @@ Short reasons: `no connection` (network error, GitHub down or limiting requests:
 No League data. Per check: the release list (GitHub API, 60 requests an hour without a token) and the channel feeds, then the package when newer.
 
 ## Design
-Section **Updates** under the error reports in `App shell / Settings / Default` (up to date) and `App shell / Settings / Crash reports on`; states in `App shell / Settings / Updates checking` (button at 40 % opacity, disabled), `Updates ready` and `Updates failed`. **Check now** is a compact secondary button (36 px high, `$border` outline, `$radius-m`); hover and pressed follow the secondary button in `Foundations`.
+Section **Updates** under the error reports in `App shell / Settings / Default` (up to date) and `App shell / Settings / Crash reports on`; states in `App shell / Settings / Updates checking` (button at 40 % opacity, disabled), `Updates ready` and `Updates failed`. **Check now** is a compact secondary button (36 px high, `$border` outline, `$radius-m`); hover and pressed follow the secondary button in `Foundations`. Its tooltips are the `Settings / Check now / Tooltip / *` frames (`History components`).
 
 ## Compliance
 Nothing shown during a game; no interaction with the game process. Updating our own executable is outside [[Riot policies]].

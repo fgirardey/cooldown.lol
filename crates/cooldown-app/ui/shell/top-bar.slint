@@ -67,6 +67,7 @@ export component TopBar inherits Rectangle {
             NavButton {
                 icon: @image-url("../images/icons/settings.svg");
                 active: root.settings-active;
+                tooltip: "Settings";
                 clicked => { root.settings-clicked(); }
             }
         }
@@ -76,6 +77,7 @@ export component TopBar inherits Rectangle {
             NavButton {
                 icon: @image-url("../images/icons/info.svg");
                 active: root.about-active;
+                tooltip: "About";
                 clicked => { root.about-clicked(); }
             }
         }

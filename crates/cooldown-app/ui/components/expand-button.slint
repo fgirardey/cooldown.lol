@@ -1,10 +1,13 @@
-// The chevron at the end of a History row: opens and closes the row's details.
+// The chevron at the end of a History row: opens and closes the row's details, which its
+// tooltip says.
 //
-// `Expand` of the `Game row / *` components in design/cooldown.pen.
+// `Expand` of the `Game row / *` components in design/cooldown.pen, tooltips in
+// `Game row / Expand / Tooltip / *` (History components).
 
 import { Theme } from "../theme.slint";
 import { Icon } from "icon.slint";
 import { StateLayer } from "state-layer.slint";
+import { TooltipAnchor } from "tooltip-anchor.slint";
 
 export component ExpandButton inherits Rectangle {
     in property <bool> expanded;
@@ -14,27 +17,31 @@ export component ExpandButton inherits Rectangle {
     height: 28px;
     border-radius: Theme.radius-s;
 
-    StateLayer {
-        border-radius: root.border-radius;
-        tint: Theme.text-primary;
-        hovered: touch.has-hover;
-        pressed: touch.pressed;
-    }
+    TooltipAnchor {
+        tooltip: root.expanded ? "Hide details" : "Show details";
 
-    Icon {
-        source: @image-url("../images/icons/chevron-down.svg");
-        width: 16px * 10 / 16;
-        height: 16px * 6 / 16;
-        colorize: touch.has-hover ? Theme.text-primary : Theme.text-secondary;
-        transform-rotation: root.expanded ? 180deg : 0deg;
-        animate transform-rotation {
-            duration: Theme.motion-medium;
-            easing: ease-out;
+        StateLayer {
+            border-radius: root.border-radius;
+            tint: Theme.text-primary;
+            hovered: touch.has-hover;
+            pressed: touch.pressed;
         }
-    }
 
-    touch := TouchArea {
-        mouse-cursor: pointer;
-        clicked => { root.clicked(); }
+        Icon {
+            source: @image-url("../images/icons/chevron-down.svg");
+            width: 16px * 10 / 16;
+            height: 16px * 6 / 16;
+            colorize: touch.has-hover ? Theme.text-primary : Theme.text-secondary;
+            transform-rotation: root.expanded ? 180deg : 0deg;
+            animate transform-rotation {
+                duration: Theme.motion-medium;
+                easing: ease-out;
+            }
+        }
+
+        touch := TouchArea {
+            mouse-cursor: pointer;
+            clicked => { root.clicked(); }
+        }
     }
 }

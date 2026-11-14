@@ -157,6 +157,9 @@ export component SettingsScreen inherits Rectangle {
                                 text: "Check now";
                                 height: 36px;
                                 enabled: !root.update-busy;
+                                tooltip: root.update-busy
+                                    ? "A check or a download is running. Wait for it to finish."
+                                    : "Look for a new alpha build now.";
                                 clicked => { root.check-updates(); }
                             }
                         }

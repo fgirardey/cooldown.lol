@@ -6,6 +6,9 @@ import { SettingsScreen } from "settings.slint";
 import { Fixtures } from "../preview-kit/fixtures.slint";
 import { PreviewCase } from "../preview-kit/preview-case.slint";
 import { PreviewPlayground } from "../preview-kit/preview-playground.slint";
+import { SecondaryButton } from "../components/secondary-button.slint";
+import { TooltipLayer } from "../shell/tooltip-layer.slint";
+import { Tooltips } from "../tooltips.slint";
 
 // Pencil frame `App shell / Settings / Default` (1280 × 800).
 export component AppShellSettingsDefault inherits Rectangle {
@@ -154,7 +157,7 @@ export component AppShellSettingsScrolledToTheBottom inherits Rectangle {
     }
 }
 
-// Edit the knobs in the live preview's Data tab; clicks show as the last action.
+// Edit the knobs in the live preview's Data tab; hover "Check now" for its tooltip; clicks show as the last action.
 export component SettingsScreenPlayground inherits Window {
     in-out property <bool> crash-reports;
     in-out property <bool> all-logs;
@@ -217,6 +220,58 @@ export component SettingsScreenPlayground inherits Window {
             }
         }
     }
+
+    // As in app-window.slint: hover "Check now" for its tooltip.
+    TooltipLayer {
+        width: root.width;
+        height: root.height;
+        hovering: Tooltips.hovering;
+        dismissed: Tooltips.dismissed;
+        request: Tooltips.request;
+    }
+}
+
+// "Check now" with its tooltip held open, since a story cannot hover: the
+// `Settings / Check now / Tooltip / *` frames below.
+component CheckNowWithTooltip inherits Rectangle {
+    in property <bool> busy;
+
+    width: 224px;
+    height: 93px;
+    background: Theme.background;
+
+    check := SecondaryButton {
+        x: (root.width - self.width) / 2;
+        y: 12px;
+        width: self.min-width;
+        height: 36px;
+        text: "Check now";
+        enabled: !root.busy;
+        tooltip: root.busy
+            ? "A check or a download is running. Wait for it to finish."
+            : "Look for a new alpha build now.";
+    }
+
+    TooltipLayer {
+        always-open: true;
+        request: {
+            text: check.tooltip,
+            x: check.x,
+            y: check.y,
+            width: check.width,
+            height: check.height,
+        };
+    }
+}
+
+// Pencil frame `Settings / Check now / Tooltip / Idle`.
+export component SettingsCheckNowTooltipIdle inherits CheckNowWithTooltip { }
+
+// Pencil frame `Settings / Check now / Tooltip / Busy`.
+export component SettingsCheckNowTooltipBusy inherits CheckNowWithTooltip {
+    width: 264px;
+    height: 110px;
+    busy: true;
 }
 
 // Gallery of every state (default component of the file).
@@ -276,6 +331,14 @@ export component Preview inherits Window {
 
                 SettingsScreen { vertical-stretch: 1; debug-tools: true; }
             }
+        }
+        PreviewCase {
+            label: "Settings / Check now / Tooltip / Idle";
+            SettingsCheckNowTooltipIdle { }
+        }
+        PreviewCase {
+            label: "Settings / Check now / Tooltip / Busy";
+            SettingsCheckNowTooltipBusy { }
         }
     }
 }

@@ -10,7 +10,7 @@ How a game shows who the player was and who they played with. Used by [[Post-gam
 Both avatars are shown **every time a game is shown**, side by side, as on DPM.LOL's match history:
 - **Played champion**: rounded square, 52 px, in front.
 - **Linked champion**: rounded square, 24 px (less than half the played one), to its right, top-aligned, slightly tucked behind it.
-- Each avatar has a **role badge** in its bottom corner holding League's position symbol (top, jungle, middle, bottom, utility), in `text-primary` like the text: 18 px on the played avatar, 14 px on the linked one. "?" when the role is unknown.
+- Each avatar has a **role badge** in its bottom corner holding League's position symbol (top, jungle, middle, bottom, utility), in `text-primary` like the text: 18 px on the played avatar, 14 px on the linked one. The badge's tooltip names the role: "Bottom" ([[Tokens#Tooltip]], frame `Champion portrait / Tooltip / Role`). "?" when the role is unknown.
 - The text next to them names both: "Ashe · Bot", then "with Lulu" in `text-secondary`.
 
 Pencil component: `Champion portrait`.
