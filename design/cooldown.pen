@@ -84326,6 +84326,345 @@
               "content": "Tooltip (ADR-0017, Tokens > Tooltip): every control whose state needs a reason. Timing and placement from Material Design: opens 500 ms after the pointer rests on the control (fade in and grow from 0.8, 150 ms), stays 600 ms after it leaves (moving to another control switches the text at once), fades out in 75 ms. Centered under the control with a 4 px gap, above it when there is no room below, 8 px from the window edges; near a side edge, aligned with the control's start or end (here: the button's end). Stays inside the window, never takes clicks. Shown on disabled controls too: that is when the reason matters most. Text: font-size-caption, text-primary, wraps at 220 px."
             }
           ]
+        },
+        {
+          "type": "frame",
+          "id": "aRlep",
+          "name": "Control tooltips",
+          "gap": 32,
+          "children": [
+            {
+              "type": "frame",
+              "id": "rhcP2",
+              "name": "Top bar / Tooltip / Settings",
+              "width": 148,
+              "height": 89,
+              "fill": "$background",
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "sFQIV",
+                  "x": 60,
+                  "y": 8,
+                  "name": "Nav",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "id": "UiyfB",
+                      "type": "ref",
+                      "ref": "q3OpU",
+                      "name": "Nav / Settings",
+                      "width": 36,
+                      "height": 36,
+                      "descendants": {
+                        "cU3ej": {
+                          "icon": "settings",
+                          "width": 22,
+                          "height": 22
+                        }
+                      }
+                    },
+                    {
+                      "id": "OJOls",
+                      "type": "ref",
+                      "ref": "q3OpU",
+                      "name": "Nav / About",
+                      "width": 36,
+                      "height": 36,
+                      "descendants": {
+                        "cU3ej": {
+                          "icon": "info",
+                          "width": 22,
+                          "height": 22
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "Y3MLL",
+                  "type": "ref",
+                  "ref": "fWzkj",
+                  "name": "Tooltip",
+                  "x": 44.5,
+                  "y": 48,
+                  "descendants": {
+                    "xp1r8": {
+                      "content": "Settings",
+                      "textGrowth": "auto"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "b9DCmD",
+              "name": "Top bar / Tooltip / About",
+              "width": 148,
+              "height": 89,
+              "fill": "$background",
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "DTonq",
+                  "x": 60,
+                  "y": 8,
+                  "name": "Nav",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "id": "zf8eZ",
+                      "type": "ref",
+                      "ref": "q3OpU",
+                      "name": "Nav / Settings",
+                      "width": 36,
+                      "height": 36,
+                      "descendants": {
+                        "cU3ej": {
+                          "icon": "settings",
+                          "width": 22,
+                          "height": 22
+                        }
+                      }
+                    },
+                    {
+                      "id": "ZYnbj",
+                      "type": "ref",
+                      "ref": "q3OpU",
+                      "name": "Nav / About",
+                      "width": 36,
+                      "height": 36,
+                      "descendants": {
+                        "cU3ej": {
+                          "icon": "info",
+                          "width": 22,
+                          "height": 22
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "idDqC",
+                  "type": "ref",
+                  "ref": "fWzkj",
+                  "name": "Tooltip",
+                  "x": 86,
+                  "y": 48,
+                  "descendants": {
+                    "xp1r8": {
+                      "content": "About",
+                      "textGrowth": "auto"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "B2LjZ3",
+              "name": "Settings / Check now / Tooltip / Idle",
+              "fill": "$background",
+              "layout": "vertical",
+              "gap": 4,
+              "padding": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "OF5wS",
+                  "type": "ref",
+                  "ref": "UWdGf",
+                  "name": "Check now",
+                  "height": 36,
+                  "width": "fit_content",
+                  "descendants": {
+                    "JYZuU": {
+                      "content": "Check now"
+                    }
+                  }
+                },
+                {
+                  "id": "p6U7T",
+                  "type": "ref",
+                  "ref": "fWzkj",
+                  "name": "Tooltip",
+                  "descendants": {
+                    "xp1r8": {
+                      "content": "Look for a new alpha build now.",
+                      "textGrowth": "auto"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "BKeFb",
+              "name": "Settings / Check now / Tooltip / Busy",
+              "fill": "$background",
+              "layout": "vertical",
+              "gap": 4,
+              "padding": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "EhMNm",
+                  "type": "ref",
+                  "ref": "l2xJX",
+                  "name": "Check now",
+                  "height": 36,
+                  "width": "fit_content",
+                  "opacity": 0.4,
+                  "descendants": {
+                    "JYZuU": {
+                      "content": "Check now"
+                    }
+                  }
+                },
+                {
+                  "id": "pQq6K",
+                  "type": "ref",
+                  "ref": "fWzkj",
+                  "name": "Tooltip",
+                  "descendants": {
+                    "xp1r8": {
+                      "content": "A check or a download is running. Wait for it to finish."
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "r7Us32",
+              "name": "Game row / Expand / Tooltip / Collapsed",
+              "fill": "$background",
+              "layout": "vertical",
+              "gap": 4,
+              "padding": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "O8V8r",
+                  "name": "Expand",
+                  "width": 28,
+                  "height": 28,
+                  "fill": "#E6EDF314",
+                  "cornerRadius": "$radius-s",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "Armee",
+                      "name": "Chevron",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$text-secondary"
+                    }
+                  ]
+                },
+                {
+                  "id": "Yvx8C",
+                  "type": "ref",
+                  "ref": "fWzkj",
+                  "name": "Tooltip",
+                  "descendants": {
+                    "xp1r8": {
+                      "content": "Show details",
+                      "textGrowth": "auto"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "q7PjR",
+              "name": "Game row / Expand / Tooltip / Expanded",
+              "fill": "$background",
+              "layout": "vertical",
+              "gap": 4,
+              "padding": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "tVg6k",
+                  "name": "Expand",
+                  "width": 28,
+                  "height": 28,
+                  "fill": "#E6EDF314",
+                  "cornerRadius": "$radius-s",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "gaPyJ",
+                      "name": "Chevron",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "chevron-up",
+                      "library": "lucide",
+                      "fill": "$text-secondary"
+                    }
+                  ]
+                },
+                {
+                  "id": "U7fRoF",
+                  "type": "ref",
+                  "ref": "fWzkj",
+                  "name": "Tooltip",
+                  "descendants": {
+                    "xp1r8": {
+                      "content": "Hide details",
+                      "textGrowth": "auto"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "iiPMS",
+              "name": "Champion portrait / Tooltip / Role",
+              "width": 120,
+              "height": 111,
+              "fill": "$background",
+              "layout": "none",
+              "children": [
+                {
+                  "id": "ofNd6",
+                  "type": "ref",
+                  "ref": "pJJnc",
+                  "name": "Champion portrait",
+                  "x": 40,
+                  "y": 12
+                },
+                {
+                  "id": "n9MJSZ",
+                  "type": "ref",
+                  "ref": "fWzkj",
+                  "name": "Tooltip",
+                  "x": 18.5,
+                  "y": 70,
+                  "descendants": {
+                    "xp1r8": {
+                      "content": "Bottom",
+                      "textGrowth": "auto"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
         }
       ]
     },
