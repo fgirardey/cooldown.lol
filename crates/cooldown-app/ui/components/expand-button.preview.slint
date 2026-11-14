@@ -3,6 +3,7 @@
 import { Theme } from "../theme.slint";
 import { ExpandButton } from "expand-button.slint";
 import { PreviewCase } from "../preview-kit/preview-case.slint";
+import { TooltipLayer } from "../shell/tooltip-layer.slint";
 
 // `Expand` of the `Game row / *` components, closed.
 export component ExpandButtonClosed inherits Rectangle {
@@ -11,6 +12,46 @@ export component ExpandButtonClosed inherits Rectangle {
     background: Theme.surface;
 
     ExpandButton { }
+}
+
+// The chevron with its tooltip held open, since a story cannot hover: the
+// `Game row / Expand / Tooltip / *` frames below.
+component ExpandWithTooltip inherits Rectangle {
+    in property <bool> expanded;
+    in property <string> tooltip;
+
+    width: 117px;
+    height: 85px;
+    background: Theme.background;
+
+    expand := ExpandButton {
+        x: (root.width - self.width) / 2;
+        y: 12px;
+        expanded: root.expanded;
+    }
+
+    TooltipLayer {
+        always-open: true;
+        request: {
+            text: root.tooltip,
+            x: expand.x,
+            y: expand.y,
+            width: expand.width,
+            height: expand.height,
+        };
+    }
+}
+
+// Pencil frame `Game row / Expand / Tooltip / Collapsed`.
+export component GameRowExpandTooltipCollapsed inherits ExpandWithTooltip {
+    tooltip: "Show details";
+}
+
+// Pencil frame `Game row / Expand / Tooltip / Expanded`.
+export component GameRowExpandTooltipExpanded inherits ExpandWithTooltip {
+    width: 111px;
+    expanded: true;
+    tooltip: "Hide details";
 }
 
 // Gallery of every variant (default component of the file).
@@ -44,6 +85,16 @@ export component Preview inherits Window {
                     clicked => { self.expanded = !self.expanded; }
                 }
             }
+        }
+
+        PreviewCase {
+            label: "Game row / Expand / Tooltip / Collapsed";
+            GameRowExpandTooltipCollapsed { }
+        }
+
+        PreviewCase {
+            label: "Game row / Expand / Tooltip / Expanded";
+            GameRowExpandTooltipExpanded { }
         }
     }
 }

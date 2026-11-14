@@ -4,10 +4,13 @@ import { Theme } from "../theme.slint";
 import { NavButton } from "nav-button.slint";
 import { PreviewCase } from "../preview-kit/preview-case.slint";
 import { PreviewPlayground } from "../preview-kit/preview-playground.slint";
+import { TooltipLayer } from "../shell/tooltip-layer.slint";
+import { Tooltips } from "../tooltips.slint";
 
-// Edit the knobs in the live preview's Data tab; clicks show as the last action.
+// Edit the knobs in the live preview's Data tab; hover the button for its tooltip; clicks show as the last action.
 export component NavButtonPlayground inherits Window {
     in-out property <bool> active;
+    in-out property <string> tooltip: "Settings";
 
     background: Theme.background;
     preferred-width: 200px;
@@ -18,10 +21,64 @@ export component NavButtonPlayground inherits Window {
             NavButton {
                 icon: @image-url("../images/icons/settings.svg");
                 active: root.active;
+                tooltip: root.tooltip;
                 clicked => { playground.log("clicked"); }
             }
         }
     }
+
+    // As in app-window.slint: hover a button for its tooltip.
+    TooltipLayer {
+        width: root.width;
+        height: root.height;
+        hovering: Tooltips.hovering;
+        dismissed: Tooltips.dismissed;
+        request: Tooltips.request;
+    }
+}
+
+// The Settings and About buttons at the right end of the top bar, with the tooltip of one of them
+// held open, since a story cannot hover: the `Top bar / Tooltip / *` frames below.
+component NavWithTooltip inherits Rectangle {
+    /// The About button's tooltip instead of the Settings one.
+    in property <bool> about;
+
+    width: 148px;
+    height: 89px;
+    background: Theme.background;
+
+    settings := NavButton {
+        x: 60px;
+        y: 8px;
+        icon: @image-url("../images/icons/settings.svg");
+        tooltip: "Settings";
+    }
+
+    about := NavButton {
+        x: 104px;
+        y: 8px;
+        icon: @image-url("../images/icons/info.svg");
+        tooltip: "About";
+    }
+
+    TooltipLayer {
+        always-open: true;
+        request: {
+            text: root.about ? about.tooltip : settings.tooltip,
+            x: root.about ? about.x : settings.x,
+            y: settings.y,
+            width: settings.width,
+            height: settings.height,
+        };
+    }
+}
+
+// Pencil frame `Top bar / Tooltip / Settings`.
+export component TopBarTooltipSettings inherits NavWithTooltip { }
+
+// Pencil frame `Top bar / Tooltip / About`.
+export component TopBarTooltipAbout inherits NavWithTooltip {
+    about: true;
 }
 
 // Gallery of every variant (default component of the file).
@@ -49,6 +106,15 @@ export component Preview inherits Window {
         PreviewCase {
             label: "About, active";
             NavButton { icon: @image-url("../images/icons/info.svg"); active: true; }
+        }
+
+        PreviewCase {
+            label: "Top bar / Tooltip / Settings";
+            TopBarTooltipSettings { }
+        }
+        PreviewCase {
+            label: "Top bar / Tooltip / About";
+            TopBarTooltipAbout { }
         }
     }
 }

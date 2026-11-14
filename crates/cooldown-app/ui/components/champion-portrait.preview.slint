@@ -4,6 +4,7 @@ import { Theme } from "../theme.slint";
 import { ChampionPortrait } from "champion-portrait.slint";
 import { Fixtures } from "../preview-kit/fixtures.slint";
 import { PreviewCase } from "../preview-kit/preview-case.slint";
+import { TooltipLayer } from "../shell/tooltip-layer.slint";
 
 // Pencil frame `Champion portrait` (played champion only).
 export component ChampionPortraitStory inherits Rectangle {
@@ -18,6 +19,37 @@ export component ChampionPortraitStory inherits Rectangle {
         initials: "JI";
         role-icon: Fixtures.game-jinx.role-icon;
         has-role: true;
+    }
+}
+
+// The role badge's tooltip, held open since a story cannot hover.
+// Pencil frame `Champion portrait / Tooltip / Role`.
+export component ChampionPortraitTooltipRole inherits Rectangle {
+    width: 120px;
+    height: 111px;
+    background: Theme.background;
+
+    portrait := ChampionPortrait {
+        x: 40px;
+        y: 12px;
+        image: Fixtures.game-jinx.champion-image;
+        has-image: true;
+        initials: "JI";
+        role-icon: Fixtures.game-jinx.role-icon;
+        has-role: true;
+        role-name: Fixtures.game-jinx.role-name;
+    }
+
+    TooltipLayer {
+        always-open: true;
+        // The badge, in the portrait's bottom-left corner.
+        request: {
+            text: Fixtures.game-jinx.role-name,
+            x: portrait.x,
+            y: portrait.y + 36px,
+            width: 18px,
+            height: 18px,
+        };
     }
 }
 
@@ -53,6 +85,11 @@ export component Preview inherits Window {
                 has-image: true;
                 has-role: false;
             }
+        }
+
+        PreviewCase {
+            label: "Champion portrait / Tooltip / Role";
+            ChampionPortraitTooltipRole { }
         }
     }
 }

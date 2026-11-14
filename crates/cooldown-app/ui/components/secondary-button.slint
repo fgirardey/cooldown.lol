@@ -2,16 +2,20 @@
 // `Interaction states` section of the `Foundations` page; compact 36px variant
 // in `App shell / Settings / Default`; destructive variant, in `$danger`, for
 // Uninstall in `App shell / Settings / Scrolled to the bottom`). Tinted on hover
-// and pressed, shrinks a little while pressed; faded and inert when disabled.
+// and pressed, shrinks a little while pressed; faded and inert when disabled. Its tooltip, when
+// it has one, also shows when it is disabled.
 
 import { Theme } from "../theme.slint";
 import { StateLayer } from "state-layer.slint";
+import { TooltipAnchor } from "tooltip-anchor.slint";
 
 export component SecondaryButton inherits Rectangle {
     in property <string> text;
     in property <bool> enabled: true;
     /// An action that removes something: outline and label in `danger`.
     in property <bool> destructive;
+    /// Why the button is in its state; empty: no tooltip.
+    in property <string> tooltip;
     callback clicked;
 
     height: 44px;
@@ -26,24 +30,28 @@ export component SecondaryButton inherits Rectangle {
         easing: ease-out;
     }
 
-    StateLayer {
-        border-radius: root.border-radius;
-        tint: root.destructive ? Theme.danger : Theme.text-primary;
-        hovered: touch.has-hover;
-        pressed: touch.pressed;
-    }
+    TooltipAnchor {
+        tooltip: root.tooltip;
 
-    label := Text {
-        font-family: Theme.font-body;
-        text: root.text;
-        color: root.destructive ? Theme.danger : Theme.text-primary;
-        font-size: Theme.font-size-body;
-        font-weight: 600;
-    }
+        StateLayer {
+            border-radius: root.border-radius;
+            tint: root.destructive ? Theme.danger : Theme.text-primary;
+            hovered: touch.has-hover;
+            pressed: touch.pressed;
+        }
 
-    touch := TouchArea {
-        enabled: root.enabled;
-        mouse-cursor: root.enabled ? pointer : default;
-        clicked => { root.clicked(); }
+        label := Text {
+            font-family: Theme.font-body;
+            text: root.text;
+            color: root.destructive ? Theme.danger : Theme.text-primary;
+            font-size: Theme.font-size-body;
+            font-weight: 600;
+        }
+
+        touch := TouchArea {
+            enabled: root.enabled;
+            mouse-cursor: root.enabled ? pointer : default;
+            clicked => { root.clicked(); }
+        }
     }
 }

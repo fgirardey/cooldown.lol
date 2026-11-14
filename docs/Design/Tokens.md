@@ -80,7 +80,7 @@ The state layer colour is the control's content colour: `background` on `accent`
 In Slint, `components/state-layer.slint` (`StateLayer`) draws the layer: every interactive control lays one over its background, fed by its `TouchArea`'s `has-hover` and `pressed`.
 
 ## Tooltip
-A control whose state needs a reason (a disabled button, a running task) explains it in a **tooltip**. In Pencil it is the `Tooltip` component of `History components`. In code ([[ADR-0017 Tooltips drawn by the window]]):
+A control whose state needs a reason (a disabled button, a running task) explains it in a **tooltip**, and a control with no label (an icon button, a badge) is named by one. In Pencil it is the `Tooltip` component of `History components`. In code ([[ADR-0017 Tooltips drawn by the window]]):
 - wrap the control in `TooltipAnchor` (`components/tooltip-anchor.slint`) with its `tooltip` text;
 - the window's `TooltipLayer` (`shell/tooltip-layer.slint`) draws it as `TooltipText` (`components/tooltip-text.slint`), a text in a `TooltipPanel`.
 
