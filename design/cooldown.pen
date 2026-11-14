@@ -84136,6 +84136,196 @@
               "content": "History refresh (right end of the History title row). The label says when History was last read from the League client (\"Updated just now\", \"Updated 2 min ago\", \"Updated 2 h ago\"), updated every minute. The button re-reads the client's match history now. Updating: label \"Updating…\", button disabled. Offline (no client): button disabled, label kept. Also runs on its own at connection and when a game ends. Hover: Icon button state layer."
             }
           ]
+        },
+        {
+          "type": "frame",
+          "id": "FwBIa",
+          "name": "History refresh tooltips",
+          "gap": 32,
+          "children": [
+            {
+              "type": "frame",
+              "id": "fWzkj",
+              "name": "Tooltip",
+              "reusable": true,
+              "fill": "$surface",
+              "cornerRadius": "$radius-chip",
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "padding": [
+                6,
+                10
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "xp1r8",
+                  "name": "Tooltip text",
+                  "fill": "$text-primary",
+                  "textGrowth": "fixed-width",
+                  "width": 220,
+                  "content": "Tooltip",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "i2vdN",
+              "name": "History refresh / Tooltip / Idle",
+              "fill": "$background",
+              "layout": "vertical",
+              "gap": 4,
+              "padding": 12,
+              "alignItems": "end",
+              "children": [
+                {
+                  "id": "UiEpL",
+                  "type": "ref",
+                  "ref": "HLeGO",
+                  "name": "History refresh"
+                },
+                {
+                  "id": "wmMhn",
+                  "type": "ref",
+                  "ref": "fWzkj",
+                  "name": "Tooltip",
+                  "descendants": {
+                    "xp1r8": {
+                      "content": "Read your latest games from the League client now. History also updates on its own after each game."
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "IGyw4",
+              "name": "History refresh / Tooltip / Updating",
+              "fill": "$background",
+              "layout": "vertical",
+              "gap": 4,
+              "padding": 12,
+              "alignItems": "end",
+              "children": [
+                {
+                  "id": "qoFXB",
+                  "type": "ref",
+                  "ref": "KCxo9",
+                  "name": "History refresh"
+                },
+                {
+                  "id": "EpiFD",
+                  "type": "ref",
+                  "ref": "fWzkj",
+                  "name": "Tooltip",
+                  "descendants": {
+                    "xp1r8": {
+                      "content": "Reading your latest games from the League client…"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "SHnOP",
+              "name": "History refresh / Tooltip / Waiting for login",
+              "fill": "$background",
+              "layout": "vertical",
+              "gap": 4,
+              "padding": 12,
+              "alignItems": "end",
+              "children": [
+                {
+                  "id": "i2z3C",
+                  "type": "ref",
+                  "ref": "KCxo9",
+                  "name": "History refresh"
+                },
+                {
+                  "id": "kocic",
+                  "type": "ref",
+                  "ref": "fWzkj",
+                  "name": "Tooltip",
+                  "descendants": {
+                    "xp1r8": {
+                      "content": "Waiting for you to log in to the League client. Trying again every 10 s."
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "j2JD7",
+              "name": "History refresh / Tooltip / Client not answering",
+              "fill": "$background",
+              "layout": "vertical",
+              "gap": 4,
+              "padding": 12,
+              "alignItems": "end",
+              "children": [
+                {
+                  "id": "s1zuJ",
+                  "type": "ref",
+                  "ref": "KCxo9",
+                  "name": "History refresh"
+                },
+                {
+                  "id": "dMwI9",
+                  "type": "ref",
+                  "ref": "fWzkj",
+                  "name": "Tooltip",
+                  "descendants": {
+                    "xp1r8": {
+                      "content": "The League client isn't answering. Trying again every 10 s."
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "o19At",
+              "name": "History refresh / Tooltip / Offline",
+              "fill": "$background",
+              "layout": "vertical",
+              "gap": 4,
+              "padding": 12,
+              "alignItems": "end",
+              "children": [
+                {
+                  "id": "Y7AYu",
+                  "type": "ref",
+                  "ref": "QaALt",
+                  "name": "History refresh"
+                },
+                {
+                  "id": "Z6UQr",
+                  "type": "ref",
+                  "ref": "fWzkj",
+                  "name": "Tooltip",
+                  "descendants": {
+                    "xp1r8": {
+                      "content": "Open the League client to refresh History."
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "note",
+              "id": "m1Qsu",
+              "name": "Tooltip behaviour",
+              "width": 320,
+              "height": 330,
+              "content": "Tooltip (ADR-0017, Tokens > Tooltip): every control whose state needs a reason. Timing and placement from Material Design: opens 500 ms after the pointer rests on the control (fade in and grow from 0.8, 150 ms), stays 600 ms after it leaves (moving to another control switches the text at once), fades out in 75 ms. Centered under the control with a 4 px gap, above it when there is no room below, 8 px from the window edges; near a side edge, aligned with the control's start or end (here: the button's end). Stays inside the window, never takes clicks. Shown on disabled controls too: that is when the reason matters most. Text: font-size-caption, text-primary, wraps at 220 px."
+            }
+          ]
         }
       ]
     },
@@ -85895,6 +86085,14 @@
     "muted-opacity": {
       "type": "number",
       "value": 0.75
+    },
+    "radius-s": {
+      "type": "number",
+      "value": 6
+    },
+    "radius-chip": {
+      "type": "number",
+      "value": 4
     }
   },
   "fileToken": "cdfa3f0f-9494-4fb1-b76f-1be028de3488"
