@@ -2,6 +2,9 @@
 
 import { Theme } from "../theme.slint";
 import { HistoryRefresh } from "history-refresh.slint";
+import { RefreshState } from "../models.slint";
+import { TooltipLayer } from "../shell/tooltip-layer.slint";
+import { Tooltips } from "../tooltips.slint";
 import { PreviewCase } from "../preview-kit/preview-case.slint";
 import { PreviewPlayground } from "../preview-kit/preview-playground.slint";
 
@@ -22,7 +25,7 @@ export component HistoryRefreshUpdating inherits Rectangle {
 
     HistoryRefresh {
         updated: "Updated 2 min ago";
-        refreshing: true;
+        state: RefreshState.reading;
     }
 }
 
@@ -38,10 +41,76 @@ export component HistoryRefreshOffline inherits Rectangle {
     }
 }
 
-// Edit the knobs in the live preview's Data tab; clicks show as the last action.
+// The refresh at the right end of the title row, with the tooltip its state opens on hover, held
+// open since a story cannot hover: the `History refresh / Tooltip / *` frames below.
+component RefreshWithTooltip inherits Rectangle {
+    in property <string> updated;
+    in property <RefreshState> state;
+    in property <bool> enabled: true;
+    in property <string> reason;
+
+    width: 264px;
+    height: 106px;
+    background: Theme.background;
+
+    refresh := HistoryRefresh {
+        x: root.width - self.width - 12px;
+        y: 12px;
+        width: self.preferred-width;
+        height: 32px;
+        updated: root.updated;
+        state: root.state;
+        enabled: root.enabled;
+    }
+
+    TooltipLayer {
+        always-open: true;
+        request: {
+            text: root.reason,
+            x: refresh.x + refresh.width - 32px,
+            y: refresh.y,
+            width: 32px,
+            height: 32px,
+        };
+    }
+}
+
+// Pencil frame `History refresh / Tooltip / Idle`.
+export component HistoryRefreshTooltipIdle inherits RefreshWithTooltip {
+    height: 123px;
+    updated: "Updated 2 min ago";
+    reason: "Read your latest games from the League client now. History also updates on its own after each game.";
+}
+
+// Pencil frame `History refresh / Tooltip / Updating`.
+export component HistoryRefreshTooltipUpdating inherits RefreshWithTooltip {
+    state: RefreshState.reading;
+    reason: "Reading your latest games from the League client…";
+}
+
+// Pencil frame `History refresh / Tooltip / Waiting for login`.
+export component HistoryRefreshTooltipWaitingForLogin inherits RefreshWithTooltip {
+    state: RefreshState.waiting-for-login;
+    reason: "Waiting for you to log in to the League client. Trying again every 10 s.";
+}
+
+// Pencil frame `History refresh / Tooltip / Client not answering`.
+export component HistoryRefreshTooltipClientNotAnswering inherits RefreshWithTooltip {
+    state: RefreshState.client-silent;
+    reason: "The League client isn't answering. Trying again every 10 s.";
+}
+
+// Pencil frame `History refresh / Tooltip / Offline`.
+export component HistoryRefreshTooltipOffline inherits RefreshWithTooltip {
+    updated: "Updated 2 h ago";
+    enabled: false;
+    reason: "Open the League client to refresh History.";
+}
+
+// Edit the knobs in the live preview's Data tab; hover the button for its tooltip; clicks show as the last action.
 export component HistoryRefreshPlayground inherits Window {
     in-out property <string> updated: "Updated just now";
-    in-out property <bool> refreshing;
+    in-out property <RefreshState> state;
     in-out property <bool> enabled: true;
 
     background: Theme.background;
@@ -52,11 +121,20 @@ export component HistoryRefreshPlayground inherits Window {
             alignment: start;
             HistoryRefresh {
                 updated: root.updated;
-                refreshing: root.refreshing;
+                state: root.state;
                 enabled: root.enabled;
                 clicked => { playground.log("clicked"); }
             }
         }
+    }
+
+    // As in app-window.slint: hover the button for its tooltip.
+    TooltipLayer {
+        width: root.width;
+        height: root.height;
+        hovering: Tooltips.hovering;
+        dismissed: Tooltips.dismissed;
+        request: Tooltips.request;
     }
 }
 
@@ -83,6 +161,26 @@ export component Preview inherits Window {
         PreviewCase {
             label: "History refresh / Offline";
             HistoryRefreshOffline { }
+        }
+
+        PreviewCase {
+            label: "History refresh / Tooltip / Idle";
+            HistoryRefreshTooltipIdle { }
+        }
+
+        PreviewCase {
+            label: "History refresh / Tooltip / Waiting for login";
+            HistoryRefreshTooltipWaitingForLogin { }
+        }
+
+        PreviewCase {
+            label: "History refresh / Tooltip / Client not answering";
+            HistoryRefreshTooltipClientNotAnswering { }
+        }
+
+        PreviewCase {
+            label: "History refresh / Tooltip / Offline";
+            HistoryRefreshTooltipOffline { }
         }
 
         PreviewCase {

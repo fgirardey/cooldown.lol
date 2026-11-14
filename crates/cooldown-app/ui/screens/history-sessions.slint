@@ -5,7 +5,7 @@
 // `History / Main / Games view (desktop)`, `History / Main / Workouts view (desktop)`.
 
 import { Theme } from "../theme.slint";
-import { SessionData } from "../models.slint";
+import { SessionData, RefreshState } from "../models.slint";
 import { ViewSwitch } from "../components/view-switch.slint";
 import { SessionHeader } from "../components/session-header.slint";
 import { GameRow } from "../components/game-row.slint";
@@ -15,10 +15,10 @@ export component HistorySessions inherits VerticalLayout {
     in property <[SessionData]> sessions;
     /// The Workouts view is shown; the Games view otherwise.
     in-out property <bool> workouts;
-    /// The refresh at the end of the title row: "Updated 2 min ago", a read running, the client
-    /// there to read from.
+    /// The refresh at the end of the title row: "Updated 2 min ago", where a read stands, the
+    /// client there to read from.
     in property <string> updated;
-    in property <bool> refreshing;
+    in property <RefreshState> refresh-state;
     in property <bool> can-refresh: true;
     /// The player asked to read the client's match history again.
     callback refresh;
@@ -71,7 +71,7 @@ export component HistorySessions inherits VerticalLayout {
         HistoryRefresh {
             horizontal-stretch: 0;
             updated: root.updated;
-            refreshing: root.refreshing;
+            state: root.refresh-state;
             enabled: root.can-refresh;
             clicked => { root.refresh(); }
         }

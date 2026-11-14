@@ -9,14 +9,16 @@ import { AppShell } from "shell/app-shell.slint";
 import { WelcomeScreen } from "screens/welcome.slint";
 import { HistoryEmpty } from "screens/history.slint";
 import { HistorySessions } from "screens/history-sessions.slint";
-import { SessionData, GameRowData, StatData, ExerciseData, TermData, StatKind } from "models.slint";
+import { SessionData, GameRowData, StatData, ExerciseData, TermData, StatKind, RefreshState } from "models.slint";
 import { RoleIcons } from "role-icons.slint";
 import { AboutScreen } from "screens/about.slint";
 import { SettingsScreen } from "screens/settings.slint";
 import { SettingsUninstallDialog } from "screens/settings-uninstall-dialog.slint";
 import { DebugScreen } from "screens/debug.slint";
+import { TooltipLayer } from "shell/tooltip-layer.slint";
+import { Tooltips } from "tooltips.slint";
 
-export { Screen, SessionData, GameRowData, StatData, ExerciseData, TermData, StatKind, RoleIcons }
+export { Screen, SessionData, GameRowData, StatData, ExerciseData, TermData, StatKind, RefreshState, RoleIcons }
 
 export component AppWindow inherits Window {
     title: "cooldown.lol";
@@ -36,9 +38,9 @@ export component AppWindow inherits Window {
     in property <[SessionData]> sessions;
     /// History shows the Workouts view; the Games view otherwise.
     in-out property <bool> history-workouts: false;
-    /// When History was last read from the client ("Updated 2 min ago"), and whether a read runs.
+    /// When History was last read from the client ("Updated 2 min ago"), and where a read stands.
     in property <string> history-updated;
-    in-out property <bool> history-refreshing;
+    in property <RefreshState> history-refresh-state;
     /// Opt-in error reports (docs/Decisions/ADR-0006): set by Rust from the stored consent.
     in-out property <bool> crash-reports: false;
     in-out property <bool> all-logs: false;
@@ -105,7 +107,7 @@ export component AppWindow inherits Window {
             sessions: root.sessions;
             workouts <=> root.history-workouts;
             updated: root.history-updated;
-            refreshing: root.history-refreshing;
+            refresh-state: root.history-refresh-state;
             can-refresh: root.connected;
             refresh => { root.history-refresh(); }
         }
@@ -177,4 +179,16 @@ export component AppWindow inherits Window {
         cancel => { root.uninstall-dialog-open = false; }
         confirm => { root.uninstall(root.uninstall-delete-data); }
     }
+
+    // The window's tooltip (docs/Decisions/ADR-0017): last, so above everything.
+    TooltipLayer {
+        width: root.width;
+        height: root.height;
+        hovering: Tooltips.hovering;
+        dismissed: Tooltips.dismissed;
+        request: Tooltips.request;
+    }
+
+    // The control under the pointer may be gone: no tooltip lingers over the next screen.
+    changed screen => { Tooltips.dismiss(); }
 }

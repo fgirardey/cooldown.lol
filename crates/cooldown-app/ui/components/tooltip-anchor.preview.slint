@@ -1,0 +1,98 @@
+// Previews of TooltipAnchor: `just preview components/tooltip-anchor`. It draws nothing itself:
+// hover the controls of the playground, which has the window's tooltip layer.
+
+import { Theme } from "../theme.slint";
+import { TooltipAnchor } from "tooltip-anchor.slint";
+import { Tooltips } from "../tooltips.slint";
+import { TooltipLayer } from "../shell/tooltip-layer.slint";
+import { PreviewCase } from "../preview-kit/preview-case.slint";
+import { PreviewPlayground } from "../preview-kit/preview-playground.slint";
+
+// A square control with a tooltip.
+component Square inherits TooltipAnchor {
+    width: 32px;
+    height: 32px;
+
+    Rectangle {
+        background: parent.has-hover ? Theme.border : Theme.surface;
+        border-radius: Theme.radius-m;
+    }
+}
+
+// Edit the knobs in the live preview's Data tab; hover the squares (500 ms) and move between
+// them: the text switches at once. The corner squares have tooltips that would go past the
+// window: they stay inside, above the control at the bottom, aligned with its start or end at
+// the sides. Make the window narrow: the tooltips narrow to fit.
+export component TooltipAnchorPlayground inherits Window {
+    in-out property <string> first: "First control's tooltip.";
+    in-out property <string> second: "Second control: a longer tooltip, wrapped at the panel's maximum width.";
+    in-out property <string> corner: "A corner control: this tooltip would go past the window, so it is moved back inside, 8 px from the edges.";
+
+    background: Theme.background;
+    preferred-width: 400px;
+    preferred-height: 260px;
+
+    PreviewPlayground {
+        padding-top: 64px;
+
+        HorizontalLayout {
+            spacing: Theme.space-xs;
+            alignment: center;
+            Square { tooltip: root.first; }
+            Square { tooltip: root.second; }
+            Square { tooltip: ""; }
+        }
+    }
+
+    Square {
+        x: Theme.space-s;
+        y: Theme.space-s;
+        tooltip: "Top left. " + root.corner;
+    }
+
+    Square {
+        x: root.width - self.width - Theme.space-s;
+        y: Theme.space-s;
+        tooltip: "Top right. " + root.corner;
+    }
+
+    Square {
+        x: Theme.space-s;
+        y: root.height - self.height - Theme.space-s;
+        tooltip: "Bottom left. " + root.corner;
+    }
+
+    Square {
+        x: root.width - self.width - Theme.space-s;
+        y: root.height - self.height - Theme.space-s;
+        tooltip: "Bottom right. " + root.corner;
+    }
+
+    TooltipLayer {
+        width: root.width;
+        height: root.height;
+        hovering: Tooltips.hovering;
+        dismissed: Tooltips.dismissed;
+        request: Tooltips.request;
+    }
+}
+
+// Gallery of every variant (default component of the file).
+export component Preview inherits Window {
+    title: "TooltipAnchor";
+    background: Theme.background;
+
+    VerticalLayout {
+        padding: Theme.space-m;
+        spacing: Theme.space-m;
+        alignment: start;
+
+        PreviewCase {
+            label: "Draws nothing: the control inside shows (open the playground to hover)";
+            HorizontalLayout {
+                alignment: start;
+                Square { tooltip: "A tooltip."; }
+            }
+        }
+    }
+}

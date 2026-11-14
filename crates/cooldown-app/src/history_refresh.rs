@@ -2,7 +2,8 @@
 //! 2 min ago" label next to it (`docs/Product/Features/History.md`, refresh).
 //!
 //! The button only raises a flag; the [`crate::watcher`] takes it on its next poll and runs the
-//! import, then reports when it is done.
+//! import, then reports how it goes: reading, waiting (and why), done. The button's tooltip
+//! explains each state.
 
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex, PoisonError};
@@ -10,7 +11,8 @@ use std::time::{Duration, Instant};
 
 use slint::Weak;
 
-use crate::AppWindow;
+use crate::history_import::Waiting;
+use crate::{AppWindow, RefreshState};
 
 /// Shared between the UI thread (the button, the label) and the watcher. Cheap to clone.
 #[derive(Clone)]
@@ -36,7 +38,7 @@ impl HistoryRefresh {
         window.on_history_refresh(move || {
             tracing::info!("History refresh asked");
             refresh.requested.store(true, Ordering::Relaxed);
-            refresh.set_refreshing(true);
+            refresh.set_state(RefreshState::Reading);
         });
 
         let timer = slint::Timer::default();
@@ -56,7 +58,15 @@ impl HistoryRefresh {
 
     /// An import started.
     pub fn started(&self) {
-        self.set_refreshing(true);
+        self.set_state(RefreshState::Reading);
+    }
+
+    /// The import waits before trying again, for this reason.
+    pub fn waiting(&self, why: Waiting) {
+        self.set_state(match why {
+            Waiting::Login => RefreshState::WaitingForLogin,
+            Waiting::Client => RefreshState::ClientSilent,
+        });
     }
 
     /// An import ended: History is up to date.
@@ -68,13 +78,13 @@ impl HistoryRefresh {
         let label = self.label();
         self.update(move |window| {
             window.set_history_updated(label.into());
-            window.set_history_refreshing(false);
+            window.set_history_refresh_state(RefreshState::Idle);
         });
     }
 
     /// The import was stopped before its end (the client went away).
     pub fn stopped(&self) {
-        self.set_refreshing(false);
+        self.set_state(RefreshState::Idle);
     }
 
     fn label(&self) -> String {
@@ -85,8 +95,8 @@ impl HistoryRefresh {
         last.map_or_default(|at| updated_label(at.elapsed()))
     }
 
-    fn set_refreshing(&self, refreshing: bool) {
-        self.update(move |window| window.set_history_refreshing(refreshing));
+    fn set_state(&self, state: RefreshState) {
+        self.update(move |window| window.set_history_refresh_state(state));
     }
 
     fn update(&self, change: impl FnOnce(AppWindow) + Send + 'static) {

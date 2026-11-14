@@ -1,0 +1,46 @@
+// The window's one tooltip: which control the pointer rests on, and what its tooltip says.
+// `TooltipAnchor` (components/) writes it, the `TooltipLayer` of app-window.slint (shell/) draws
+// it above everything. A UI global, not app state: see docs/Decisions/ADR-0017.
+
+import { TooltipRequest } from "models.slint";
+
+export global Tooltips {
+    /// The pointer is on a control that has a tooltip.
+    out property <bool> hovering;
+    /// That control's tooltip, kept after the pointer leaves so it can fade out.
+    out property <TooltipRequest> request;
+    /// Hide at once, without the hide delay (the screen changed under the pointer).
+    out property <bool> dismissed;
+    property <int> last-ticket;
+
+    /// The pointer entered a control: returns its ticket, for `update` and `leave`.
+    public function enter(request: TooltipRequest) -> int {
+        self.last-ticket += 1;
+        self.request = request;
+        self.hovering = true;
+        self.dismissed = false;
+        return self.last-ticket;
+    }
+
+    /// The tooltip of the control holding `ticket` changed while the pointer is on it.
+    public function update(ticket: int, text: string) {
+        if ticket == self.last-ticket {
+            self.request.text = text;
+        }
+    }
+
+    /// The pointer left the control holding `ticket`. Ignored when another control took over
+    /// meanwhile: the leave of one control and the enter of its neighbour come in either order.
+    public function leave(ticket: int) {
+        if ticket == self.last-ticket {
+            self.hovering = false;
+        }
+    }
+
+    /// Hides the tooltip at once.
+    public function dismiss() {
+        self.last-ticket += 1;
+        self.hovering = false;
+        self.dismissed = true;
+    }
+}

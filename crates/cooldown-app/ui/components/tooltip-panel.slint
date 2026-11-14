@@ -1,0 +1,36 @@
+// The panel of a tooltip, around its content: a text that explains a control's state
+// (`TooltipText`), or richer details later. The window's `TooltipLayer` draws it; controls ask
+// for it with `TooltipAnchor`.
+//
+// `Tooltip` component of `History components` in design/cooldown.pen.
+
+import { Theme } from "../theme.slint";
+
+export component TooltipPanel inherits Rectangle {
+    /// Content wider than this is squeezed to it: text wraps.
+    in property <length> max-content-width: Theme.tooltip-max-width;
+    /// Padding on each side of the content.
+    out property <length> horizontal-padding: 10px;
+
+    // A wrapping text prefers its unwrapped line: size the panel to the squeezed content.
+    property <length> panel-width: min(content.preferred-width, root.max-content-width + 2 * root.horizontal-padding);
+
+    background: Theme.surface;
+    border-width: 1px;
+    border-color: Theme.border;
+    border-radius: Theme.radius-chip;
+    width: root.panel-width;
+    preferred-width: root.panel-width;
+    height: content.preferred-height;
+    preferred-height: content.preferred-height;
+
+    content := VerticalLayout {
+        padding-top: 6px;
+        padding-bottom: 6px;
+        padding-left: root.horizontal-padding;
+        padding-right: root.horizontal-padding;
+        spacing: 2px;
+
+        @children
+    }
+}
