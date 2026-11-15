@@ -13,6 +13,7 @@ Conventions are in `design/README.md`. Summary:
 - Sections, top to bottom: `Foundations`, `Primitives`, `Core components`, then one row of screens per flow.
 - Frames: `<Feature> / <Screen> / <State>`, matching the notes in [[Features]].
 - Every UI state gets a frame (empty, loading, nominal, error).
+- A component with several states has a `… / Base` component; each state is an instance of it with overrides, so a change to the base reaches every state.
 - Values come from [[Tokens]].
 
 ## Designing with Claude

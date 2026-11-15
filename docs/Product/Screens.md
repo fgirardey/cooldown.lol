@@ -55,9 +55,9 @@ flowchart LR
 ```
 
 ## Frames
-In `design/cooldown.pen`, at 1280 × 800 (the installer at 420 × 500). The `App shell / Settings / *` frames lost their content in the move to 1280 × 800: the app keeps the Settings layout of the earlier frames, in the About column. Every screen except Welcome is an instance of the `App shell / Top bar / Default` component with its `Content` slot replaced. Modal frames show the prompt or the sheet over a dimmed copy of `History / Main / Nominal`.
+In `design/cooldown.pen`, at 1280 × 800 (the installer at 420 × 500). The `App shell / Settings / *` frames lost their content in the move to 1280 × 800: the app keeps the Settings layout of the earlier frames, in the About column. Every screen except Welcome is an instance of the `App shell / Top bar / Default` component with its `Content` slot replaced. Modal frames show the prompt or the sheet over a dimmed copy of `History / Main / Games view`.
 
-The canvas is a stack of sections, each starting with a `Flow label / …` title: `Foundations` (the `Brand / Logo` and `Foundations` boards), `Primitives`, `Controls`, `Core components`, `History components`, then the screens. History screens are built from the History components: each session is a `Session header / *` instance followed by `Game row / *` instances. Every button, icon button and text link in the screens is an instance of a `Controls` component. Screens are laid out along the user flow: one row per stage, left to right in the order the player sees the screens, with arrows labelled by the action that leads to the next frame ("Let's go", "Start workout", "Close", …).
+The canvas is a stack of sections, each starting with a `Flow label / …` title: `Foundations` (the `Brand / Logo` and `Foundations` boards), `Primitives`, `Controls`, `Core components`, `History components`, then the screens, and `Explorations` last. Sections never overlap. History screens are built from the History components: each session is a `Session header / *` instance followed by `Game row / *` instances. Every button, icon button and text link in the screens is an instance of a `Controls` component. Screens are laid out along the user flow: one row per stage, left to right in the order the player sees the screens, with arrows labelled by the action that leads to the next frame ("Let's go", "Start workout", "Close", …).
 
 **Primitives**
 | Frame | Shows |
@@ -85,6 +85,7 @@ The canvas is a stack of sections, each starting with a `Flow label / …` title
 | Frame | Shows |
 |---|---|
 | `Session header / <Games, Workouts, Workouts / Current>` | Session title, status chips and win/loss count, per History view ([[History#Session summary]]) |
+| `Game row / <Games, Workouts> / Base` | What every game row of a view is made of; the states below are instances of it ([[Design with Pencil]]) |
 | `Game row / Games / <Pending, Done, Partial, Skipped, No workout, Before cooldown.lol>` | Game row of the Games view: champion, KDA and stat gauges, workout status ([[History#Game rows]]) |
 | `Game row / Games / Done expanded` | Same row opened on its details |
 | `Game row / Workouts / <Pending, Done, Partial, Skipped>` | Game row of the Workouts view: one column per exercise |
@@ -108,8 +109,8 @@ The canvas is a stack of sections, each starting with a `Flow label / …` title
 | `Post-game workout / Modal / Step plank running` | Countdown running |
 | `Post-game workout / Modal / Step plank paused` | Countdown paused |
 | `Post-game workout / Modal / Summary` | Done vs. due, status, session total, Close |
-| `History / Main / Nominal` | Back on History: current session and an older one, dense game rows |
-| `History / Main / Game expanded` | One card opened: stat and target per exercise, game details |
+| `History / Main / Games view` | Back on History, Games view: current session and an older one ([[History#Views]]) |
+| `History / Main / Games view · Game expanded` | One row opened on its details |
 
 **3 · Variants**
 | Frame | Shows |
@@ -117,12 +118,6 @@ The canvas is a stack of sections, each starting with a `Flow label / …` title
 | `Post-game workout / Modal / Prompt (Support)` | Support variant, with 0 squats (dimmed) |
 | `History / Main / No workout` | Remake and role not detected: muted "No workout" cards with the reason |
 | `History / Main / Empty` | No game stored yet and none in the client's match history |
-
-**6 · Desktop proposal**
-| Frame | Shows |
-|---|---|
-| `History / Main / <Games, Workouts> view (desktop)` | History in each view ([[History#Views]]) |
-| `History / Main / <Games, Workouts> view · Game expanded (desktop)` | A row opened on its details in each view |
 
 **4 · About & Settings**
 | Frame | Shows |
@@ -144,6 +139,22 @@ The canvas is a stack of sections, each starting with a `Flow label / …` title
 | `Installer / Window / Installing` | Installer: installation in progress |
 | `Installer / Window / Done` | Installer: installed, Launch cooldown.lol switch and Finish |
 | `Installer / Window / Failed` | Installer: installation failed |
+
+**6 · Workouts view**
+| Frame | Shows |
+|---|---|
+| `History / Main / Workouts view` | History in the Workouts view ([[History#Views]]) |
+| `History / Main / Workouts view · Game expanded` | A row opened on its details |
+
+**7 · First desktop proposal**
+| Frame | Shows |
+|---|---|
+| `History / Main / <Nominal, Game expanded> (desktop)` | First 1280 × 800 History, before the view switch: the stat behind each exercise in every row |
+
+**Explorations**
+| Frame | Shows |
+|---|---|
+| `Rebrand / cooldown.lol exploration` | Marks explored for the rename to cooldown.lol ([[Brand]]) |
 
 ## Open questions
 - Can the window be resized, and down to what size?
