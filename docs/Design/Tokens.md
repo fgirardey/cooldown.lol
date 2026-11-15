@@ -60,6 +60,7 @@ Tints of a History row in the Games view ([[History#Game rows]]): the result's c
 | `tint-row-mid` | 0.08 | Win or loss tint, at 28 % |
 | `tint-row-muted` | 0.15 | `text-secondary` tint of a game without workout, at the stripe |
 | `tint-row-muted-mid` | 0.05 | Same, at 28 % |
+| `tint-curve` | 0.08 | `danger` tint under a cost curve, left of the game, in the row's details |
 
 ## Interaction
 Hover, pressed, focus, disabled and selected states. Buttons, icon buttons and text links are Pencil components in `Controls library`, with one reusable instance per state (`Button / Primary / Hover`, …) and a **State rules** table (trigger, visual change, tokens, motion, cursor); switches and workout cards are in the `Interaction states` section of the `Foundations` page. Every interactive control adds a **state layer** in its content colour (Material), filled and outlined buttons also **shrink** while pressed (iOS), and every change eases out.

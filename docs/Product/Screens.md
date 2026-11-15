@@ -88,8 +88,11 @@ The canvas is a stack of sections, each starting with a `Flow label / …` title
 | `Game row / <Games, Workouts> / Base` | What every game row of a view is made of; the states below are instances of it ([[Design with Pencil]]) |
 | `Game row / Games / <Pending, Done, Partial, Skipped, No workout, Before cooldown.lol>` | Game row of the Games view: champion, KDA and stat gauges, workout status ([[History#Game rows]]) |
 | `Game row / Games / Done expanded` | Same row opened on its details |
+| `Game row / Details` | The details of an expanded row: one `Exercise` line per exercise and the game's details line ([[History#Game rows]]) |
+| `Game row / Details / Exercise` | One exercise: pictogram and what it pays for, its cost curve, and the result |
+| `Game row / Details / Exercise / Hover` | Same line with the pointer on the curve: marker, its value on both axes and the tooltip |
 | `Game row / Workouts / <Pending, Done, Partial, Skipped>` | Game row of the Workouts view: one column per exercise |
-| `Game row / Workouts / <Done, Partial> expanded` | Same rows opened on their details |
+| `Game row / Workouts / <Done, Partial> expanded` | Same rows opened on their details; like every Workouts row, instances of `Game row / Workouts / Base` |
 | `Game row / Computing` | "Game over · Computing your workout…" row |
 | `Stat icon / <Farming, Damage share, Kill participation, Vision, Deaths>` | Stat pictograms used in the game rows |
 
@@ -155,7 +158,6 @@ The canvas is a stack of sections, each starting with a `Flow label / …` title
 | Frame | Shows |
 |---|---|
 | `Rebrand / cooldown.lol exploration` | Marks explored for the rename to cooldown.lol ([[Brand]]) |
-
 ## Open questions
 - Can the window be resized, and down to what size?
 - Should the window remember its position on screen?
