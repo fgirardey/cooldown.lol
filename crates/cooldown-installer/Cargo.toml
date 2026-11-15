@@ -3,6 +3,7 @@ name = "cooldown-installer"
 description = "cooldown.lol's installer window: shortcut and startup choices, then Velopack's setup (ADR-0012)."
 version.workspace = true
 edition.workspace = true
+rust-version.workspace = true
 authors.workspace = true
 publish.workspace = true
 license.workspace = true

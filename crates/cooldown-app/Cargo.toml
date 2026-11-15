@@ -3,6 +3,7 @@ name = "cooldown-app"
 description = "cooldown.lol desktop app (Slint UI)."
 version.workspace = true
 edition.workspace = true
+rust-version.workspace = true
 authors.workspace = true
 publish.workspace = true
 license.workspace = true

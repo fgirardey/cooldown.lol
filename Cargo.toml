@@ -5,6 +5,9 @@ members = ["crates/*"]
 [workspace.package]
 version = "0.1.0"
 edition = "2024"
+# The oldest Rust that builds the workspace; raise it when the code uses newer features.
+# rust-toolchain.toml follows stable, so `rustup update` gets there.
+rust-version = "1.100"
 authors = ["Florian Girardey"]
 license = "MIT OR Apache-2.0"
 publish = false

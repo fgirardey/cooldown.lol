@@ -4,12 +4,14 @@ Daily loop on **macOS**. The Windows PC is only needed for what the Mac can't sh
 
 ## One-time setup (Mac)
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh   # rustup; the toolchain is pinned by rust-toolchain.toml
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh   # rustup; rust-toolchain.toml picks the toolchain
 brew install just
 cargo install slint-viewer                                        # optional: live preview of .slint files
 volta install node@24                                             # Node, only for commit linting (or brew install node)
 just setup                                                        # commitlint, the commit-msg hook and cargo-xwin
 ```
+`rust-toolchain.toml` follows the **stable** channel, like CI, but rustup does not update it on its own: run `rustup update` when CI moves to a new Rust release (its clippy may add lints) or when cargo says the workspace requires a newer rustc. That minimum is `rust-version` in the workspace `Cargo.toml`; raise it when the code starts using a newer feature.
+
 `rust-toolchain.toml` also installs the `x86_64-pc-windows-msvc` target and `llvm-tools`, used by `just check-windows`. That recipe runs `cargo xwin check`: Velopack depends on `ring`, which compiles C, so the Windows C headers are needed; cargo-xwin downloads Microsoft's CRT and Windows SDK headers once (about 1 GB, under Microsoft's license) into its cache.
 
 Recommended editor extensions are listed in `.vscode/extensions.json` (rust-analyzer, Slint).
