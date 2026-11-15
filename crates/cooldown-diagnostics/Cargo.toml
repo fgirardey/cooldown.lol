@@ -3,6 +3,7 @@ name = "cooldown-diagnostics"
 description = "Opt-in reports: consent and scrubbing of personal data."
 version.workspace = true
 edition.workspace = true
+rust-version.workspace = true
 authors.workspace = true
 publish.workspace = true
 license.workspace = true

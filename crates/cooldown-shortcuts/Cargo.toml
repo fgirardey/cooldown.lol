@@ -3,6 +3,7 @@ name = "cooldown-shortcuts"
 description = "cooldown.lol's Start menu and Desktop shortcuts and startup entry on Windows (ADR-0012, ADR-0013)."
 version.workspace = true
 edition.workspace = true
+rust-version.workspace = true
 authors.workspace = true
 publish.workspace = true
 license.workspace = true

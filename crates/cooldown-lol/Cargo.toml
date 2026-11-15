@@ -3,6 +3,7 @@ name = "cooldown-lol"
 description = "Access to the League of Legends local APIs (LCU + Live Client Data)."
 version.workspace = true
 edition.workspace = true
+rust-version.workspace = true
 authors.workspace = true
 publish.workspace = true
 license.workspace = true
