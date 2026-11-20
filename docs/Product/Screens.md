@@ -23,10 +23,32 @@ Map of the app's screens and how the player moves between them. Each screen's be
 └────────────────────────────────────┘
 ```
 - **No sidebar.** **History** is the main screen and takes the full width, with 32 px margins. About and Settings use a 720 px column centred in the window; Welcome a 560 px column centred both ways.
-- **Top bar** (52 px), on every screen except Welcome: the Mark and the "COOLDOWN.LOL" wordmark (`.LOL` in `accent`) on the left; on the right the connection dot and client phase (replaces the current [[Client status]] card), a **Settings** button (gear) and an **About** button (ⓘ). The button of the screen being shown is marked with a `border` background and a `text-primary` icon. Having no label, each button is named by its tooltip: "Settings", "About" ([[Tokens#Tooltip]], frames `Top bar / Tooltip / *` in `History components`).
-- **Settings** and **About** open from the top bar buttons and have a "‹ History" link back. There is no other navigation.
-- The window opens on **History**. Navigation never changes on its own.
-- **Workout modal**: when a game ends and its workout is ready, a **prompt** opens over History, like a matchmaking "match found" prompt: a centred dialog with a big round **Start workout** button, what is due, and Later / Skip workout (see [[Post-game workout#Prompt ("Workout ready")]]). Once started, the steps open as a **sheet** rising over History: full width, from just under the top bar to the bottom of the window, rounded top corners, header "POST-GAME WORKOUT" and a close button (×). Closing it returns to History. If About is shown when the workout is ready, the app goes back to History first.
+- **Top bar** (52 px), on every screen except Welcome:
+  - on the left, a 36 px **leading slot** and a **headline**, as in a Material app bar. On History, they hold the Mark and the "COOLDOWN.LOL" wordmark (`.LOL` in `accent`). On a pushed screen, the **back arrow** takes the Mark's place, with the tooltip "Back to History (Esc)", and the title of the current screen ("SETTINGS") takes the wordmark's place. Nothing else in the bar moves. History has no back arrow. See [[#Navigation]].
+  - on the right, the connection dot and client phase (replaces the current [[Client status]] card), a **Settings** button (gear) and an **About** button (ⓘ).
+  - The button of the screen being shown is marked with a `border` background and a `text-primary` icon. Having no label, each button is named by its tooltip: "Settings", "About", "Back to History (Esc)" ([[Tokens#Tooltip]], frames `Top bar / Tooltip / *` in `History components`).
+- The window opens on **History**.
+- **Workout modal**: when a game ends and its workout is ready, a **prompt** opens over History, like a matchmaking "match found" prompt: a centred dialog with a big round **Start workout** button, what is due, and Later / Skip workout (see [[Post-game workout#Prompt ("Workout ready")]]). Once started, the steps open as a **sheet** rising over History: full width, from just under the top bar to the bottom of the window, rounded top corners, header "POST-GAME WORKOUT" and a close button (×). Closing it returns to History. From any other screen, the app goes back to History first ([[#Navigation]]).
+
+## Navigation
+A stack of screens with History at the bottom, and modals kept apart from it, as on iOS and Android. The rules and their reasons are in [[ADR-0018 Navigation stack]].
+- **History** is the root. **Settings** and **About** are pushed from the top bar buttons. **Debug** is pushed from Settings.
+  - A top bar button pops back to its screen if that screen is already in the stack. Otherwise it pops back to History, then pushes its screen. The stack is therefore always `History › Settings › Debug` or `History › About` at most.
+  - Clicking the button of the screen being shown does nothing.
+- **Welcome** is shown alone at first launch. "Let's go" replaces it with History, and going back never returns to it.
+- **Back**:
+  - inputs: the back arrow of the top bar, **Esc**, **Alt+←** (**⌘[** on macOS) and the mouse back button;
+  - Back closes the open modal first, otherwise it returns to the screen below. On History it does nothing: it never closes the window.
+  - There is no forward move.
+- **Screens below are kept**: back on History, the scroll position, the opened rows and the Games/Workouts view are as the player left them. A pushed screen starts at the top each time it opens.
+- **Modals** (uninstall confirmation, workout prompt, workout steps) sit over the current screen, one at a time.
+  - Esc does what their way out does: Cancel, Later, Close (×).
+  - A click on the scrim never closes them.
+- **Navigation changes on its own only when a workout is ready**: from any screen, the app goes back to History, then opens the prompt. If the uninstall confirmation is open, or Welcome is shown, the prompt waits until it is closed. Showing the window from the notification area or a second launch keeps its screen.
+- **Screen titles** are in the top bar's headline. Settings, About and Debug no longer repeat them, and no longer have a "‹ History" link, in their content.
+- **Transitions**: pushing a screen slides it in by 30 px from the right while it fades in, and going back plays the same move in reverse. Meanwhile, the leading slot fades through, and a cursor erases the headline, then types the next one. The cursor is a block in `accent`. It erases at 10 ms per character and types at 18 ms per character, each phase in 150 ms at most, then it stays 120 ms and goes. See `App shell / Top bar / Headline transition`. A modal fades in its scrim and lifts its content. Each lasts `motion-medium` (200 ms), easing out. There is no transition, no cursor and no typing when Windows' Animation effects setting is off.
+- **Window title**: "cooldown.lol" on History and Welcome, "Settings — cooldown.lol" and "About — cooldown.lol" on the pushed screens.
+- A link that goes forward ends with a chevron →. Only Back uses ←.
 
 ## Screens
 | Screen | Access | Content | Feature |
@@ -47,15 +69,20 @@ flowchart LR
     F -- yes --> W[Welcome]
     W -- Let's go --> S
     F -- no --> S[History]
-    S <--> A[About]
-    A -- New workout ready --> S
+    S -- gear --> ST[Settings]
+    S -- ⓘ --> A[About]
+    ST -- Debug events --> D[Debug]
+    D -- Back --> ST
+    ST -- Back --> S
+    A -- Back --> S
+    ST & A & D -- New workout ready --> S
     EOG([New workout ready]) --> M[Workout modal]
     S -- Start on a pending card --> M
-    M -- Close / summary done --> S
+    M -- Close / summary done / Esc --> S
 ```
 
 ## Frames
-In `design/cooldown.pen`, at 1280 × 800 (the installer at 420 × 500). The `App shell / Settings / *` frames lost their content in the move to 1280 × 800: the app keeps the Settings layout of the earlier frames, in the About column. Every screen except Welcome is an instance of the `App shell / Top bar / Default` component with its `Content` slot replaced. Modal frames show the prompt or the sheet over a dimmed copy of `History / Main / Games view`.
+In `design/cooldown.pen`, at 1280 × 800 (the installer at 420 × 500). The `App shell / Settings / *` frames lost their content in the move to 1280 × 800: the app keeps the Settings layout of the earlier frames, in the About column. The History screens are instances of the `App shell / Top bar / Default` component, and the Settings and About screens are instances of `App shell / Top bar / Pushed`, each with its `Content` slot replaced and the screen's title as headline. Modal frames show the prompt or the sheet over a dimmed copy of `History / Main / Games view`.
 
 The canvas is a stack of sections, each starting with a `Flow label / …` title: `Foundations` (the `Brand / Logo` and `Foundations` boards), `Primitives`, `Controls`, `Core components`, `History components`, then the screens, and `Explorations` last. Sections never overlap. History screens are built from the History components: each session is a `Session header / *` instance followed by `Game row / *` instances. Every button, icon button and text link in the screens is an instance of a `Controls` component. Screens are laid out along the user flow: one row per stage, left to right in the order the player sees the screens, with arrows labelled by the action that leads to the next frame ("Let's go", "Start workout", "Close", …).
 
@@ -78,7 +105,9 @@ The canvas is a stack of sections, each starting with a `Flow label / …` title
 **Core components**
 | Frame | Shows |
 |---|---|
-| `App shell / Top bar / Default` | The top bar (Mark, wordmark, connection status, Settings and About buttons) and the `Content` slot, reusable component |
+| `App shell / Top bar / Default` | The top bar (`Leading` slot with the Mark, `Headline` with the wordmark and its hidden `Cursor`, connection status, Settings and About buttons) and the `Content` slot, reusable component |
+| `App shell / Top bar / Pushed` | The same top bar on a pushed screen, an instance of `Default`: the back arrow in the `Leading` slot and the screen's title as headline ([[#Navigation]]) |
+| `App shell / Top bar / Headline transition` | Step by step, the cursor erasing and typing the headline, from History to Settings and back, with the times and the rule |
 | `Champion portrait` | Played + linked champion placeholder, reusable component ([[Champion portraits]]) |
 
 **History components**

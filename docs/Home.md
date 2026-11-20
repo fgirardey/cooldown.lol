@@ -37,6 +37,7 @@ Open the `docs/` folder as an **Obsidian vault**. This vault is the written memo
 - [[ADR-0015 Rename to cooldown.lol]]
 - [[ADR-0016 Develop against the League client]]
 - [[ADR-0017 Tooltips drawn by the window]]
+- [[ADR-0018 Navigation stack]]
 
 ## Workflow
 - [[Development]] — the daily loop on macOS

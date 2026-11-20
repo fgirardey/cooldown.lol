@@ -41,6 +41,7 @@ flowchart LR
 2. **One way in.** The app reads game data only through the `LolClient` trait. The League client is the same on macOS and Windows, so the code path is identical in development and production.
 3. **OS code is fenced.** Everything platform-specific lives in `cooldown-app/src/platform/`. Each platform module exposes the same functions; macOS may stub Windows-only behaviour.
 4. **State flows one way.** Data source → `Event` → reducer → `CompanionState` → UI. The UI never calls the network.
+5. **Navigation is a stack owned by Rust.** `Navigator` (`cooldown-app/src/navigation.rs`) holds the screens and the open modal. The window renders it and reports the player's moves (`navigate`, `back`). See [[ADR-0018 Navigation stack]].
 
 ## Threading
 - **Main thread**: Slint event loop. Never block it.
