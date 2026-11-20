@@ -60,7 +60,7 @@ Short reasons: `no connection` (network error, GitHub down or limiting requests:
 No League data. Per check: the release list (GitHub API, 60 requests an hour without a token) and the channel feeds, then the package when newer.
 
 ## Design
-Section **Updates** under the error reports in `App shell / Settings / Default` (up to date) and `App shell / Settings / Crash reports on`; states in `App shell / Settings / Updates checking` (button at 40 % opacity, disabled), `Updates ready` and `Updates failed`. **Check now** is a compact secondary button (36 px high, `$border` outline, `$radius-m`); hover and pressed follow the secondary button in `Foundations`. Its tooltips are the `Settings / Check now / Tooltip / *` frames (`History components`).
+Section **Updates** under the error reports in `App shell / Settings / Default` (up to date) and `App shell / Settings / Crash reports on`; states in `App shell / Settings / Updates checking` (button at 40 % opacity, disabled), `Updates ready` and `Updates failed`. **Check now** is a compact secondary button (36 px high, `$border` outline, `$radius-m`); hover and pressed follow `Button / Secondary` in the `Controls library`. Its tooltips are the `Settings / Check now / Tooltip / *` frames (`History components`).
 
 ## Compliance
 Nothing shown during a game; no interaction with the game process. Updating our own executable is outside [[Riot policies]].

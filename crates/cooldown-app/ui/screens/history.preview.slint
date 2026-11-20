@@ -43,8 +43,9 @@ export component HistoryMainBeforeCooldown inherits Rectangle {
     }
 }
 
-// Pencil frame `History / Main / Workouts view` (1280 × 800), games of Before cooldown.lol.
-export component HistoryMainWorkoutsView inherits Rectangle {
+// Games of `History / Main / Before cooldown.lol` in the Workouts view (1280 × 800). No screen
+// frame in Pencil: the rows are the `Game row / Workouts / *` components.
+export component HistoryMainBeforeCooldownWorkouts inherits Rectangle {
     width: 1280px;
     height: 800px;
     background: Theme.background;
@@ -103,8 +104,8 @@ export component Preview inherits Window {
         }
 
         PreviewCase {
-            label: "History / Main / Workouts view";
-            HistoryMainWorkoutsView { }
+            label: "History / Main / Before cooldown.lol, Workouts view";
+            HistoryMainBeforeCooldownWorkouts { }
         }
 
         PreviewCase {

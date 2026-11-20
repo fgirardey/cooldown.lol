@@ -1,6 +1,6 @@
 # Design tokens
 
-Single reference for the visual foundations. **Mirrored 1:1** in `crates/cooldown-app/ui/theme.slint` (global `Theme`) and in the `Foundations` page of `design/cooldown.pen`.
+Single reference for the visual foundations. **Mirrored 1:1** in `crates/cooldown-app/ui/theme.slint` (global `Theme`) and in the `Foundations` board of `design/cooldown.pen`.
 
 When a value changes: update Pencil, this note and `theme.slint` in the same commit.
 
@@ -42,7 +42,7 @@ Colours come from the brand direction chosen in Pencil (see [[Brand]]): a K/DA r
 | `radius-panel` | 10px (session panel, champion portrait) |
 
 ## Session panel
-Tints of a session panel ([[History#Session summary]]): the session's colour (`text-secondary` for a session of games from before cooldown.lol) at these opacities. They are Pencil variables, but the `Session / *` components still use literal values.
+Tints of a session panel ([[History#Session summary]]): the session's colour (`text-secondary` for a session of games from before cooldown.lol) at these opacities. They are Pencil variables, but the `Session header / *` components still use literal values.
 
 | Token | Value | Usage |
 |---|---|---|
@@ -63,7 +63,7 @@ Tints of a History row in the Games view ([[History#Game rows]]): the result's c
 | `tint-curve` | 0.08 | `danger` tint under a cost curve, left of the game, in the row's details |
 
 ## Interaction
-Hover, pressed, focus, disabled and selected states. Buttons, icon buttons and text links are Pencil components in `Controls library`, with one reusable instance per state (`Button / Primary / Hover`, …) and a **State rules** table (trigger, visual change, tokens, motion, cursor); switches and workout cards are in the `Interaction states` section of the `Foundations` page. Every interactive control adds a **state layer** in its content colour (Material), filled and outlined buttons also **shrink** while pressed (iOS), and every change eases out.
+Hover, pressed, focus, disabled and selected states. Buttons, icon buttons and text links are Pencil components in `Controls library`, with one reusable instance per state (`Button / Primary / Hover`, …) and a **State rules** table (trigger, visual change, tokens, motion, cursor); switches and workout cards are in the `Interaction states` section of the `Foundations` board. Every interactive control adds a **state layer** in its content colour (Material), filled and outlined buttons also **shrink** while pressed (iOS), and every change eases out.
 
 | Token | Value | Usage |
 |---|---|---|
