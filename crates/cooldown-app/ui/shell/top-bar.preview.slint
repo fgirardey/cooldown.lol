@@ -1,5 +1,6 @@
 // Previews of TopBar: `just preview shell/top-bar`.
-// The Pencil frame `App shell / Top bar / Default` is in shell/app-shell.preview.slint.
+// The Pencil frames `App shell / Top bar / Default` and `… / Pushed` are in
+// shell/app-shell.preview.slint.
 
 import { Theme } from "../theme.slint";
 import { TopBar } from "top-bar.slint";
@@ -7,12 +8,281 @@ import { Fixtures } from "../preview-kit/fixtures.slint";
 import { PreviewCase } from "../preview-kit/preview-case.slint";
 import { PreviewPlayground } from "../preview-kit/preview-playground.slint";
 
+// One step of the headline transition: its time, then the top bar.
+component Step inherits HorizontalLayout {
+    in property <string> time;
+
+    spacing: Theme.space-m;
+    alignment: start;
+
+    Text {
+        width: 56px;
+        font-family: Theme.font-display;
+        text: root.time;
+        color: Theme.text-primary;
+        font-size: 16px;
+        font-weight: 600;
+        horizontal-alignment: right;
+        vertical-alignment: center;
+    }
+    @children
+}
+
+// The cursor erasing the headline and typing the next one, step by step (times from
+// `src/headline.rs`).
+// Pencil frame `App shell / Top bar / Headline transition` (1728 × 648).
+export component AppShellTopBarHeadlineTransition inherits Rectangle {
+    width: 1728px;
+    height: 648px;
+    background: Theme.background;
+
+    VerticalLayout {
+        padding: Theme.space-xl;
+        spacing: Theme.space-l;
+        alignment: start;
+
+        Text {
+            font-family: Theme.font-display;
+            text: "HEADLINE TRANSITION";
+            color: Theme.text-primary;
+            font-size: Theme.font-size-title;
+            font-weight: 800;
+            font-italic: true;
+            letter-spacing: 1px;
+        }
+
+        HorizontalLayout {
+            spacing: 48px;
+            alignment: start;
+        VerticalLayout {
+                spacing: 12px;
+                Text {
+                    font-family: Theme.font-body;
+                    text: "History → Settings (push)";
+                    color: Theme.text-primary;
+                    font-size: Theme.font-size-body;
+                    font-weight: 600;
+                }
+                Step {
+                    time: "0 ms";
+                    TopBar {
+                        width: 520px;
+                        connected: true;
+                        status-label: Fixtures.status-lobby;
+                        animated: false;
+                        pushed: false;
+                        settings-active: false;
+                        headline-main: "COOLDOWN";
+                        headline-accent: ".LOL";
+                        cursor: true;
+                    }
+                }
+                Step {
+                    time: "50 ms";
+                    TopBar {
+                        width: 520px;
+                        connected: true;
+                        status-label: Fixtures.status-lobby;
+                        animated: false;
+                        pushed: false;
+                        settings-active: false;
+                        headline-main: "COOLDOW";
+                        headline-accent: "";
+                        cursor: true;
+                    }
+                }
+                Step {
+                    time: "100 ms";
+                    TopBar {
+                        width: 520px;
+                        connected: true;
+                        status-label: Fixtures.status-lobby;
+                        animated: false;
+                        pushed: false;
+                        settings-active: false;
+                        headline-main: "CO";
+                        headline-accent: "";
+                        cursor: true;
+                    }
+                }
+                Step {
+                    time: "120 ms";
+                    TopBar {
+                        width: 520px;
+                        connected: true;
+                        status-label: Fixtures.status-lobby;
+                        animated: false;
+                        pushed: true;
+                        settings-active: true;
+                        headline-main: "";
+                        headline-accent: "";
+                        cursor: true;
+                    }
+                }
+                Step {
+                    time: "192 ms";
+                    TopBar {
+                        width: 520px;
+                        connected: true;
+                        status-label: Fixtures.status-lobby;
+                        animated: false;
+                        pushed: true;
+                        settings-active: true;
+                        headline-main: "SETT";
+                        headline-accent: "";
+                        cursor: true;
+                    }
+                }
+                Step {
+                    time: "264 ms";
+                    TopBar {
+                        width: 520px;
+                        connected: true;
+                        status-label: Fixtures.status-lobby;
+                        animated: false;
+                        pushed: true;
+                        settings-active: true;
+                        headline-main: "SETTINGS";
+                        headline-accent: "";
+                        cursor: true;
+                    }
+                }
+                Step {
+                    time: "384 ms";
+                    TopBar {
+                        width: 520px;
+                        connected: true;
+                        status-label: Fixtures.status-lobby;
+                        animated: false;
+                        pushed: true;
+                        settings-active: true;
+                        headline-main: "SETTINGS";
+                        headline-accent: "";
+                        cursor: false;
+                    }
+                }
+            }
+        VerticalLayout {
+                spacing: 12px;
+                Text {
+                    font-family: Theme.font-body;
+                    text: "Settings → History (back)";
+                    color: Theme.text-primary;
+                    font-size: Theme.font-size-body;
+                    font-weight: 600;
+                }
+                Step {
+                    time: "0 ms";
+                    TopBar {
+                        width: 520px;
+                        connected: true;
+                        status-label: Fixtures.status-lobby;
+                        animated: false;
+                        pushed: true;
+                        settings-active: true;
+                        headline-main: "SETTINGS";
+                        headline-accent: "";
+                        cursor: true;
+                    }
+                }
+                Step {
+                    time: "40 ms";
+                    TopBar {
+                        width: 520px;
+                        connected: true;
+                        status-label: Fixtures.status-lobby;
+                        animated: false;
+                        pushed: true;
+                        settings-active: true;
+                        headline-main: "SETT";
+                        headline-accent: "";
+                        cursor: true;
+                    }
+                }
+                Step {
+                    time: "80 ms";
+                    TopBar {
+                        width: 520px;
+                        connected: true;
+                        status-label: Fixtures.status-lobby;
+                        animated: false;
+                        pushed: true;
+                        settings-active: true;
+                        headline-main: "";
+                        headline-accent: "";
+                        cursor: true;
+                    }
+                }
+                Step {
+                    time: "100 ms";
+                    TopBar {
+                        width: 520px;
+                        connected: true;
+                        status-label: Fixtures.status-lobby;
+                        animated: false;
+                        pushed: false;
+                        settings-active: false;
+                        headline-main: "C";
+                        headline-accent: "";
+                        cursor: true;
+                    }
+                }
+                Step {
+                    time: "155 ms";
+                    TopBar {
+                        width: 520px;
+                        connected: true;
+                        status-label: Fixtures.status-lobby;
+                        animated: false;
+                        pushed: false;
+                        settings-active: false;
+                        headline-main: "COOLDO";
+                        headline-accent: "";
+                        cursor: true;
+                    }
+                }
+                Step {
+                    time: "230 ms";
+                    TopBar {
+                        width: 520px;
+                        connected: true;
+                        status-label: Fixtures.status-lobby;
+                        animated: false;
+                        pushed: false;
+                        settings-active: false;
+                        headline-main: "COOLDOWN";
+                        headline-accent: ".LOL";
+                        cursor: true;
+                    }
+                }
+                Step {
+                    time: "350 ms";
+                    TopBar {
+                        width: 520px;
+                        connected: true;
+                        status-label: Fixtures.status-lobby;
+                        animated: false;
+                        pushed: false;
+                        settings-active: false;
+                        headline-main: "COOLDOWN";
+                        headline-accent: ".LOL";
+                        cursor: false;
+                    }
+                }
+            }
+        }
+    }
+}
+
 // Edit the knobs in the live preview's Data tab; clicks show as the last action.
 export component TopBarPlayground inherits Window {
     in-out property <bool> connected: true;
     in-out property <string> status-label: Fixtures.status-lobby;
     in-out property <bool> settings-active;
     in-out property <bool> about-active;
+    in-out property <bool> pushed;
+    in-out property <string> screen-title: "SETTINGS";
+    in-out property <bool> cursor;
 
     background: Theme.background;
     preferred-width: 1280px;
@@ -23,6 +293,11 @@ export component TopBarPlayground inherits Window {
             status-label: root.status-label;
             settings-active: root.settings-active;
             about-active: root.about-active;
+            pushed: root.pushed;
+            title: root.screen-title;
+            cursor: root.cursor;
+            back-tooltip: "Back to History (Esc)";
+            back-clicked => { playground.log("back-clicked"); }
             settings-clicked => { playground.log("settings-clicked"); }
             about-clicked => { playground.log("about-clicked"); }
         }
@@ -55,6 +330,18 @@ export component Preview inherits Window {
         PreviewCase {
             label: "About active";
             TopBar { connected: true; status-label: Fixtures.status-lobby; about-active: true; }
+        }
+        PreviewCase {
+            label: "Pushed (Settings)";
+            TopBar { connected: true; status-label: Fixtures.status-lobby; settings-active: true; pushed: true; title: "SETTINGS"; }
+        }
+        PreviewCase {
+            label: "Typing (cursor after SETT)";
+            TopBar { connected: true; status-label: Fixtures.status-lobby; pushed: true; headline-main: "SETT"; cursor: true; }
+        }
+        PreviewCase {
+            label: "Erased (only the cursor)";
+            TopBar { connected: true; status-label: Fixtures.status-lobby; pushed: true; headline-main: ""; cursor: true; }
         }
         PreviewCase {
             label: "Long status label (error)";

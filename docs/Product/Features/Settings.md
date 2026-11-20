@@ -13,7 +13,7 @@ As a player, I want to decide whether cooldown.lol sends error reports, and chan
 Error reports are opt-in ([[ADR-0006 Opt-in error reports]]): the choice must be visible and reversible.
 
 ## Behaviour
-- Opens from the gear button in the top bar; "‹ History" goes back. See [[Screens]].
+- Opens from the gear button in the top bar, which then shows the back arrow and "SETTINGS". The back arrow, Esc, Alt+← and the mouse back button go back. See [[Screens#Navigation]].
 - Section **Error reports**, two switches, both **off** by default:
   - **Send crash reports**: scrubbed errors and panics with where they happened in the code, the app version and OS (Sentry issues); a hard (native) crash also sends a memory snapshot of cooldown.lol, used only to find the cause. Text: "When cooldown.lol crashes or hits an error, send the scrubbed error, where it happened in the code, the app version and OS. A hard crash also sends a memory snapshot of cooldown.lol, used only to find the cause."
   - **Send all logs**: everyday logs (`INFO` and above), scrubbed the same way (Sentry logs). Independent of the first switch.
@@ -24,7 +24,7 @@ Error reports are opt-in ([[ADR-0006 Opt-in error reports]]): the choice must be
 - Section **Uninstall**, on installed builds only: "Remove cooldown.lol from this PC" and an **Uninstall** button that opens the confirmation dialog ([[Installation#Behaviour]]).
 - Flipping an error-report switch saves the consent (`diagnostics.json`). The install id is created when a switch is turned on and forgotten when both are off. Reporting starts or stops at the **next launch**.
 
-- **Debug events** (throwaway, debug builds only, no design): a link at the bottom of Settings opens a screen with buttons that log a warning, log an error, log an error with personal data (to check scrubbing) or panic in a thread, to test the error reports end to end. The same events, plus a native crash (`stack-overflow`), can be fired at start in any build with `COOLDOWN_TEST_CRASH=<kind>` ([[Releasing]]). Delete it once the integration is verified (`ui/screens/debug.slint`, `src/debug_events.rs`).
+- **Debug events** (throwaway, debug builds only, no design): a link at the bottom of Settings, "Debug events" with a chevron →, opens a screen (its back arrow returns to Settings) with buttons that log a warning, log an error, log an error with personal data (to check scrubbing) or panic in a thread, to test the error reports end to end. The same events, plus a native crash (`stack-overflow`), can be fired at start in any build with `COOLDOWN_TEST_CRASH=<kind>` ([[Releasing]]). Delete it once the integration is verified (`ui/screens/debug.slint`, `src/debug_events.rs`).
 
 ## Data
 Preferences live in `settings.json` ([[ADR-0007 Local persistence]]). The consent is separate on purpose: `diagnostics.json` in the data folder (`ConsentStore` in `cooldown-diagnostics`).

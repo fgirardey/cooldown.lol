@@ -45,6 +45,10 @@ thiserror = { workspace = true }
 # Champion names and images from Data Dragon (ADR-0004).
 reqwest = { workspace = true }
 
+[target.'cfg(windows)'.dependencies]
+# Windows' "Animation effects" setting, for the screen transitions (ADR-0018).
+winreg = "0.56"
+
 [dev-dependencies]
 # Paused clock, to test the import's retries without waiting.
 tokio = { workspace = true, features = ["test-util"] }

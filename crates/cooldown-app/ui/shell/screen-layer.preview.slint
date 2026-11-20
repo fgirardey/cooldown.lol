@@ -1,0 +1,97 @@
+// Previews of ScreenLayer: `just preview shell/screen-layer`. No Pencil frame: the motion is
+// described in docs/Product/Screens.md (Navigation).
+
+import { Theme } from "../theme.slint";
+import { ScreenLayer } from "screen-layer.slint";
+import { PreviewCase } from "../preview-kit/preview-case.slint";
+import { PreviewPlayground } from "../preview-kit/preview-playground.slint";
+
+component Sample inherits Rectangle {
+    in property <string> label;
+    in property <color> tint;
+
+    background: Theme.background;
+    border-width: 1px;
+    border-color: root.tint;
+
+    Text {
+        font-family: Theme.font-display;
+        text: root.label;
+        color: root.tint;
+        font-size: Theme.font-size-title;
+        font-weight: 800;
+        font-italic: true;
+    }
+}
+
+// Flip `pushed` in the Data tab: the pushed layer slides in over the root one, and back out.
+export component ScreenLayerPlayground inherits Window {
+    in-out property <bool> pushed;
+    in-out property <bool> animated: true;
+
+    background: Theme.background;
+    preferred-width: 640px;
+    preferred-height: 400px;
+
+    PreviewPlayground {
+        Rectangle {
+            height: 300px;
+            clip: true;
+
+            ScreenLayer {
+                width: parent.width;
+                height: parent.height;
+                shown: !root.pushed;
+                below: true;
+                animated: root.animated;
+                Sample { label: "HISTORY"; tint: Theme.text-secondary; }
+            }
+
+            ScreenLayer {
+                width: parent.width;
+                height: parent.height;
+                shown: root.pushed;
+                animated: root.animated;
+                Sample { label: "SETTINGS"; tint: Theme.accent; }
+            }
+        }
+    }
+}
+
+// Gallery of every state (default component of the file).
+export component Preview inherits Window {
+    title: "ScreenLayer";
+    background: Theme.background;
+    preferred-width: 640px;
+
+    VerticalLayout {
+        padding: Theme.space-m;
+        spacing: Theme.space-m;
+        alignment: start;
+
+        PreviewCase {
+            label: "Shown";
+            Rectangle {
+                height: 120px;
+                ScreenLayer {
+                    width: parent.width;
+                    height: parent.height;
+                    shown: true;
+                    Sample { label: "SETTINGS"; tint: Theme.accent; }
+                }
+            }
+        }
+        PreviewCase {
+            label: "Hidden (nothing drawn)";
+            Rectangle {
+                height: 120px;
+                ScreenLayer {
+                    width: parent.width;
+                    height: parent.height;
+                    shown: false;
+                    Sample { label: "SETTINGS"; tint: Theme.accent; }
+                }
+            }
+        }
+    }
+}

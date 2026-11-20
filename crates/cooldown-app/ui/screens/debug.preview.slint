@@ -18,6 +18,8 @@ export component DebugScreenStory inherits Rectangle {
         connected: true;
         status-label: Fixtures.status-lobby;
         settings-active: true;
+        pushed: true;
+        title: "DEBUG EVENTS";
 
         DebugScreen { vertical-stretch: 1; }
     }
@@ -35,7 +37,6 @@ export component DebugScreenPlayground inherits Window {
 
         DebugScreen {
             vertical-stretch: 1;
-            back => { playground.log("back"); }
             fire(kind) => { playground.log("fire " + kind); }
         }
     }

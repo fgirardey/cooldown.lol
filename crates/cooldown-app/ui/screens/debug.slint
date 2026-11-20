@@ -1,37 +1,18 @@
 // THROWAWAY debug screen: buttons that fire events to test the integration
-// (error reports). Reached from Settings, in debug builds only. No Pencil frame.
-// Delete it with `Screen.debug`, its route in app-window.slint and the Rust handler.
+// (error reports). Pushed from Settings, in debug builds only; its title and the way back are
+// in the top bar. No Pencil frame.
+// Delete it with `Screen.debug`, `Route::Debug`, its layer in app-window.slint and the Rust handler.
 
 import { Theme } from "../theme.slint";
-import { BackLink } from "../components/back-link.slint";
 import { PrimaryButton } from "../components/primary-button.slint";
 
 export component DebugScreen inherits VerticalLayout {
     /// `kind` is one of "warning", "error", "scrubbed-error", "panic".
     callback fire(kind: string);
-    callback back;
 
     padding: Theme.space-l;
     spacing: Theme.space-m;
     alignment: start;
-
-    HorizontalLayout {
-        alignment: start;
-        BackLink {
-            text: "Settings";
-            clicked => { root.back(); }
-        }
-    }
-
-    Text {
-        font-family: Theme.font-display;
-        text: "DEBUG EVENTS";
-        color: Theme.text-primary;
-        font-size: Theme.font-size-title;
-        font-weight: 800;
-        font-italic: true;
-        letter-spacing: 1px;
-    }
 
     PrimaryButton {
         text: "Log a warning";

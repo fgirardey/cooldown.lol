@@ -36,3 +36,10 @@ pub fn data_dir() -> PathBuf {
 pub fn configure_main_window(_window: &slint::Window) {
     tracing::debug!("macOS: overlay features are stubbed (development platform)");
 }
+
+/// Whether to play screen transitions and the headline typing. macOS: always
+/// (development platform; Reduce motion is not read).
+pub fn animations_enabled() -> bool {
+    tracing::debug!("macOS: the reduce motion setting is not read, animations on");
+    true
+}

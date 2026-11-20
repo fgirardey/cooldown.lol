@@ -29,3 +29,19 @@ pub fn data_dir() -> PathBuf {
 pub fn configure_main_window(_window: &slint::Window) {
     tracing::debug!("no Windows-specific window configuration yet");
 }
+
+/// Whether to play screen transitions and the headline typing: off when the player
+/// turned off Windows' "Animation effects" (Settings → Accessibility → Visual
+/// effects), which writes `MinAnimate = 0` in `HKCU\Control Panel\Desktop\WindowMetrics`.
+/// Read once at launch; on when it cannot be read.
+pub fn animations_enabled() -> bool {
+    use winreg::RegKey;
+    use winreg::enums::HKEY_CURRENT_USER;
+
+    let enabled = RegKey::predef(HKEY_CURRENT_USER)
+        .open_subkey("Control Panel\\Desktop\\WindowMetrics")
+        .and_then(|key| key.get_value::<String, _>("MinAnimate"))
+        .map_or(true, |value| value.trim() != "0");
+    tracing::info!(enabled, "Windows animation effects");
+    enabled
+}

@@ -17,11 +17,14 @@
 mod build_info;
 mod champion_catalog;
 mod debug_events;
+mod headline;
 mod history_import;
 mod history_refresh;
 mod history_screen;
 mod history_store;
 mod history_view;
+mod navigation;
+mod navigator;
 mod platform;
 mod reporting;
 mod settings;
@@ -96,12 +99,18 @@ fn main() -> anyhow::Result<()> {
     let welcome_seen = settings.load().welcome_seen;
     if !welcome_seen {
         tracing::info!(data_dir = %data_dir.display(), "first launch: showing the welcome");
-        window.set_screen(Screen::Welcome);
     }
+    let root = if welcome_seen {
+        navigator::Route::History
+    } else {
+        navigator::Route::Welcome
+    };
+    let navigation = navigation::Navigation::bind(&window, root);
     window.on_welcome_done(move || {
         if let Err(error) = settings.update(|s| s.welcome_seen = true) {
             tracing::warn!(%error, "cannot record that the welcome was seen");
         }
+        navigation.reset(navigator::Route::History);
     });
 
     // Reporting starts or stops at the next launch (see `reporting::start`).

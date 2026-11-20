@@ -18,6 +18,8 @@ export component AppShellAboutDefault inherits Rectangle {
         connected: true;
         status-label: Fixtures.status-lobby;
         about-active: true;
+        pushed: true;
+        title: "ABOUT";
 
         AboutScreen {
             vertical-stretch: 1;
@@ -26,7 +28,7 @@ export component AppShellAboutDefault inherits Rectangle {
     }
 }
 
-// Edit the knobs in the live preview's Data tab; "History" shows as the last action.
+// Edit the knobs in the live preview's Data tab.
 export component AboutScreenPlayground inherits Window {
     in-out property <string> version: Fixtures.version;
 
@@ -41,7 +43,6 @@ export component AboutScreenPlayground inherits Window {
         AboutScreen {
             vertical-stretch: 1;
             version: root.version;
-            back => { playground.log("back"); }
         }
     }
 }

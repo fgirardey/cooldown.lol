@@ -1,10 +1,12 @@
-// "‹ <text>" link back to the previous screen.
-// Brightens on hover and dims while pressed.
+// "<text> ›" link to a screen pushed over the current one (docs/Product/Screens.md,
+// Navigation: only Back points left). Brightens on hover and dims while pressed.
+//
+// Text link of the `Controls library` in design/cooldown.pen, with the chevron after the text.
 
 import { Theme } from "../theme.slint";
 import { Icon } from "icon.slint";
 
-export component BackLink inherits TouchArea {
+export component ForwardLink inherits TouchArea {
     in property <string> text;
     property <color> content: root.has-hover ? Theme.text-primary : Theme.text-secondary;
 
@@ -17,19 +19,6 @@ export component BackLink inherits TouchArea {
 
     HorizontalLayout {
         spacing: Theme.space-xs;
-        VerticalLayout {
-            alignment: center;
-            Icon {
-                source: @image-url("../images/icons/chevron-left.svg");
-                width: 6px;
-                height: 10px;
-                colorize: root.content;
-                animate colorize {
-                    duration: Theme.motion-fast;
-                    easing: ease-out;
-                }
-            }
-        }
         Text {
             font-family: Theme.font-body;
             text: root.text;
@@ -38,6 +27,19 @@ export component BackLink inherits TouchArea {
             animate color {
                 duration: Theme.motion-fast;
                 easing: ease-out;
+            }
+        }
+        VerticalLayout {
+            alignment: center;
+            Icon {
+                source: @image-url("../images/icons/chevron-right.svg");
+                width: 6px;
+                height: 10px;
+                colorize: root.content;
+                animate colorize {
+                    duration: Theme.motion-fast;
+                    easing: ease-out;
+                }
             }
         }
     }

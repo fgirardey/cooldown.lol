@@ -6,7 +6,7 @@ See a component or a screen in all its states, with fixed data, without running 
 just preview components/primary-button                          # gallery of ui/components/primary-button.preview.slint
 just preview components/primary-button PrimaryButtonPlayground  # one story of that file
 just preview screens/history HistoryMainEmpty                   # a Pencil frame, to compare side by side
-just preview app-window                                         # the real app window, routing included
+just preview app-window                                         # the real app window, with the navigation faked
 ```
 Needs `slint-viewer` (`cargo install slint-viewer`); it reloads on every save. In VS Code, the Slint extension's **Show Preview** above any component does the same, and its **Data** tab edits the story's `in-out` properties live.
 

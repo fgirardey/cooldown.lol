@@ -28,6 +28,30 @@ export component AppShellTopBarDefault inherits Rectangle {
     }
 }
 
+// Pencil frame `App shell / Top bar / Pushed` (1280 × 800).
+export component AppShellTopBarPushed inherits Rectangle {
+    width: 1280px;
+    height: 800px;
+    background: Theme.background;
+    clip: true;
+
+    AppShell {
+        connected: true;
+        status-label: Fixtures.status-lobby;
+        pushed: true;
+        title: "SCREEN TITLE";
+
+        Text {
+            vertical-stretch: 1;
+            text: "Screen content";
+            color: Theme.text-secondary;
+            font-size: Theme.font-size-body;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+}
+
 // Edit the knobs in the live preview's Data tab; clicks show as the last action.
 export component AppShellPlayground inherits Window {
     in-out property <bool> connected: true;
@@ -70,6 +94,11 @@ export component Preview inherits Window {
         PreviewCase {
             label: "App shell / Top bar / Default";
             AppShellTopBarDefault { }
+        }
+
+        PreviewCase {
+            label: "App shell / Top bar / Pushed";
+            AppShellTopBarPushed { }
         }
     }
 }

@@ -16,3 +16,7 @@ pub fn data_dir() -> PathBuf {
 }
 
 pub fn configure_main_window(_window: &slint::Window) {}
+
+pub fn animations_enabled() -> bool {
+    true
+}

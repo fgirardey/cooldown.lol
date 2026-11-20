@@ -37,21 +37,21 @@ The workout opens in two parts: a **prompt**, then, once started, the **steps** 
 
 #### Prompt ("Workout ready")
 Works like a matchmaking "match found" prompt: one obvious action, readable at a glance.
-- Opens **on its own** once per game, as soon as the workout is computed (from About, the app goes back to History first). **Start** on the game's pending card in History also reopens it.
+- Opens **on its own** once per game, as soon as the workout is computed. From any other screen, the app goes back to History first. If the uninstall confirmation is open, the prompt waits until it is closed ([[Screens#Navigation]]). **Start** on the game's pending card in History also reopens it.
 - A centred dialog over a dimmed window (top bar included).
 - Content, top to bottom:
   - "WORKOUT READY" in `accent`;
   - played and linked champion portraits ([[Champion portraits]]), Victory / Defeat, "Champion · Role · with <linked champion>";
   - a **big round "START WORKOUT" button** (`accent`, inside a faint halo) — the only primary action;
   - what is due, one item per exercise with its pictogram: burpees, squats, plank seconds (e.g. "6 · 21 · 60s"); an exercise with 0 due is dimmed;
-  - two text actions: **Later** (closes the prompt, the workout stays *Pending*) and **Skip workout** (every exercise recorded as 0 done, status *Skipped*);
+  - two text actions: **Later** (closes the prompt, the workout stays *Pending*; Esc and the other Back inputs do the same) and **Skip workout** (every exercise recorded as 0 done, status *Skipped*);
   - "Listen to your body. Skip anything that hurts." (no health claim).
 - No countdown: the prompt waits for the player.
 - There is no overview screen: why each number is due (stat, actual value, target, cap) is shown in each step and in the details of a History row ([[History#Game rows]]).
 
 #### Steps
 - After **Start workout**, the steps open as a sheet over History: full width, from under the top bar to the bottom of the window, over a dimmed History; header "POST-GAME WORKOUT" and a close button (×). See [[Screens#Layout]].
-- **Close (×)** at any step: the steps already recorded are kept, the workout stays *Pending*, and Start on its card reopens the prompt; Start workout then resumes at the step where it was left. Closing during the plank countdown pauses it.
+- **Close (×)** at any step, or Esc and the other Back inputs ([[Screens#Navigation]]): the steps already recorded are kept, the workout stays *Pending*, and Start on its card reopens the prompt; Start workout then resumes at the step where it was left. Closing during the plank countdown pauses it.
 - The summary's **Close** closes the sheet; the History card then shows the workout's status.
 - Only one workout can be pending: when the next workout is ready, the pending one is closed (unfinished steps recorded as 0, see [[#Interruptions]]).
 
