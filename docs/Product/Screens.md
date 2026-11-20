@@ -84,25 +84,26 @@ flowchart LR
 ## Frames
 In `design/cooldown.pen`, at 1280 × 800 (the installer at 420 × 500). The `App shell / Settings / *` frames lost their content in the move to 1280 × 800: the app keeps the Settings layout of the earlier frames, in the About column. The History screens are instances of the `App shell / Top bar / Default` component, and the Settings and About screens are instances of `App shell / Top bar / Pushed`, each with its `Content` slot replaced and the screen's title as headline. Modal frames show the prompt or the sheet over a dimmed copy of `History / Main / Games view`.
 
-The canvas is a stack of sections, each starting with a `Flow label / …` title: `Foundations` (the `Brand / Logo` and `Foundations` boards), `Primitives`, `Controls`, `Core components`, `History components`, then the screens, and `Explorations` last. Sections never overlap. History screens are built from the History components: each session is a `Session header / *` instance followed by `Game row / *` instances. Every button, icon button and text link in the screens is an instance of a `Controls` component. Screens are laid out along the user flow: one row per stage, left to right in the order the player sees the screens, with arrows labelled by the action that leads to the next frame ("Let's go", "Start workout", "Close", …).
+The canvas is a stack of three parts, each opening on a huge `Section / <number> <name>` banner: `01 Foundations`, `02 Components`, `03 Screens`. Each part is split into subsections opening on a `Subsection / …` title (`Flow label / …` for the screen flows): Foundations holds `Brand & tokens` (the `Brand / Logo` and `Foundations` boards) and `Logo & icons`; Components holds `Controls`, `App shell` and `History`; Screens holds one row per flow. Sections never overlap. History screens are built from the History components: each session is a `Session header / *` instance followed by `Game row / *` instances. Every button, icon button and text link in the screens is an instance of a `Controls` component. Screens are laid out along the user flow: one row per stage, left to right in the order the player sees the screens, with arrows labelled by the action that leads to the next frame ("Let's go", "Start workout", "Close", …).
 
-**Primitives**
+**Logo & icons** (Foundations)
 | Frame | Shows |
 |---|---|
 | `Logo / <Mark, Lockup>` | Logo components ([[Brand]]) |
-| `Switch / <Off, On>` | On/off switch, reusable components |
 | `Exercise icon / <Burpee, Squat, Plank> / <16, 28, 44, 56>` | Exercise pictograms, reusable components (generated in Pencil) |
+| `Stat icon / <Farming, Damage share, Kill participation, Vision, Deaths>` | Stat pictograms used in the game rows, and the `Stat iconography` board |
 
-**Controls** (board `Controls library`)
+**Controls** (Components, board `Controls library`)
 | Frame | Shows |
 |---|---|
 | `Button / <Primary, Secondary, Danger>` | 44 px buttons, optional leading icon |
 | `Button / Primary / Small` | Inline Start button of a pending game row |
 | `Icon button` | 36 px icon button (top bar navigation, dialog close) |
 | `Text link` | Text link with optional leading icon (Back, Later) |
+| `Switch / <Off, On>` | On/off switch, reusable components |
 | `<component> / <Hover, Pressed, Focus, Disabled>` (+ `Icon button / Selected`) | One reusable instance per state, and the **State rules** table ([[Tokens#Interaction]]) |
 
-**Core components**
+**App shell** (Components)
 | Frame | Shows |
 |---|---|
 | `App shell / Top bar / Default` | The top bar (`Leading` slot with the Mark, `Headline` with the wordmark and its hidden `Cursor`, connection status, Settings and About buttons) and the `Content` slot, reusable component |
@@ -110,7 +111,7 @@ The canvas is a stack of sections, each starting with a `Flow label / …` title
 | `App shell / Top bar / Headline transition` | Step by step, the cursor erasing and typing the headline, from History to Settings and back, with the times and the rule |
 | `Champion portrait` | Played + linked champion placeholder, reusable component ([[Champion portraits]]) |
 
-**History components**
+**History** (Components, board `History components`)
 | Frame | Shows |
 |---|---|
 | `Session header / <Games, Workouts, Workouts / Current>` | Session title, status chips and win/loss count, per History view ([[History#Session summary]]) |
@@ -123,7 +124,6 @@ The canvas is a stack of sections, each starting with a `Flow label / …` title
 | `Game row / Workouts / <Pending, Done, Partial, Skipped>` | Game row of the Workouts view: one column per exercise |
 | `Game row / Workouts / <Done, Partial> expanded` | Same rows opened on their details; like every Workouts row, instances of `Game row / Workouts / Base` |
 | `Game row / Computing` | "Game over · Computing your workout…" row |
-| `Stat icon / <Farming, Damage share, Kill participation, Vision, Deaths>` | Stat pictograms used in the game rows |
 
 **1 · First launch → first game**
 | Frame | Shows |
@@ -172,21 +172,6 @@ The canvas is a stack of sections, each starting with a `Flow label / …` title
 | `Installer / Window / Done` | Installer: installed, Launch cooldown.lol switch and Finish |
 | `Installer / Window / Failed` | Installer: installation failed |
 
-**6 · Workouts view**
-| Frame | Shows |
-|---|---|
-| `History / Main / Workouts view` | History in the Workouts view ([[History#Views]]) |
-| `History / Main / Workouts view · Game expanded` | A row opened on its details |
-
-**7 · First desktop proposal**
-| Frame | Shows |
-|---|---|
-| `History / Main / <Nominal, Game expanded> (desktop)` | First 1280 × 800 History, before the view switch: the stat behind each exercise in every row |
-
-**Explorations**
-| Frame | Shows |
-|---|---|
-| `Rebrand / cooldown.lol exploration` | Marks explored for the rename to cooldown.lol ([[Brand]]) |
 ## Open questions
 - Can the window be resized, and down to what size?
 - Should the window remember its position on screen?
