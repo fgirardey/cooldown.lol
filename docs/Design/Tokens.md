@@ -72,7 +72,11 @@ Hover, pressed, focus, disabled and selected states. Buttons, icon buttons and t
 | `press-scale` | 0.97 | Scale of filled and outlined buttons while pressed |
 | `disabled-opacity` | 0.4 | Opacity of a disabled control (e.g. **Check now** while a check runs) |
 | `motion-fast` | 100ms | Hover and press transitions (ease-out) |
-| `motion-medium` | 200ms | Switch toggle, card expand and collapse (ease-out) |
+| `motion-medium` | 200ms | Switch toggle, card expand and collapse, screen transitions (ease-out) |
+| `motion-type-erase` | 10ms | Top bar headline: the cursor erases one character ([[ADR-0018 Navigation stack]]) |
+| `motion-type-char` | 18ms | Top bar headline: the cursor types one character |
+| `motion-type-phase-max` | 150ms | Top bar headline: longest erase or type phase; longer titles go faster |
+| `motion-cursor-hold` | 120ms | Top bar headline: how long the cursor stays after the last character |
 | `focus-ring` | `#58a6ff` | Keyboard focus ring (Tab only, never on click) |
 | `focus-ring-width` | 2px | Focus ring thickness, drawn outside the control and following its radius; replaces the border of outlined buttons |
 

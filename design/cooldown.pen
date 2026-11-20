@@ -1,5 +1,5 @@
 {
-  "version": "2.22",
+  "version": "2.25",
   "children": [
     {
       "type": "frame",
@@ -3793,81 +3793,90 @@
           "gap": "$space-s",
           "padding": [
             0,
-            "$space-s",
-            0,
-            "$space-m"
+            "$space-s"
           ],
           "alignItems": "center",
           "children": [
             {
               "type": "frame",
-              "id": "Q43w0",
-              "name": "Mark",
-              "width": 28,
-              "height": 28,
-              "layout": "none",
+              "id": "pY8wR",
+              "name": "Leading",
+              "width": 36,
+              "height": 36,
+              "justifyContent": "center",
+              "alignItems": "center",
               "children": [
                 {
-                  "type": "path",
-                  "id": "sBSYo",
-                  "x": 0.4010330310138541,
-                  "y": 0,
-                  "name": "Tile border",
-                  "geometry": "M9.1802 0.08065c3.07102-0.13704 6.80398-0.02977 9.94273-0.02938l18.76609 0.00023 11.11798-0.00148c3.91015-0.00352 7.08906-0.52254 10.45 1.86405 2.11797 1.53278 3.54531 3.84016 3.97109 6.42014 0.16875 1.00571 0.12499 2.35097 0.12421 3.3991l-0.00859 4.57725-0.0039 15.53556-0.00704 16.76621 0.00938 5.01017c0.00156 0.9528 0.075 2.10251-0.05625 3.02649-0.68047 4.79243-4.07968 7.94229-8.72266 8.70993-3.30156 0.14815-7.40078 0.04414-10.74452 0.04399l-19.46774-0.00328-10.1982-0.00376c-1.44891 0.00391-4.63985 0.09212-5.94547-0.10188-1.74141-0.27377-3.37656-1.01274-4.73289-2.13891-2.05805-1.67554-3.35422-4.10963-3.59586-6.75267-0.10203-1.07562-0.06179-2.58623-0.05977-3.69647l0.0093-5.91032-0.00289-18.32493-0.00118-13.12912c-0.00203-1.46809-0.09164-5.50724 0.08883-6.78399 0.25101-1.83999 1.02031-3.57052 2.21813-4.98954 1.77898-2.13338 4.11476-3.23847 6.84922-3.48739z",
-                  "fill": "#3FB950",
-                  "width": 27.197933937972294,
-                  "height": 28
-                },
-                {
-                  "type": "path",
-                  "id": "sbXu9",
-                  "x": 1.1867967633732468,
-                  "y": 0.8126347639386601,
-                  "name": "Tile",
-                  "geometry": "M7.71994 0.05567c3.10836-0.11798 6.85633-0.01196 10.00774-0.01078l19.08741-0.0025 10.36016-0.00078c1.48438-0.00312 4.47657-0.09251 5.85469 0.09774 1.42734 0.20978 2.77109 0.80452 3.88515 1.72038 1.65547 1.35198 2.69689 3.31238 2.8922 5.44052 0.10233 1.02563 0.05702 2.38058 0.05155 3.43816l-0.00625 4.97494 0.00625 17.29774 0.00079 14.40789 0.00078 4.28769c-0.00078 0.82758 0.02969 1.9879-0.06798 2.78265-0.19765 1.52629-0.81483 2.96805-1.78202 4.16525-1.50235 1.82516-3.45 2.76796-5.78437 2.99205-2.84297 0.13281-6.75938 0.01688-9.67735 0.01663l-18.96344-0.00203-10.9457 0.00766c-1.44305 0.00095-4.40562 0.0847-5.64875-0.09484-1.5118-0.22635-2.92812-0.87788-4.08367-1.87876-3.10836-2.67567-2.89422-5.52521-2.88125-9.23372l0.00218-5.57466-0.00054-18.61675-0.00399-12.74135c-0.00047-1.60568-0.09523-5.15674 0.09891-6.5596 0.21336-1.56223 0.88383-3.02657 1.92695-4.20885 1.47352-1.67373 3.46352-2.56607 5.67055-2.70468z",
-                  "fill": "#161B22",
-                  "width": 25.618832950021776,
-                  "height": 26.40481062371539
-                },
-                {
-                  "type": "path",
-                  "id": "hrFn6",
-                  "x": 7.665453823055236,
-                  "y": 4.08140162136968,
-                  "name": "Glass",
-                  "geometry": "M1.38342 0.05938c0.96445-0.09415 2.5321-0.04821 3.53258-0.04797l6.13078-0.00336 10.29821 0.00524c2.03593-0.00063 4.08828-0.00523 6.125 0.01289 1.16016 0.01023 2.19218 0.67935 2.13515 1.91203-0.02344 0.52192-0.25391 1.01298-0.64062 1.36394-0.65469 0.58731-1.26875 0.54715-2.06797 0.50684 0.66719 5.12541-1.19609 10.6693-5.11798 14.07192-1.24452 1.07962-3.81952 2.32168-4.02733 4.08526-0.26016 2.21439 2.37031 3.32027 3.76484 4.4913 4.16251 3.48685 6.00391 8.93581 5.39218 14.27795 0.50079-0.01531 0.90157-0.05899 1.38751 0.12174 1.07109 0.38581 1.6789 1.69459 1.06562 2.70834-0.29062 0.48058-0.65234 0.71436-1.15937 0.91555l-0.03984 0.00601c-0.39767 0.06454-0.56798 0.06445-0.96641 0.0668l-17.19977-0.00108-5.45968 0.00248c-1.1311 0.0004-3.1593 0.25073-3.96064-0.5641-0.36726-0.37465-0.56765-0.88187-0.55554-1.40645 0.00422-0.48965 0.20477-0.95718 0.55672-1.29768 0.6218-0.6027 1.32398-0.55317 2.12227-0.54418-0.13461-1.55583-0.13805-2.99486 0.0721-4.54569 0.48914-3.76171 2.35281-7.2094 5.23219-9.6789 1.27274-1.09322 3.62188-2.12041 3.83789-3.96392 0.25587-2.18385-2.28929-3.29323-3.74656-4.45599-0.77438-0.62865-1.47672-1.34128-2.09406-2.12478-2.71453-3.41325-3.78555-7.87041-3.29766-12.17037-1.5075 0.09954-3.03875-0.46645-2.63844-2.44363 0.11899-0.58754 0.79243-1.04743 1.31883-1.30019z",
-                  "fill": "#E6EDF3",
-                  "width": 12.668493318153683,
-                  "height": 19.08005837542119
-                },
-                {
-                  "type": "path",
-                  "id": "snQ2t",
-                  "x": 9.646422213223104,
-                  "y": 15.756051865492022,
-                  "name": "Spent sand",
-                  "geometry": "M9.88093 0c0.25391 0.39386 0.37813 0.87647 0.58438 1.12782 0.00469 0.3587 0.02422 0.84132 0.00234 1.18956 0.125 0.65466 1.60938 1.55872 2.18829 1.99719l3.5078 2.66045c2.01563 1.5141 3.95157 2.53215 4.12892 5.32347l-20.29266 0.00235 0.01593-0.11876c0.44164-3.22597 2.7879-3.92297 4.97125-5.81485 1.07414-0.93077 4.69688-3.07306 4.86016-4.2658l0.03359-2.10143z",
-                  "fill": "#F85149",
-                  "width": 8.682894626252127,
-                  "height": 5.26329912818906
-                },
-                {
-                  "type": "path",
-                  "id": "j8Awcm",
-                  "x": 10.111060002903487,
-                  "y": 8.830000687668575,
-                  "name": "Remaining sand",
-                  "geometry": "M0 0.46482c4.64625-1.30472 6.39445 0.53192 10.85368 0.71936 2.47812 0.10414 4.47968-0.70889 7.15937-0.31238-1.35547 3.05415-3.08907 4.45834-5.76094 6.25896-1.31718 0.88803-2.51328 2.93492-2.75 4.49028-0.25547 1.75334-0.06327 3.87915-0.12265 5.69359-0.20625-0.25135-0.33047-0.73396-0.58439-1.12782 0.0125-3.29152 0.36485-5.86791-2.17163-8.46312-0.70117-0.71732-1.63961-1.24924-2.46781-1.83147-1.93305-1.35918-3.30141-3.23581-4.15563-5.4274z",
-                  "fill": "#3FB950",
-                  "width": 7.707493295231402,
-                  "height": 7.4086172513122985
+                  "type": "frame",
+                  "id": "Q43w0",
+                  "name": "Mark",
+                  "width": 28,
+                  "height": 28,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "path",
+                      "id": "sBSYo",
+                      "x": 0.4010330310138541,
+                      "y": 0,
+                      "name": "Tile border",
+                      "geometry": "M9.1802 0.08065c3.07102-0.13704 6.80398-0.02977 9.94273-0.02938l18.76609 0.00023 11.11798-0.00148c3.91015-0.00352 7.08906-0.52254 10.45 1.86405 2.11797 1.53278 3.54531 3.84016 3.97109 6.42014 0.16875 1.00571 0.12499 2.35097 0.12421 3.3991l-0.00859 4.57725-0.0039 15.53556-0.00704 16.76621 0.00938 5.01017c0.00156 0.9528 0.075 2.10251-0.05625 3.02649-0.68047 4.79243-4.07968 7.94229-8.72266 8.70993-3.30156 0.14815-7.40078 0.04414-10.74452 0.04399l-19.46774-0.00328-10.1982-0.00376c-1.44891 0.00391-4.63985 0.09212-5.94547-0.10188-1.74141-0.27377-3.37656-1.01274-4.73289-2.13891-2.05805-1.67554-3.35422-4.10963-3.59586-6.75267-0.10203-1.07562-0.06179-2.58623-0.05977-3.69647l0.0093-5.91032-0.00289-18.32493-0.00118-13.12912c-0.00203-1.46809-0.09164-5.50724 0.08883-6.78399 0.25101-1.83999 1.02031-3.57052 2.21813-4.98954 1.77898-2.13338 4.11476-3.23847 6.84922-3.48739z",
+                      "fill": "#3FB950",
+                      "width": 27.197933937972294,
+                      "height": 28
+                    },
+                    {
+                      "type": "path",
+                      "id": "sbXu9",
+                      "x": 1.1867967633732468,
+                      "y": 0.8126347639386601,
+                      "name": "Tile",
+                      "geometry": "M7.71994 0.05567c3.10836-0.11798 6.85633-0.01196 10.00774-0.01078l19.08741-0.0025 10.36016-0.00078c1.48438-0.00312 4.47657-0.09251 5.85469 0.09774 1.42734 0.20978 2.77109 0.80452 3.88515 1.72038 1.65547 1.35198 2.69689 3.31238 2.8922 5.44052 0.10233 1.02563 0.05702 2.38058 0.05155 3.43816l-0.00625 4.97494 0.00625 17.29774 0.00079 14.40789 0.00078 4.28769c-0.00078 0.82758 0.02969 1.9879-0.06798 2.78265-0.19765 1.52629-0.81483 2.96805-1.78202 4.16525-1.50235 1.82516-3.45 2.76796-5.78437 2.99205-2.84297 0.13281-6.75938 0.01688-9.67735 0.01663l-18.96344-0.00203-10.9457 0.00766c-1.44305 0.00095-4.40562 0.0847-5.64875-0.09484-1.5118-0.22635-2.92812-0.87788-4.08367-1.87876-3.10836-2.67567-2.89422-5.52521-2.88125-9.23372l0.00218-5.57466-0.00054-18.61675-0.00399-12.74135c-0.00047-1.60568-0.09523-5.15674 0.09891-6.5596 0.21336-1.56223 0.88383-3.02657 1.92695-4.20885 1.47352-1.67373 3.46352-2.56607 5.67055-2.70468z",
+                      "fill": "#161B22",
+                      "width": 25.618832950021776,
+                      "height": 26.40481062371539
+                    },
+                    {
+                      "type": "path",
+                      "id": "hrFn6",
+                      "x": 7.665453823055236,
+                      "y": 4.08140162136968,
+                      "name": "Glass",
+                      "geometry": "M1.38342 0.05938c0.96445-0.09415 2.5321-0.04821 3.53258-0.04797l6.13078-0.00336 10.29821 0.00524c2.03593-0.00063 4.08828-0.00523 6.125 0.01289 1.16016 0.01023 2.19218 0.67935 2.13515 1.91203-0.02344 0.52192-0.25391 1.01298-0.64062 1.36394-0.65469 0.58731-1.26875 0.54715-2.06797 0.50684 0.66719 5.12541-1.19609 10.6693-5.11798 14.07192-1.24452 1.07962-3.81952 2.32168-4.02733 4.08526-0.26016 2.21439 2.37031 3.32027 3.76484 4.4913 4.16251 3.48685 6.00391 8.93581 5.39218 14.27795 0.50079-0.01531 0.90157-0.05899 1.38751 0.12174 1.07109 0.38581 1.6789 1.69459 1.06562 2.70834-0.29062 0.48058-0.65234 0.71436-1.15937 0.91555l-0.03984 0.00601c-0.39767 0.06454-0.56798 0.06445-0.96641 0.0668l-17.19977-0.00108-5.45968 0.00248c-1.1311 0.0004-3.1593 0.25073-3.96064-0.5641-0.36726-0.37465-0.56765-0.88187-0.55554-1.40645 0.00422-0.48965 0.20477-0.95718 0.55672-1.29768 0.6218-0.6027 1.32398-0.55317 2.12227-0.54418-0.13461-1.55583-0.13805-2.99486 0.0721-4.54569 0.48914-3.76171 2.35281-7.2094 5.23219-9.6789 1.27274-1.09322 3.62188-2.12041 3.83789-3.96392 0.25587-2.18385-2.28929-3.29323-3.74656-4.45599-0.77438-0.62865-1.47672-1.34128-2.09406-2.12478-2.71453-3.41325-3.78555-7.87041-3.29766-12.17037-1.5075 0.09954-3.03875-0.46645-2.63844-2.44363 0.11899-0.58754 0.79243-1.04743 1.31883-1.30019z",
+                      "fill": "#E6EDF3",
+                      "width": 12.668493318153683,
+                      "height": 19.08005837542119
+                    },
+                    {
+                      "type": "path",
+                      "id": "snQ2t",
+                      "x": 9.646422213223104,
+                      "y": 15.756051865492022,
+                      "name": "Spent sand",
+                      "geometry": "M9.88093 0c0.25391 0.39386 0.37813 0.87647 0.58438 1.12782 0.00469 0.3587 0.02422 0.84132 0.00234 1.18956 0.125 0.65466 1.60938 1.55872 2.18829 1.99719l3.5078 2.66045c2.01563 1.5141 3.95157 2.53215 4.12892 5.32347l-20.29266 0.00235 0.01593-0.11876c0.44164-3.22597 2.7879-3.92297 4.97125-5.81485 1.07414-0.93077 4.69688-3.07306 4.86016-4.2658l0.03359-2.10143z",
+                      "fill": "#F85149",
+                      "width": 8.682894626252127,
+                      "height": 5.26329912818906
+                    },
+                    {
+                      "type": "path",
+                      "id": "j8Awcm",
+                      "x": 10.111060002903487,
+                      "y": 8.830000687668575,
+                      "name": "Remaining sand",
+                      "geometry": "M0 0.46482c4.64625-1.30472 6.39445 0.53192 10.85368 0.71936 2.47812 0.10414 4.47968-0.70889 7.15937-0.31238-1.35547 3.05415-3.08907 4.45834-5.76094 6.25896-1.31718 0.88803-2.51328 2.93492-2.75 4.49028-0.25547 1.75334-0.06327 3.87915-0.12265 5.69359-0.20625-0.25135-0.33047-0.73396-0.58439-1.12782 0.0125-3.29152 0.36485-5.86791-2.17163-8.46312-0.70117-0.71732-1.63961-1.24924-2.46781-1.83147-1.93305-1.35918-3.30141-3.23581-4.15563-5.4274z",
+                      "fill": "#3FB950",
+                      "width": 7.707493295231402,
+                      "height": 7.4086172513122985
+                    }
+                  ]
                 }
               ]
             },
             {
               "type": "frame",
               "id": "yDVQ0",
-              "name": "Wordmark",
+              "name": "Headline",
               "alignItems": "end",
               "children": [
                 {
@@ -3893,6 +3902,40 @@
                   "fontWeight": "800",
                   "letterSpacing": 1,
                   "fontStyle": "italic"
+                },
+                {
+                  "type": "frame",
+                  "id": "V1Ff3D",
+                  "x": 111,
+                  "y": 0,
+                  "name": "Cursor",
+                  "enabled": false,
+                  "height": 22,
+                  "layout": "vertical",
+                  "padding": [
+                    0,
+                    0,
+                    0,
+                    2
+                  ],
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "type": "path",
+                      "id": "BWCDp",
+                      "name": "Cursor block",
+                      "geometry": "M3 0h7l-2.6 13h-7z",
+                      "viewBox": [
+                        0,
+                        0,
+                        10,
+                        13
+                      ],
+                      "fill": "$accent",
+                      "width": 10,
+                      "height": 13
+                    }
+                  ]
                 }
               ]
             },
@@ -51457,15 +51500,18 @@
       ]
     },
     {
-      "id": "HZzIf",
+      "id": "o92dtz",
       "type": "ref",
-      "ref": "SKE9k",
+      "ref": "g89Q5J",
       "name": "App shell / About / Default",
       "x": 0,
       "y": 14058,
       "width": 1280,
       "height": 800,
       "descendants": {
+        "j7LJg": {
+          "content": "ABOUT"
+        },
         "O6Yto": {
           "fill": "#E6EDF314"
         },
@@ -51474,7 +51520,7 @@
         },
         "F4vpb": {
           "type": "frame",
-          "id": "XITmT",
+          "id": "U75Rw2",
           "name": "Content",
           "width": "fill_container",
           "height": "fill_container",
@@ -51486,49 +51532,8 @@
           ],
           "children": [
             {
-              "type": "frame",
-              "id": "bz5Ba",
-              "name": "Back",
-              "gap": 4,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "icon",
-                  "id": "gAFvf",
-                  "name": "Back icon",
-                  "width": 16,
-                  "height": 16,
-                  "icon": "chevron-left",
-                  "library": "lucide",
-                  "fill": "$text-secondary"
-                },
-                {
-                  "type": "text",
-                  "id": "M92LCs",
-                  "name": "Back label",
-                  "fill": "$text-secondary",
-                  "content": "History",
-                  "fontFamily": "$font-body",
-                  "fontSize": "$font-size-body",
-                  "fontWeight": "normal"
-                }
-              ]
-            },
-            {
               "type": "text",
-              "id": "V1nl9",
-              "name": "Screen title",
-              "fill": "$text-primary",
-              "content": "ABOUT",
-              "fontFamily": "$font-display",
-              "fontSize": "$font-size-title",
-              "fontWeight": "800",
-              "letterSpacing": 1,
-              "fontStyle": "italic"
-            },
-            {
-              "type": "text",
-              "id": "JY8j7",
+              "id": "A4xFpY",
               "name": "Version",
               "fill": "$text-primary",
               "content": "cooldown.lol 0.1.0",
@@ -51538,7 +51543,7 @@
             },
             {
               "type": "frame",
-              "id": "Fwt0w",
+              "id": "ns51C",
               "name": "AboutSlint placeholder",
               "width": "fill_container",
               "height": 140,
@@ -51552,7 +51557,7 @@
               "children": [
                 {
                   "type": "text",
-                  "id": "nYSX0",
+                  "id": "WlzUr",
                   "name": "Widget name",
                   "fill": "$text-primary",
                   "content": "AboutSlint widget",
@@ -51562,7 +51567,7 @@
                 },
                 {
                   "type": "text",
-                  "id": "B5RDkX",
+                  "id": "DUQ42",
                   "name": "Widget note",
                   "fill": "$text-secondary",
                   "content": "Rendered by Slint (ADR-0001)",
@@ -51574,7 +51579,7 @@
             },
             {
               "type": "text",
-              "id": "KX9P6",
+              "id": "g9J9h",
               "name": "Riot disclaimer",
               "fill": "$text-secondary",
               "textGrowth": "fixed-width",
@@ -51590,15 +51595,18 @@
       }
     },
     {
-      "id": "Z9SgBW",
+      "id": "dygQq",
       "type": "ref",
-      "ref": "SKE9k",
+      "ref": "g89Q5J",
       "name": "App shell / Settings / Default",
       "x": 1400,
       "y": 14058,
       "width": 1280,
       "height": 800,
       "descendants": {
+        "j7LJg": {
+          "content": "SETTINGS"
+        },
         "GHZ8R": {
           "content": "Connected · Lobby"
         },
@@ -51611,15 +51619,18 @@
       }
     },
     {
-      "id": "UywUM",
+      "id": "YYCXR",
       "type": "ref",
-      "ref": "SKE9k",
+      "ref": "g89Q5J",
       "name": "App shell / Settings / Crash reports on",
       "x": 2800,
       "y": 14058,
       "width": 1280,
       "height": 800,
       "descendants": {
+        "j7LJg": {
+          "content": "SETTINGS"
+        },
         "F6fQRc": {
           "fill": "#E6EDF314"
         },
@@ -51629,15 +51640,18 @@
       }
     },
     {
-      "id": "QwYww",
+      "id": "Fq4w9",
       "type": "ref",
-      "ref": "SKE9k",
+      "ref": "g89Q5J",
       "name": "App shell / Settings / Updates checking",
       "x": 4200,
       "y": 14058,
       "width": 1280,
       "height": 800,
       "descendants": {
+        "j7LJg": {
+          "content": "SETTINGS"
+        },
         "GHZ8R": {
           "content": "Connected · Lobby"
         },
@@ -51650,15 +51664,18 @@
       }
     },
     {
-      "id": "Ezgbn",
+      "id": "l5XPPw",
       "type": "ref",
-      "ref": "SKE9k",
+      "ref": "g89Q5J",
       "name": "App shell / Settings / Updates ready",
       "x": 5600,
       "y": 14058,
       "width": 1280,
       "height": 800,
       "descendants": {
+        "j7LJg": {
+          "content": "SETTINGS"
+        },
         "GHZ8R": {
           "content": "Connected · Lobby"
         },
@@ -51671,15 +51688,18 @@
       }
     },
     {
-      "id": "Yfszs",
+      "id": "vOTGk",
       "type": "ref",
-      "ref": "SKE9k",
+      "ref": "g89Q5J",
       "name": "App shell / Settings / Updates failed",
       "x": 7000,
       "y": 14058,
       "width": 1280,
       "height": 800,
       "descendants": {
+        "j7LJg": {
+          "content": "SETTINGS"
+        },
         "GHZ8R": {
           "content": "Connected · Lobby"
         },
@@ -51692,15 +51712,18 @@
       }
     },
     {
-      "id": "h3LGVe",
+      "id": "N9jGX",
       "type": "ref",
-      "ref": "SKE9k",
+      "ref": "g89Q5J",
       "name": "App shell / Settings / Scrolled to the bottom",
       "x": 8400,
       "y": 14058,
       "width": 1280,
       "height": 800,
       "descendants": {
+        "j7LJg": {
+          "content": "SETTINGS"
+        },
         "GHZ8R": {
           "content": "Connected · Lobby"
         },
@@ -51728,24 +51751,33 @@
       "layout": "none",
       "children": [
         {
-          "id": "f9SNp",
+          "id": "XlKml",
           "type": "ref",
-          "ref": "SKE9k",
+          "ref": "g89Q5J",
           "name": "Settings behind",
           "x": 0,
           "y": 0,
           "width": 1280,
           "height": 800,
           "descendants": {
+            "j7LJg": {
+              "content": "SETTINGS"
+            },
             "GHZ8R": {
               "content": "Connected · Lobby"
+            },
+            "F6fQRc": {
+              "fill": "#E6EDF314"
+            },
+            "F6fQRc/cU3ej": {
+              "fill": "$accent"
             },
             "ebEjx": {
               "clip": true,
               "children": [
                 {
                   "type": "frame",
-                  "id": "ksPs9",
+                  "id": "f5yUb9",
                   "name": "Content",
                   "clip": true,
                   "width": "fill_container",
@@ -51760,55 +51792,14 @@
                   "children": [
                     {
                       "type": "frame",
-                      "id": "NaNyt",
-                      "name": "Back",
-                      "gap": 4,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "icon",
-                          "id": "HReTN",
-                          "name": "Back icon",
-                          "width": 16,
-                          "height": 16,
-                          "icon": "chevron-left",
-                          "library": "lucide",
-                          "fill": "$text-secondary"
-                        },
-                        {
-                          "type": "text",
-                          "id": "fHkTa",
-                          "name": "Back label",
-                          "fill": "$text-secondary",
-                          "content": "History",
-                          "fontFamily": "$font-body",
-                          "fontSize": "$font-size-body",
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "id": "I3cZw",
-                      "name": "Screen title",
-                      "fill": "$text-primary",
-                      "content": "SETTINGS",
-                      "fontFamily": "$font-display",
-                      "fontSize": "$font-size-title",
-                      "fontWeight": "800",
-                      "letterSpacing": 1,
-                      "fontStyle": "italic"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "zBnm4",
+                      "id": "aTPMR",
                       "name": "Section / Error reports",
                       "width": "fill_container",
                       "layout": "vertical",
                       "children": [
                         {
                           "type": "text",
-                          "id": "bO1Ti",
+                          "id": "OpFu7",
                           "name": "Section label",
                           "fill": "$text-secondary",
                           "content": "ERROR REPORTS",
@@ -51819,7 +51810,7 @@
                         },
                         {
                           "type": "frame",
-                          "id": "orGFD",
+                          "id": "bPokB",
                           "name": "Setting / Crash reports",
                           "width": "fill_container",
                           "stroke": "$border",
@@ -51835,7 +51826,7 @@
                           "children": [
                             {
                               "type": "frame",
-                              "id": "m9pIoH",
+                              "id": "KFohA",
                               "name": "Setting text",
                               "width": "fill_container",
                               "layout": "vertical",
@@ -51843,7 +51834,7 @@
                               "children": [
                                 {
                                   "type": "text",
-                                  "id": "JOKuY",
+                                  "id": "NMfXk",
                                   "name": "Label",
                                   "fill": "$text-primary",
                                   "content": "Send crash reports",
@@ -51853,7 +51844,7 @@
                                 },
                                 {
                                   "type": "text",
-                                  "id": "fDmx7",
+                                  "id": "L8tfjf",
                                   "name": "Detail",
                                   "fill": "$text-secondary",
                                   "textGrowth": "fixed-width",
@@ -51867,7 +51858,7 @@
                               ]
                             },
                             {
-                              "id": "bZI34",
+                              "id": "d6OMI",
                               "type": "ref",
                               "ref": "GX2CB",
                               "name": "Switch"
@@ -51876,7 +51867,7 @@
                         },
                         {
                           "type": "frame",
-                          "id": "BYvB4",
+                          "id": "hamPh",
                           "name": "Setting / All logs",
                           "width": "fill_container",
                           "stroke": "$border",
@@ -51892,7 +51883,7 @@
                           "children": [
                             {
                               "type": "frame",
-                              "id": "D1jyFA",
+                              "id": "WmJlp",
                               "name": "Setting text",
                               "width": "fill_container",
                               "layout": "vertical",
@@ -51900,7 +51891,7 @@
                               "children": [
                                 {
                                   "type": "text",
-                                  "id": "dDaLl",
+                                  "id": "iiZaH",
                                   "name": "Label",
                                   "fill": "$text-primary",
                                   "content": "Send all logs",
@@ -51910,7 +51901,7 @@
                                 },
                                 {
                                   "type": "text",
-                                  "id": "x2lCY",
+                                  "id": "N6XoYf",
                                   "name": "Detail",
                                   "fill": "$text-secondary",
                                   "textGrowth": "fixed-width",
@@ -51924,7 +51915,7 @@
                               ]
                             },
                             {
-                              "id": "CsSGB",
+                              "id": "A8WDG",
                               "type": "ref",
                               "ref": "GX2CB",
                               "name": "Switch"
@@ -51935,7 +51926,7 @@
                     },
                     {
                       "type": "text",
-                      "id": "vLOLd",
+                      "id": "xJJd1",
                       "name": "Retention note",
                       "fill": "$text-secondary",
                       "textGrowth": "fixed-width",
@@ -51948,14 +51939,14 @@
                     },
                     {
                       "type": "frame",
-                      "id": "G1x3BZ",
+                      "id": "WBSR2",
                       "name": "Section / Updates",
                       "width": "fill_container",
                       "layout": "vertical",
                       "children": [
                         {
                           "type": "text",
-                          "id": "JyRU8",
+                          "id": "CCv76",
                           "name": "Section label",
                           "fill": "$text-secondary",
                           "content": "UPDATES",
@@ -51966,7 +51957,7 @@
                         },
                         {
                           "type": "frame",
-                          "id": "qnuAm",
+                          "id": "kNGw5",
                           "name": "Setting / Updates",
                           "width": "fill_container",
                           "stroke": "$border",
@@ -51982,7 +51973,7 @@
                           "children": [
                             {
                               "type": "frame",
-                              "id": "Gw6UZ",
+                              "id": "EpSvq",
                               "name": "Updates text",
                               "width": "fill_container",
                               "layout": "vertical",
@@ -51990,7 +51981,7 @@
                               "children": [
                                 {
                                   "type": "text",
-                                  "id": "TPyQh",
+                                  "id": "scuo7",
                                   "name": "Updates label",
                                   "fill": "$text-primary",
                                   "content": "Alpha channel",
@@ -52000,7 +51991,7 @@
                                 },
                                 {
                                   "type": "text",
-                                  "id": "MM87U",
+                                  "id": "Q6zPn",
                                   "name": "Update status",
                                   "fill": "$text-secondary",
                                   "textGrowth": "fixed-width",
@@ -52015,7 +52006,7 @@
                             },
                             {
                               "type": "frame",
-                              "id": "kgBaB",
+                              "id": "wx3bO",
                               "name": "Check now button",
                               "height": 36,
                               "cornerRadius": "$radius-m",
@@ -52030,7 +52021,7 @@
                               "children": [
                                 {
                                   "type": "text",
-                                  "id": "iEw6h",
+                                  "id": "IyQCF",
                                   "name": "Check now label",
                                   "fill": "$text-primary",
                                   "content": "Check now",
@@ -52046,14 +52037,14 @@
                     },
                     {
                       "type": "frame",
-                      "id": "pecIx",
+                      "id": "VYa6f",
                       "name": "Section / Shortcuts",
                       "width": "fill_container",
                       "layout": "vertical",
                       "children": [
                         {
                           "type": "text",
-                          "id": "DiJEf",
+                          "id": "YFADf",
                           "name": "Section label",
                           "fill": "$text-secondary",
                           "content": "SHORTCUTS",
@@ -52064,7 +52055,7 @@
                         },
                         {
                           "type": "frame",
-                          "id": "Jtbq1",
+                          "id": "KKkBD",
                           "name": "Setting / Start menu",
                           "width": "fill_container",
                           "stroke": "$border",
@@ -52080,7 +52071,7 @@
                           "children": [
                             {
                               "type": "frame",
-                              "id": "bte8f",
+                              "id": "ZuJ26",
                               "name": "Setting text",
                               "width": "fill_container",
                               "layout": "vertical",
@@ -52088,7 +52079,7 @@
                               "children": [
                                 {
                                   "type": "text",
-                                  "id": "DheNh",
+                                  "id": "z8UuCV",
                                   "name": "Label",
                                   "fill": "$text-primary",
                                   "content": "Start menu",
@@ -52098,7 +52089,7 @@
                                 },
                                 {
                                   "type": "text",
-                                  "id": "OlsUB",
+                                  "id": "kpMgR",
                                   "name": "Detail",
                                   "fill": "$text-secondary",
                                   "textGrowth": "fixed-width",
@@ -52112,7 +52103,7 @@
                               ]
                             },
                             {
-                              "id": "sIJ7C",
+                              "id": "QoVe8",
                               "type": "ref",
                               "ref": "n3W1d",
                               "name": "Switch"
@@ -52121,7 +52112,7 @@
                         },
                         {
                           "type": "frame",
-                          "id": "u8RVZY",
+                          "id": "o9DD6E",
                           "name": "Setting / Desktop",
                           "width": "fill_container",
                           "stroke": "$border",
@@ -52137,7 +52128,7 @@
                           "children": [
                             {
                               "type": "frame",
-                              "id": "Hr7Fh",
+                              "id": "vfhDi",
                               "name": "Setting text",
                               "width": "fill_container",
                               "layout": "vertical",
@@ -52145,7 +52136,7 @@
                               "children": [
                                 {
                                   "type": "text",
-                                  "id": "b7jnMO",
+                                  "id": "yXloy",
                                   "name": "Label",
                                   "fill": "$text-primary",
                                   "content": "Desktop",
@@ -52155,7 +52146,7 @@
                                 },
                                 {
                                   "type": "text",
-                                  "id": "XFllF",
+                                  "id": "Y70dzI",
                                   "name": "Detail",
                                   "fill": "$text-secondary",
                                   "textGrowth": "fixed-width",
@@ -52169,7 +52160,7 @@
                               ]
                             },
                             {
-                              "id": "QYJOo",
+                              "id": "XafAD",
                               "type": "ref",
                               "ref": "GX2CB",
                               "name": "Switch"
@@ -52180,14 +52171,14 @@
                     },
                     {
                       "type": "frame",
-                      "id": "wpf5i",
+                      "id": "BbNVo",
                       "name": "Section / Startup",
                       "width": "fill_container",
                       "layout": "vertical",
                       "children": [
                         {
                           "type": "text",
-                          "id": "q1b0k",
+                          "id": "yz6ai",
                           "name": "Section label",
                           "fill": "$text-secondary",
                           "content": "STARTUP",
@@ -52198,7 +52189,7 @@
                         },
                         {
                           "type": "frame",
-                          "id": "oRMZw",
+                          "id": "t8PXqO",
                           "name": "Setting / Start with Windows",
                           "width": "fill_container",
                           "stroke": "$border",
@@ -52214,7 +52205,7 @@
                           "children": [
                             {
                               "type": "frame",
-                              "id": "cr2s0",
+                              "id": "bAkI9",
                               "name": "Setting text",
                               "width": "fill_container",
                               "layout": "vertical",
@@ -52222,7 +52213,7 @@
                               "children": [
                                 {
                                   "type": "text",
-                                  "id": "H3yM3U",
+                                  "id": "Lf6FA",
                                   "name": "Label",
                                   "fill": "$text-primary",
                                   "content": "Start with Windows",
@@ -52232,7 +52223,7 @@
                                 },
                                 {
                                   "type": "text",
-                                  "id": "cVUhv",
+                                  "id": "tn9B0",
                                   "name": "Detail",
                                   "fill": "$text-secondary",
                                   "textGrowth": "fixed-width",
@@ -52246,7 +52237,7 @@
                               ]
                             },
                             {
-                              "id": "Y0sB0",
+                              "id": "G3Dw5w",
                               "type": "ref",
                               "ref": "GX2CB",
                               "name": "Switch"
@@ -52257,7 +52248,7 @@
                     },
                     {
                       "type": "text",
-                      "id": "sBxK3",
+                      "id": "RHPuT",
                       "name": "Tray note",
                       "fill": "$text-secondary",
                       "textGrowth": "fixed-width",
@@ -52270,14 +52261,14 @@
                     },
                     {
                       "type": "frame",
-                      "id": "bttDZ",
+                      "id": "zeydF",
                       "name": "Section / Uninstall",
                       "width": "fill_container",
                       "layout": "vertical",
                       "children": [
                         {
                           "type": "text",
-                          "id": "VHR7x",
+                          "id": "SYJ1R",
                           "name": "Section label",
                           "fill": "$text-secondary",
                           "content": "UNINSTALL",
@@ -52288,7 +52279,7 @@
                         },
                         {
                           "type": "frame",
-                          "id": "s5ALIa",
+                          "id": "vI3li",
                           "name": "Setting / Uninstall",
                           "width": "fill_container",
                           "stroke": "$border",
@@ -52304,7 +52295,7 @@
                           "children": [
                             {
                               "type": "frame",
-                              "id": "hA8P8",
+                              "id": "OR2aH",
                               "name": "Setting text",
                               "width": "fill_container",
                               "layout": "vertical",
@@ -52312,7 +52303,7 @@
                               "children": [
                                 {
                                   "type": "text",
-                                  "id": "PmgtG",
+                                  "id": "iYOjj",
                                   "name": "Label",
                                   "fill": "$text-primary",
                                   "content": "Remove cooldown.lol from this PC",
@@ -52322,7 +52313,7 @@
                                 },
                                 {
                                   "type": "text",
-                                  "id": "v3391",
+                                  "id": "XQS4d",
                                   "name": "Detail",
                                   "fill": "$text-secondary",
                                   "textGrowth": "fixed-width",
@@ -52337,7 +52328,7 @@
                             },
                             {
                               "type": "frame",
-                              "id": "B6CWE",
+                              "id": "Bs0Fe",
                               "name": "Uninstall button",
                               "height": 36,
                               "cornerRadius": "$radius-m",
@@ -52352,7 +52343,7 @@
                               "children": [
                                 {
                                   "type": "text",
-                                  "id": "VUjip",
+                                  "id": "nddAc",
                                   "name": "Uninstall label",
                                   "fill": "$danger",
                                   "content": "Uninstall",
@@ -52528,24 +52519,33 @@
       "layout": "none",
       "children": [
         {
-          "id": "m4j4vt",
+          "id": "kG8oo",
           "type": "ref",
-          "ref": "SKE9k",
+          "ref": "g89Q5J",
           "name": "Settings behind",
           "x": 0,
           "y": 0,
           "width": 1280,
           "height": 800,
           "descendants": {
+            "j7LJg": {
+              "content": "SETTINGS"
+            },
             "GHZ8R": {
               "content": "Connected · Lobby"
+            },
+            "F6fQRc": {
+              "fill": "#E6EDF314"
+            },
+            "F6fQRc/cU3ej": {
+              "fill": "$accent"
             },
             "ebEjx": {
               "clip": true,
               "children": [
                 {
                   "type": "frame",
-                  "id": "fBSLw",
+                  "id": "URmB3",
                   "name": "Content",
                   "clip": true,
                   "width": "fill_container",
@@ -52560,55 +52560,14 @@
                   "children": [
                     {
                       "type": "frame",
-                      "id": "RAJGM",
-                      "name": "Back",
-                      "gap": 4,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "icon",
-                          "id": "T1FvH",
-                          "name": "Back icon",
-                          "width": 16,
-                          "height": 16,
-                          "icon": "chevron-left",
-                          "library": "lucide",
-                          "fill": "$text-secondary"
-                        },
-                        {
-                          "type": "text",
-                          "id": "Sl2vN",
-                          "name": "Back label",
-                          "fill": "$text-secondary",
-                          "content": "History",
-                          "fontFamily": "$font-body",
-                          "fontSize": "$font-size-body",
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "id": "SI2gi",
-                      "name": "Screen title",
-                      "fill": "$text-primary",
-                      "content": "SETTINGS",
-                      "fontFamily": "$font-display",
-                      "fontSize": "$font-size-title",
-                      "fontWeight": "800",
-                      "letterSpacing": 1,
-                      "fontStyle": "italic"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "enP7G",
+                      "id": "XvJWR",
                       "name": "Section / Error reports",
                       "width": "fill_container",
                       "layout": "vertical",
                       "children": [
                         {
                           "type": "text",
-                          "id": "LFtjF",
+                          "id": "ukFyF",
                           "name": "Section label",
                           "fill": "$text-secondary",
                           "content": "ERROR REPORTS",
@@ -52619,7 +52578,7 @@
                         },
                         {
                           "type": "frame",
-                          "id": "TdtMw",
+                          "id": "h5OT7",
                           "name": "Setting / Crash reports",
                           "width": "fill_container",
                           "stroke": "$border",
@@ -52635,7 +52594,7 @@
                           "children": [
                             {
                               "type": "frame",
-                              "id": "Ot2Bb",
+                              "id": "n3cXp",
                               "name": "Setting text",
                               "width": "fill_container",
                               "layout": "vertical",
@@ -52643,7 +52602,7 @@
                               "children": [
                                 {
                                   "type": "text",
-                                  "id": "TW0cE",
+                                  "id": "c7GoJV",
                                   "name": "Label",
                                   "fill": "$text-primary",
                                   "content": "Send crash reports",
@@ -52653,7 +52612,7 @@
                                 },
                                 {
                                   "type": "text",
-                                  "id": "lDPbh",
+                                  "id": "SiujF",
                                   "name": "Detail",
                                   "fill": "$text-secondary",
                                   "textGrowth": "fixed-width",
@@ -52667,7 +52626,7 @@
                               ]
                             },
                             {
-                              "id": "E5X04",
+                              "id": "Fvi6m",
                               "type": "ref",
                               "ref": "GX2CB",
                               "name": "Switch"
@@ -52676,7 +52635,7 @@
                         },
                         {
                           "type": "frame",
-                          "id": "AOs9x",
+                          "id": "UjA1R",
                           "name": "Setting / All logs",
                           "width": "fill_container",
                           "stroke": "$border",
@@ -52692,7 +52651,7 @@
                           "children": [
                             {
                               "type": "frame",
-                              "id": "S2XT4g",
+                              "id": "Z6eMOW",
                               "name": "Setting text",
                               "width": "fill_container",
                               "layout": "vertical",
@@ -52700,7 +52659,7 @@
                               "children": [
                                 {
                                   "type": "text",
-                                  "id": "JNB93",
+                                  "id": "eiHgI",
                                   "name": "Label",
                                   "fill": "$text-primary",
                                   "content": "Send all logs",
@@ -52710,7 +52669,7 @@
                                 },
                                 {
                                   "type": "text",
-                                  "id": "zoIVG",
+                                  "id": "vdeEd",
                                   "name": "Detail",
                                   "fill": "$text-secondary",
                                   "textGrowth": "fixed-width",
@@ -52724,7 +52683,7 @@
                               ]
                             },
                             {
-                              "id": "BteQk",
+                              "id": "Yfd9F",
                               "type": "ref",
                               "ref": "GX2CB",
                               "name": "Switch"
@@ -52735,7 +52694,7 @@
                     },
                     {
                       "type": "text",
-                      "id": "i0O7P",
+                      "id": "oKoPc",
                       "name": "Retention note",
                       "fill": "$text-secondary",
                       "textGrowth": "fixed-width",
@@ -52748,14 +52707,14 @@
                     },
                     {
                       "type": "frame",
-                      "id": "sEF46",
+                      "id": "C4Iw8H",
                       "name": "Section / Updates",
                       "width": "fill_container",
                       "layout": "vertical",
                       "children": [
                         {
                           "type": "text",
-                          "id": "x3VWI",
+                          "id": "VRwYT",
                           "name": "Section label",
                           "fill": "$text-secondary",
                           "content": "UPDATES",
@@ -52766,7 +52725,7 @@
                         },
                         {
                           "type": "frame",
-                          "id": "wpW83",
+                          "id": "q5F7fP",
                           "name": "Setting / Updates",
                           "width": "fill_container",
                           "stroke": "$border",
@@ -52782,7 +52741,7 @@
                           "children": [
                             {
                               "type": "frame",
-                              "id": "C5O1i",
+                              "id": "AoZF3",
                               "name": "Updates text",
                               "width": "fill_container",
                               "layout": "vertical",
@@ -52790,7 +52749,7 @@
                               "children": [
                                 {
                                   "type": "text",
-                                  "id": "zAmCf",
+                                  "id": "RxrPt",
                                   "name": "Updates label",
                                   "fill": "$text-primary",
                                   "content": "Alpha channel",
@@ -52800,7 +52759,7 @@
                                 },
                                 {
                                   "type": "text",
-                                  "id": "LPMxK",
+                                  "id": "ho3xE",
                                   "name": "Update status",
                                   "fill": "$text-secondary",
                                   "textGrowth": "fixed-width",
@@ -52815,7 +52774,7 @@
                             },
                             {
                               "type": "frame",
-                              "id": "Xck3X",
+                              "id": "ZXt55",
                               "name": "Check now button",
                               "height": 36,
                               "cornerRadius": "$radius-m",
@@ -52830,7 +52789,7 @@
                               "children": [
                                 {
                                   "type": "text",
-                                  "id": "dfr07",
+                                  "id": "T4rfLi",
                                   "name": "Check now label",
                                   "fill": "$text-primary",
                                   "content": "Check now",
@@ -52846,14 +52805,14 @@
                     },
                     {
                       "type": "frame",
-                      "id": "uImJ7",
+                      "id": "V0G9yC",
                       "name": "Section / Shortcuts",
                       "width": "fill_container",
                       "layout": "vertical",
                       "children": [
                         {
                           "type": "text",
-                          "id": "vAac4",
+                          "id": "Wpk98",
                           "name": "Section label",
                           "fill": "$text-secondary",
                           "content": "SHORTCUTS",
@@ -52864,7 +52823,7 @@
                         },
                         {
                           "type": "frame",
-                          "id": "ntQSl",
+                          "id": "q12qg2",
                           "name": "Setting / Start menu",
                           "width": "fill_container",
                           "stroke": "$border",
@@ -52880,7 +52839,7 @@
                           "children": [
                             {
                               "type": "frame",
-                              "id": "ChKoq",
+                              "id": "q7rnak",
                               "name": "Setting text",
                               "width": "fill_container",
                               "layout": "vertical",
@@ -52888,7 +52847,7 @@
                               "children": [
                                 {
                                   "type": "text",
-                                  "id": "XLdIE",
+                                  "id": "eoMbL",
                                   "name": "Label",
                                   "fill": "$text-primary",
                                   "content": "Start menu",
@@ -52898,7 +52857,7 @@
                                 },
                                 {
                                   "type": "text",
-                                  "id": "UnwBr",
+                                  "id": "YQt9u",
                                   "name": "Detail",
                                   "fill": "$text-secondary",
                                   "textGrowth": "fixed-width",
@@ -52912,7 +52871,7 @@
                               ]
                             },
                             {
-                              "id": "EN67f",
+                              "id": "l7dtIx",
                               "type": "ref",
                               "ref": "n3W1d",
                               "name": "Switch"
@@ -52921,7 +52880,7 @@
                         },
                         {
                           "type": "frame",
-                          "id": "scdG2",
+                          "id": "jcMSV",
                           "name": "Setting / Desktop",
                           "width": "fill_container",
                           "stroke": "$border",
@@ -52937,7 +52896,7 @@
                           "children": [
                             {
                               "type": "frame",
-                              "id": "t7esJ",
+                              "id": "LJFgE",
                               "name": "Setting text",
                               "width": "fill_container",
                               "layout": "vertical",
@@ -52945,7 +52904,7 @@
                               "children": [
                                 {
                                   "type": "text",
-                                  "id": "gVYt1",
+                                  "id": "F1loM",
                                   "name": "Label",
                                   "fill": "$text-primary",
                                   "content": "Desktop",
@@ -52955,7 +52914,7 @@
                                 },
                                 {
                                   "type": "text",
-                                  "id": "EqQq1",
+                                  "id": "RqyQ2",
                                   "name": "Detail",
                                   "fill": "$text-secondary",
                                   "textGrowth": "fixed-width",
@@ -52969,7 +52928,7 @@
                               ]
                             },
                             {
-                              "id": "wHesn",
+                              "id": "w7tKqN",
                               "type": "ref",
                               "ref": "GX2CB",
                               "name": "Switch"
@@ -52980,14 +52939,14 @@
                     },
                     {
                       "type": "frame",
-                      "id": "a93WJo",
+                      "id": "VN0lt",
                       "name": "Section / Startup",
                       "width": "fill_container",
                       "layout": "vertical",
                       "children": [
                         {
                           "type": "text",
-                          "id": "T7WNn",
+                          "id": "j3TGY",
                           "name": "Section label",
                           "fill": "$text-secondary",
                           "content": "STARTUP",
@@ -52998,7 +52957,7 @@
                         },
                         {
                           "type": "frame",
-                          "id": "Dj4y5",
+                          "id": "Kq1tW",
                           "name": "Setting / Start with Windows",
                           "width": "fill_container",
                           "stroke": "$border",
@@ -53014,7 +52973,7 @@
                           "children": [
                             {
                               "type": "frame",
-                              "id": "XQyQw",
+                              "id": "f5Z1oe",
                               "name": "Setting text",
                               "width": "fill_container",
                               "layout": "vertical",
@@ -53022,7 +52981,7 @@
                               "children": [
                                 {
                                   "type": "text",
-                                  "id": "qdexM",
+                                  "id": "B9dRhb",
                                   "name": "Label",
                                   "fill": "$text-primary",
                                   "content": "Start with Windows",
@@ -53032,7 +52991,7 @@
                                 },
                                 {
                                   "type": "text",
-                                  "id": "kFZKn",
+                                  "id": "wP4SE",
                                   "name": "Detail",
                                   "fill": "$text-secondary",
                                   "textGrowth": "fixed-width",
@@ -53046,7 +53005,7 @@
                               ]
                             },
                             {
-                              "id": "l5Sgu",
+                              "id": "DevbM",
                               "type": "ref",
                               "ref": "GX2CB",
                               "name": "Switch"
@@ -53057,7 +53016,7 @@
                     },
                     {
                       "type": "text",
-                      "id": "EJSGn",
+                      "id": "tsQZU",
                       "name": "Tray note",
                       "fill": "$text-secondary",
                       "textGrowth": "fixed-width",
@@ -53070,14 +53029,14 @@
                     },
                     {
                       "type": "frame",
-                      "id": "Km6o3",
+                      "id": "XzEQn",
                       "name": "Section / Uninstall",
                       "width": "fill_container",
                       "layout": "vertical",
                       "children": [
                         {
                           "type": "text",
-                          "id": "qoJ7z",
+                          "id": "UwozJ",
                           "name": "Section label",
                           "fill": "$text-secondary",
                           "content": "UNINSTALL",
@@ -53088,7 +53047,7 @@
                         },
                         {
                           "type": "frame",
-                          "id": "t8e9SF",
+                          "id": "UGLuJ",
                           "name": "Setting / Uninstall",
                           "width": "fill_container",
                           "stroke": "$border",
@@ -53104,7 +53063,7 @@
                           "children": [
                             {
                               "type": "frame",
-                              "id": "HtQOb",
+                              "id": "SyFnc",
                               "name": "Setting text",
                               "width": "fill_container",
                               "layout": "vertical",
@@ -53112,7 +53071,7 @@
                               "children": [
                                 {
                                   "type": "text",
-                                  "id": "C4KE6G",
+                                  "id": "QhcWY",
                                   "name": "Label",
                                   "fill": "$text-primary",
                                   "content": "Remove cooldown.lol from this PC",
@@ -53122,7 +53081,7 @@
                                 },
                                 {
                                   "type": "text",
-                                  "id": "KEGuQ",
+                                  "id": "CVseD",
                                   "name": "Detail",
                                   "fill": "$text-secondary",
                                   "textGrowth": "fixed-width",
@@ -53137,7 +53096,7 @@
                             },
                             {
                               "type": "frame",
-                              "id": "Jdo2D",
+                              "id": "F1Sb8R",
                               "name": "Uninstall button",
                               "height": 36,
                               "cornerRadius": "$radius-m",
@@ -53152,7 +53111,7 @@
                               "children": [
                                 {
                                   "type": "text",
-                                  "id": "ET4P4",
+                                  "id": "BD8dm",
                                   "name": "Uninstall label",
                                   "fill": "$danger",
                                   "content": "Uninstall",
@@ -68492,6 +68451,50 @@
           "children": [
             {
               "type": "frame",
+              "id": "OmT01",
+              "name": "Top bar / Tooltip / Back",
+              "width": 180,
+              "height": 89,
+              "fill": "$background",
+              "layout": "none",
+              "children": [
+                {
+                  "id": "FqzuT",
+                  "type": "ref",
+                  "ref": "q3OpU",
+                  "name": "Back",
+                  "x": 8,
+                  "y": 8,
+                  "width": 36,
+                  "height": 36,
+                  "fill": "#E6EDF314",
+                  "descendants": {
+                    "cU3ej": {
+                      "icon": "arrow-left",
+                      "width": 22,
+                      "height": 22,
+                      "fill": "$text-primary"
+                    }
+                  }
+                },
+                {
+                  "id": "v6aFvW",
+                  "type": "ref",
+                  "ref": "fWzkj",
+                  "name": "Tooltip",
+                  "x": 8,
+                  "y": 48,
+                  "descendants": {
+                    "xp1r8": {
+                      "content": "Back to History (Esc)",
+                      "textGrowth": "auto"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
               "id": "rhcP2",
               "name": "Top bar / Tooltip / Settings",
               "width": 148,
@@ -70508,6 +70511,976 @@
       "fontFamily": "$font-body",
       "fontSize": 11,
       "fontWeight": "normal"
+    },
+    {
+      "id": "g89Q5J",
+      "type": "ref",
+      "reusable": true,
+      "ref": "SKE9k",
+      "name": "App shell / Top bar / Pushed",
+      "x": 640,
+      "y": 4473,
+      "width": 400,
+      "height": 640,
+      "descendants": {
+        "Q43w0": {
+          "id": "MwMZK",
+          "type": "ref",
+          "ref": "q3OpU",
+          "name": "Back",
+          "width": 36,
+          "height": 36,
+          "descendants": {
+            "cU3ej": {
+              "icon": "arrow-left"
+            }
+          }
+        },
+        "j7LJg": {
+          "content": "SCREEN TITLE"
+        },
+        "v4KixY": {
+          "enabled": false
+        }
+      }
+    },
+    {
+      "type": "frame",
+      "id": "q0RUSJ",
+      "x": 1120,
+      "y": 4473,
+      "name": "App shell / Top bar / Headline transition",
+      "fill": "$background",
+      "cornerRadius": "$radius-panel",
+      "stroke": "$border",
+      "strokeWidth": 1,
+      "layout": "vertical",
+      "gap": 24,
+      "padding": 32,
+      "children": [
+        {
+          "type": "frame",
+          "id": "jSxPS",
+          "name": "Intro",
+          "width": 1600,
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "hdt2Y",
+              "name": "Title",
+              "fill": "$text-primary",
+              "content": "HEADLINE TRANSITION",
+              "fontFamily": "$font-display",
+              "fontSize": "$font-size-title",
+              "fontWeight": "800",
+              "letterSpacing": 1,
+              "fontStyle": "italic"
+            },
+            {
+              "type": "text",
+              "id": "aqnJ3",
+              "name": "Rule",
+              "fill": "$text-secondary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "On every move between screens, a cursor erases the headline, then types the title of the next screen, like a game console. Erase 10 ms per character, type 18 ms per character, each phase 150 ms at most; the cursor stays 120 ms after the last character, then goes. Meanwhile the leading slot fades through (out, swap at the midpoint, in) over the 200 ms of the screen transition. Same for a lateral move (SETTINGS → ABOUT). With Windows' Animation effects off: no cursor, the headline swaps at once.",
+              "lineHeight": 1.5,
+              "fontFamily": "$font-body",
+              "fontSize": "$font-size-body",
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "lDy2g",
+          "name": "Columns",
+          "gap": 48,
+          "children": [
+            {
+              "type": "frame",
+              "id": "kM2hs",
+              "name": "History → Settings (push)",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "PmVNk",
+                  "name": "Column title",
+                  "fill": "$text-primary",
+                  "content": "History → Settings (push)",
+                  "fontFamily": "$font-body",
+                  "fontSize": "$font-size-body",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "cFNq5",
+                  "name": "Step 0 ms",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "OlRbw",
+                      "name": "Time",
+                      "fill": "$text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 56,
+                      "content": "0 ms",
+                      "textAlign": "right",
+                      "fontFamily": "$font-display",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "id": "J07BVc",
+                      "type": "ref",
+                      "ref": "SKE9k",
+                      "name": "Top bar · 0 ms",
+                      "width": 520,
+                      "height": 52,
+                      "descendants": {
+                        "pY8wR": {
+                          "opacity": 1
+                        },
+                        "j7LJg": {
+                          "content": "COOLDOWN",
+                          "enabled": true
+                        },
+                        "v4KixY": {
+                          "content": ".LOL",
+                          "enabled": true
+                        },
+                        "V1Ff3D": {
+                          "enabled": true
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "W1lcb",
+                      "name": "Note",
+                      "fill": "$text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": 200,
+                      "content": "The cursor appears after the last character",
+                      "fontFamily": "$font-body",
+                      "fontSize": "$font-size-caption",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "NmXs5",
+                  "name": "Step 50 ms",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "B2eS2",
+                      "name": "Time",
+                      "fill": "$text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 56,
+                      "content": "50 ms",
+                      "textAlign": "right",
+                      "fontFamily": "$font-display",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "id": "TK68O",
+                      "type": "ref",
+                      "ref": "SKE9k",
+                      "name": "Top bar · 50 ms",
+                      "width": 520,
+                      "height": 52,
+                      "descendants": {
+                        "pY8wR": {
+                          "opacity": 0.5
+                        },
+                        "j7LJg": {
+                          "content": "COOLDOW",
+                          "enabled": true
+                        },
+                        "v4KixY": {
+                          "enabled": false
+                        },
+                        "V1Ff3D": {
+                          "enabled": true
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "jzQDo",
+                      "name": "Note",
+                      "fill": "$text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": 200,
+                      "content": "Erasing, 10 ms per character; the Mark fades out",
+                      "fontFamily": "$font-body",
+                      "fontSize": "$font-size-caption",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "U7crDt",
+                  "name": "Step 100 ms",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "keMEp",
+                      "name": "Time",
+                      "fill": "$text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 56,
+                      "content": "100 ms",
+                      "textAlign": "right",
+                      "fontFamily": "$font-display",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "id": "w0BrLd",
+                      "type": "ref",
+                      "ref": "SKE9k",
+                      "name": "Top bar · 100 ms",
+                      "width": 520,
+                      "height": 52,
+                      "descendants": {
+                        "pY8wR": {
+                          "opacity": 0
+                        },
+                        "j7LJg": {
+                          "content": "CO",
+                          "enabled": true
+                        },
+                        "v4KixY": {
+                          "enabled": false
+                        },
+                        "V1Ff3D": {
+                          "enabled": true
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "wScxy",
+                      "name": "Note",
+                      "fill": "$text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": 200,
+                      "content": "Midpoint: the back arrow replaces the Mark",
+                      "fontFamily": "$font-body",
+                      "fontSize": "$font-size-caption",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "GcamB",
+                  "name": "Step 120 ms",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "D2ZgM8",
+                      "name": "Time",
+                      "fill": "$text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 56,
+                      "content": "120 ms",
+                      "textAlign": "right",
+                      "fontFamily": "$font-display",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "id": "VMx88",
+                      "type": "ref",
+                      "ref": "g89Q5J",
+                      "name": "Top bar · 120 ms",
+                      "width": 520,
+                      "height": 52,
+                      "descendants": {
+                        "pY8wR": {
+                          "opacity": 0.2
+                        },
+                        "j7LJg": {
+                          "enabled": false
+                        },
+                        "v4KixY": {
+                          "enabled": false
+                        },
+                        "V1Ff3D": {
+                          "enabled": true
+                        },
+                        "F6fQRc": {
+                          "fill": "#E6EDF314"
+                        },
+                        "F6fQRc/cU3ej": {
+                          "fill": "$accent"
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "JXZrq",
+                      "name": "Note",
+                      "fill": "$text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": 200,
+                      "content": "Erased: only the cursor is left",
+                      "fontFamily": "$font-body",
+                      "fontSize": "$font-size-caption",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "OcyBY",
+                  "name": "Step 192 ms",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "C1GXMJ",
+                      "name": "Time",
+                      "fill": "$text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 56,
+                      "content": "192 ms",
+                      "textAlign": "right",
+                      "fontFamily": "$font-display",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "id": "wPnwR",
+                      "type": "ref",
+                      "ref": "g89Q5J",
+                      "name": "Top bar · 192 ms",
+                      "width": 520,
+                      "height": 52,
+                      "descendants": {
+                        "pY8wR": {
+                          "opacity": 0.9
+                        },
+                        "j7LJg": {
+                          "content": "SETT",
+                          "enabled": true
+                        },
+                        "v4KixY": {
+                          "enabled": false
+                        },
+                        "V1Ff3D": {
+                          "enabled": true
+                        },
+                        "F6fQRc": {
+                          "fill": "#E6EDF314"
+                        },
+                        "F6fQRc/cU3ej": {
+                          "fill": "$accent"
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "tdSjt",
+                      "name": "Note",
+                      "fill": "$text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": 200,
+                      "content": "Typing, 18 ms per character",
+                      "fontFamily": "$font-body",
+                      "fontSize": "$font-size-caption",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "XxqGT",
+                  "name": "Step 264 ms",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ITolq",
+                      "name": "Time",
+                      "fill": "$text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 56,
+                      "content": "264 ms",
+                      "textAlign": "right",
+                      "fontFamily": "$font-display",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "id": "zUUBb",
+                      "type": "ref",
+                      "ref": "g89Q5J",
+                      "name": "Top bar · 264 ms",
+                      "width": 520,
+                      "height": 52,
+                      "descendants": {
+                        "pY8wR": {
+                          "opacity": 1
+                        },
+                        "j7LJg": {
+                          "content": "SETTINGS",
+                          "enabled": true
+                        },
+                        "v4KixY": {
+                          "enabled": false
+                        },
+                        "V1Ff3D": {
+                          "enabled": true
+                        },
+                        "F6fQRc": {
+                          "fill": "#E6EDF314"
+                        },
+                        "F6fQRc/cU3ej": {
+                          "fill": "$accent"
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "VGYy3",
+                      "name": "Note",
+                      "fill": "$text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": 200,
+                      "content": "Typed: the cursor stays 120 ms",
+                      "fontFamily": "$font-body",
+                      "fontSize": "$font-size-caption",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "HCpUz",
+                  "name": "Step 384 ms",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Um4nW",
+                      "name": "Time",
+                      "fill": "$text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 56,
+                      "content": "384 ms",
+                      "textAlign": "right",
+                      "fontFamily": "$font-display",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "id": "pXvcZ",
+                      "type": "ref",
+                      "ref": "g89Q5J",
+                      "name": "Top bar · 384 ms",
+                      "width": 520,
+                      "height": 52,
+                      "descendants": {
+                        "pY8wR": {
+                          "opacity": 1
+                        },
+                        "j7LJg": {
+                          "content": "SETTINGS",
+                          "enabled": true
+                        },
+                        "v4KixY": {
+                          "enabled": false
+                        },
+                        "V1Ff3D": {
+                          "enabled": false
+                        },
+                        "F6fQRc": {
+                          "fill": "#E6EDF314"
+                        },
+                        "F6fQRc/cU3ej": {
+                          "fill": "$accent"
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "xWNP5",
+                      "name": "Note",
+                      "fill": "$text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": 200,
+                      "content": "Done: the cursor is gone",
+                      "fontFamily": "$font-body",
+                      "fontSize": "$font-size-caption",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "q2aiI",
+              "name": "Settings → History (back)",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "TzPTX",
+                  "name": "Column title",
+                  "fill": "$text-primary",
+                  "content": "Settings → History (back)",
+                  "fontFamily": "$font-body",
+                  "fontSize": "$font-size-body",
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "UdrOw",
+                  "name": "Step 0 ms",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Iepg9",
+                      "name": "Time",
+                      "fill": "$text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 56,
+                      "content": "0 ms",
+                      "textAlign": "right",
+                      "fontFamily": "$font-display",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "id": "t9cEVd",
+                      "type": "ref",
+                      "ref": "g89Q5J",
+                      "name": "Top bar · 0 ms",
+                      "width": 520,
+                      "height": 52,
+                      "descendants": {
+                        "pY8wR": {
+                          "opacity": 1
+                        },
+                        "j7LJg": {
+                          "content": "SETTINGS",
+                          "enabled": true
+                        },
+                        "v4KixY": {
+                          "enabled": false
+                        },
+                        "V1Ff3D": {
+                          "enabled": true
+                        },
+                        "F6fQRc": {
+                          "fill": "#E6EDF314"
+                        },
+                        "F6fQRc/cU3ej": {
+                          "fill": "$accent"
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "gAZZm",
+                      "name": "Note",
+                      "fill": "$text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": 200,
+                      "content": "The cursor appears after the last character",
+                      "fontFamily": "$font-body",
+                      "fontSize": "$font-size-caption",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "XSjLZ",
+                  "name": "Step 40 ms",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "QJZrB",
+                      "name": "Time",
+                      "fill": "$text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 56,
+                      "content": "40 ms",
+                      "textAlign": "right",
+                      "fontFamily": "$font-display",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "id": "i64D4F",
+                      "type": "ref",
+                      "ref": "g89Q5J",
+                      "name": "Top bar · 40 ms",
+                      "width": 520,
+                      "height": 52,
+                      "descendants": {
+                        "pY8wR": {
+                          "opacity": 0.6
+                        },
+                        "j7LJg": {
+                          "content": "SETT",
+                          "enabled": true
+                        },
+                        "v4KixY": {
+                          "enabled": false
+                        },
+                        "V1Ff3D": {
+                          "enabled": true
+                        },
+                        "F6fQRc": {
+                          "fill": "#E6EDF314"
+                        },
+                        "F6fQRc/cU3ej": {
+                          "fill": "$accent"
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "Sopbq",
+                      "name": "Note",
+                      "fill": "$text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": 200,
+                      "content": "Erasing; the back arrow fades out",
+                      "fontFamily": "$font-body",
+                      "fontSize": "$font-size-caption",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Qs2np",
+                  "name": "Step 80 ms",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "whnfK",
+                      "name": "Time",
+                      "fill": "$text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 56,
+                      "content": "80 ms",
+                      "textAlign": "right",
+                      "fontFamily": "$font-display",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "id": "Sa73A",
+                      "type": "ref",
+                      "ref": "g89Q5J",
+                      "name": "Top bar · 80 ms",
+                      "width": 520,
+                      "height": 52,
+                      "descendants": {
+                        "pY8wR": {
+                          "opacity": 0.2
+                        },
+                        "j7LJg": {
+                          "enabled": false
+                        },
+                        "v4KixY": {
+                          "enabled": false
+                        },
+                        "V1Ff3D": {
+                          "enabled": true
+                        },
+                        "F6fQRc": {
+                          "fill": "#E6EDF314"
+                        },
+                        "F6fQRc/cU3ej": {
+                          "fill": "$accent"
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "OlxIp",
+                      "name": "Note",
+                      "fill": "$text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": 200,
+                      "content": "Erased: only the cursor is left",
+                      "fontFamily": "$font-body",
+                      "fontSize": "$font-size-caption",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "mHTcK",
+                  "name": "Step 100 ms",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "NbZz8",
+                      "name": "Time",
+                      "fill": "$text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 56,
+                      "content": "100 ms",
+                      "textAlign": "right",
+                      "fontFamily": "$font-display",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "id": "Foj7R",
+                      "type": "ref",
+                      "ref": "SKE9k",
+                      "name": "Top bar · 100 ms",
+                      "width": 520,
+                      "height": 52,
+                      "descendants": {
+                        "pY8wR": {
+                          "opacity": 0
+                        },
+                        "j7LJg": {
+                          "content": "C",
+                          "enabled": true
+                        },
+                        "v4KixY": {
+                          "enabled": false
+                        },
+                        "V1Ff3D": {
+                          "enabled": true
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "mL3dA",
+                      "name": "Note",
+                      "fill": "$text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": 200,
+                      "content": "Midpoint: the Mark replaces the back arrow",
+                      "fontFamily": "$font-body",
+                      "fontSize": "$font-size-caption",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Z8JykB",
+                  "name": "Step 155 ms",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "AOXh6",
+                      "name": "Time",
+                      "fill": "$text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 56,
+                      "content": "155 ms",
+                      "textAlign": "right",
+                      "fontFamily": "$font-display",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "id": "mrC4V",
+                      "type": "ref",
+                      "ref": "SKE9k",
+                      "name": "Top bar · 155 ms",
+                      "width": 520,
+                      "height": 52,
+                      "descendants": {
+                        "pY8wR": {
+                          "opacity": 0.55
+                        },
+                        "j7LJg": {
+                          "content": "COOLDO",
+                          "enabled": true
+                        },
+                        "v4KixY": {
+                          "enabled": false
+                        },
+                        "V1Ff3D": {
+                          "enabled": true
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "nSeYd",
+                      "name": "Note",
+                      "fill": "$text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": 200,
+                      "content": "12 characters: 12.5 ms each, to fit in 150 ms",
+                      "fontFamily": "$font-body",
+                      "fontSize": "$font-size-caption",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Ftkj6",
+                  "name": "Step 230 ms",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "OmrGi",
+                      "name": "Time",
+                      "fill": "$text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 56,
+                      "content": "230 ms",
+                      "textAlign": "right",
+                      "fontFamily": "$font-display",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "id": "Miswa",
+                      "type": "ref",
+                      "ref": "SKE9k",
+                      "name": "Top bar · 230 ms",
+                      "width": 520,
+                      "height": 52,
+                      "descendants": {
+                        "pY8wR": {
+                          "opacity": 1
+                        },
+                        "j7LJg": {
+                          "content": "COOLDOWN",
+                          "enabled": true
+                        },
+                        "v4KixY": {
+                          "content": ".LOL",
+                          "enabled": true
+                        },
+                        "V1Ff3D": {
+                          "enabled": true
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "bycru",
+                      "name": "Note",
+                      "fill": "$text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": 200,
+                      "content": "Typed, .LOL in accent",
+                      "fontFamily": "$font-body",
+                      "fontSize": "$font-size-caption",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "R0ppYi",
+                  "name": "Step 350 ms",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "h75DWp",
+                      "name": "Time",
+                      "fill": "$text-primary",
+                      "textGrowth": "fixed-width",
+                      "width": 56,
+                      "content": "350 ms",
+                      "textAlign": "right",
+                      "fontFamily": "$font-display",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "id": "CJeJR",
+                      "type": "ref",
+                      "ref": "SKE9k",
+                      "name": "Top bar · 350 ms",
+                      "width": 520,
+                      "height": 52,
+                      "descendants": {
+                        "pY8wR": {
+                          "opacity": 1
+                        },
+                        "j7LJg": {
+                          "content": "COOLDOWN",
+                          "enabled": true
+                        },
+                        "v4KixY": {
+                          "content": ".LOL",
+                          "enabled": true
+                        },
+                        "V1Ff3D": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "adck5",
+                      "name": "Note",
+                      "fill": "$text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": 200,
+                      "content": "Done: the cursor is gone",
+                      "fontFamily": "$font-body",
+                      "fontSize": "$font-size-caption",
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "variables": {
@@ -70682,6 +71655,22 @@
     "tint-curve": {
       "type": "number",
       "value": 0.08
+    },
+    "motion-type-erase": {
+      "type": "number",
+      "value": 10
+    },
+    "motion-type-char": {
+      "type": "number",
+      "value": 18
+    },
+    "motion-type-phase-max": {
+      "type": "number",
+      "value": 150
+    },
+    "motion-cursor-hold": {
+      "type": "number",
+      "value": 120
     }
   },
   "fileToken": "cdfa3f0f-9494-4fb1-b76f-1be028de3488"
