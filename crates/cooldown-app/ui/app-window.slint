@@ -2,9 +2,16 @@
 //
 // Screen map: docs/Product/Screens.md. Each screen lives in screens/, the
 // app shell (top bar) in shell/, shared widgets in components/.
+//
+// Navigation is a stack owned by Rust (`src/navigation.rs`, ADR-0018): the window shows the
+// screen and the modal it is given, and reports the player's moves (`open-screen`,
+// `push-screen`, `present`, `back`). Every screen of the shell stays built in its own layer,
+// so going back finds it as it was left.
 
 import { Theme } from "theme.slint";
 import { Screen } from "screen.slint";
+import { Modal } from "modal.slint";
+import { ScreenLayer } from "shell/screen-layer.slint";
 import { AppShell } from "shell/app-shell.slint";
 import { WelcomeScreen } from "screens/welcome.slint";
 import { HistoryEmpty } from "screens/history.slint";
@@ -18,10 +25,11 @@ import { DebugScreen } from "screens/debug.slint";
 import { TooltipLayer } from "shell/tooltip-layer.slint";
 import { Tooltips } from "tooltips.slint";
 
-export { Screen, SessionData, GameRowData, StatData, ExerciseData, TermData, StatKind, RefreshState, RoleIcons }
+export { Theme, Screen, Modal, SessionData, GameRowData, StatData, ExerciseData, TermData, StatKind, RefreshState, RoleIcons }
 
 export component AppWindow inherits Window {
-    title: "cooldown.lol";
+    // "Settings — cooldown.lol" on a pushed screen, for Alt+Tab and the taskbar.
+    title: root.screen-title == "" ? "cooldown.lol" : root.screen-title + " — cooldown.lol";
     // Title bar and task bar: the mark (`docs/Design/Brand.md`, app icon).
     icon: @image-url("images/app-icon.png");
     preferred-width: 1280px;
@@ -29,8 +37,29 @@ export component AppWindow inherits Window {
     background: Theme.background;
     default-font-family: Theme.font-body;
 
-    /// The screen shown. Rust picks `welcome` at start when the welcome has not been seen.
+    /// The screen shown and the modal over it, from the navigation stack. Rust sets them
+    /// (in-out only so that the app window preview can fake the navigation).
     in-out property <Screen> screen: Screen.history;
+    in-out property <Modal> modal: Modal.none;
+    /// Name of the screen shown on a pushed screen ("Settings"), empty on History and Welcome;
+    /// and of the screen the back arrow returns to ("History").
+    in-out property <string> screen-title;
+    in property <string> back-title;
+    /// The top bar headline, as the typing cursor draws it (`src/headline.rs`).
+    in-out property <string> headline-main: "COOLDOWN";
+    in-out property <string> headline-accent: ".LOL";
+    in property <bool> headline-cursor;
+    /// Screen transitions and headline typing; false when Windows' animation effects are off.
+    in property <bool> animations: true;
+    /// Settings' scroll position: Rust puts it back to the top when Settings is pushed.
+    in-out property <length> settings-scroll-y;
+    /// A top bar button (Settings, About).
+    callback open-screen(screen: Screen);
+    /// A link to a screen pushed over the current one ("Debug events ›").
+    callback push-screen(screen: Screen);
+    callback present(modal: Modal);
+    /// The back arrow or Cancel. Esc, Alt+← and the mouse back button reach Rust directly.
+    callback back();
     in property <bool> connected: false;
     in property <string> status-label: "Looking for the League client…";
     in property <string> version;
@@ -74,7 +103,6 @@ export component AppWindow inherits Window {
     callback start-with-windows-changed(wanted: bool);
     /// Uninstall section in Settings (installed builds) and its confirmation dialog.
     in property <bool> uninstall-visible;
-    in-out property <bool> uninstall-dialog-open;
     in-out property <bool> uninstall-delete-data;
     /// Rust sets it when the uninstaller could not start.
     in-out property <bool> uninstall-failed;
@@ -84,99 +112,138 @@ export component AppWindow inherits Window {
     callback debug-event(kind: string);
 
     if root.screen == Screen.welcome: WelcomeScreen {
-        lets-go => {
-            root.screen = Screen.history;
-            root.welcome-done();
-        }
+        lets-go => { root.welcome-done(); }
     }
 
     if root.screen != Screen.welcome: AppShell {
         connected: root.connected;
         status-label: root.status-label;
-        settings-active: root.screen == Screen.settings;
+        settings-active: root.screen == Screen.settings || root.screen == Screen.debug;
         about-active: root.screen == Screen.about;
-        settings-clicked => { root.screen = Screen.settings; }
-        about-clicked => { root.screen = Screen.about; }
+        pushed: root.screen != Screen.history;
+        title: root.screen-title;
+        headline-main: root.headline-main;
+        headline-accent: root.headline-accent;
+        cursor: root.headline-cursor;
+        back-tooltip: "Back to " + root.back-title + " (Esc)";
+        animated: root.animations;
+        back-clicked => { root.back(); }
+        settings-clicked => { root.open-screen(Screen.settings); }
+        about-clicked => { root.open-screen(Screen.about); }
 
-        if root.screen == Screen.history && root.sessions.length == 0: HistoryEmpty {
+        // One layer per screen, stacked; the last ones are on top.
+        Rectangle {
             vertical-stretch: 1;
-        }
+            clip: true;
 
-        if root.screen == Screen.history && root.sessions.length > 0: HistorySessions {
-            vertical-stretch: 1;
-            sessions: root.sessions;
-            workouts <=> root.history-workouts;
-            updated: root.history-updated;
-            refresh-state: root.history-refresh-state;
-            can-refresh: root.connected;
-            refresh => { root.history-refresh(); }
-        }
+            ScreenLayer {
+                width: parent.width;
+                height: parent.height;
+                shown: root.screen == Screen.history;
+                below: true;
+                animated: root.animations;
 
-        if root.screen == Screen.about: AboutScreen {
-            vertical-stretch: 1;
-            version: root.version;
-            back => { root.screen = Screen.history; }
-        }
+                if root.sessions.length == 0: HistoryEmpty {
+                    vertical-stretch: 1;
+                }
 
-        if root.screen == Screen.settings: SettingsScreen {
-            vertical-stretch: 1;
-            crash-reports: root.crash-reports;
-            all-logs: root.all-logs;
-            update-visible: root.update-visible;
-            update-status: root.update-status;
-            update-busy: root.update-busy;
-            check-updates => { root.check-updates(); }
-            shortcuts-visible: root.shortcuts-visible;
-            shortcut-start-menu: root.shortcut-start-menu;
-            shortcut-desktop: root.shortcut-desktop;
-            shortcut-start-menu-toggled => {
-                root.shortcut-start-menu = !root.shortcut-start-menu;
-                root.shortcut-start-menu-changed(root.shortcut-start-menu);
+                if root.sessions.length > 0: HistorySessions {
+                    vertical-stretch: 1;
+                    sessions: root.sessions;
+                    workouts <=> root.history-workouts;
+                    updated: root.history-updated;
+                    refresh-state: root.history-refresh-state;
+                    can-refresh: root.connected;
+                    refresh => { root.history-refresh(); }
+                }
             }
-            shortcut-desktop-toggled => {
-                root.shortcut-desktop = !root.shortcut-desktop;
-                root.shortcut-desktop-changed(root.shortcut-desktop);
-            }
-            startup-visible: root.startup-visible;
-            start-with-windows: root.start-with-windows;
-            start-with-windows-toggled => {
-                root.start-with-windows = !root.start-with-windows;
-                root.start-with-windows-changed(root.start-with-windows);
-            }
-            uninstall-visible: root.uninstall-visible;
-            uninstall-clicked => {
-                root.uninstall-delete-data = false;
-                root.uninstall-failed = false;
-                root.uninstall-dialog-open = true;
-            }
-            debug-tools: root.debug-tools;
-            open-debug => { root.screen = Screen.debug; }
-            back => { root.screen = Screen.history; }
-            crash-reports-toggled => {
-                root.crash-reports = !root.crash-reports;
-                root.crash-reports-changed(root.crash-reports);
-            }
-            all-logs-toggled => {
-                root.all-logs = !root.all-logs;
-                root.all-logs-changed(root.all-logs);
-            }
-        }
 
-        if root.screen == Screen.debug: DebugScreen {
-            vertical-stretch: 1;
-            fire(kind) => { root.debug-event(kind); }
-            back => { root.screen = Screen.settings; }
+            ScreenLayer {
+                width: parent.width;
+                height: parent.height;
+                shown: root.screen == Screen.settings;
+                below: root.screen == Screen.debug;
+                animated: root.animations;
+
+                SettingsScreen {
+                    vertical-stretch: 1;
+                    scroll-y <=> root.settings-scroll-y;
+                    crash-reports: root.crash-reports;
+                    all-logs: root.all-logs;
+                    update-visible: root.update-visible;
+                    update-status: root.update-status;
+                    update-busy: root.update-busy;
+                    check-updates => { root.check-updates(); }
+                    shortcuts-visible: root.shortcuts-visible;
+                    shortcut-start-menu: root.shortcut-start-menu;
+                    shortcut-desktop: root.shortcut-desktop;
+                    shortcut-start-menu-toggled => {
+                        root.shortcut-start-menu = !root.shortcut-start-menu;
+                        root.shortcut-start-menu-changed(root.shortcut-start-menu);
+                    }
+                    shortcut-desktop-toggled => {
+                        root.shortcut-desktop = !root.shortcut-desktop;
+                        root.shortcut-desktop-changed(root.shortcut-desktop);
+                    }
+                    startup-visible: root.startup-visible;
+                    start-with-windows: root.start-with-windows;
+                    start-with-windows-toggled => {
+                        root.start-with-windows = !root.start-with-windows;
+                        root.start-with-windows-changed(root.start-with-windows);
+                    }
+                    uninstall-visible: root.uninstall-visible;
+                    uninstall-clicked => {
+                        root.uninstall-delete-data = false;
+                        root.uninstall-failed = false;
+                        root.present(Modal.uninstall-confirm);
+                    }
+                    debug-tools: root.debug-tools;
+                    open-debug => { root.push-screen(Screen.debug); }
+                    crash-reports-toggled => {
+                        root.crash-reports = !root.crash-reports;
+                        root.crash-reports-changed(root.crash-reports);
+                    }
+                    all-logs-toggled => {
+                        root.all-logs = !root.all-logs;
+                        root.all-logs-changed(root.all-logs);
+                    }
+                }
+            }
+
+            ScreenLayer {
+                width: parent.width;
+                height: parent.height;
+                shown: root.screen == Screen.about;
+                animated: root.animations;
+
+                AboutScreen {
+                    vertical-stretch: 1;
+                    version: root.version;
+                }
+            }
+
+            if root.debug-tools: ScreenLayer {
+                width: parent.width;
+                height: parent.height;
+                shown: root.screen == Screen.debug;
+                animated: root.animations;
+
+                DebugScreen {
+                    vertical-stretch: 1;
+                    fire(kind) => { root.debug-event(kind); }
+                }
+            }
         }
     }
 
     // Over the whole window, top bar included.
-    if root.uninstall-dialog-open && root.screen == Screen.settings: SettingsUninstallDialog {
+    if root.modal == Modal.uninstall-confirm: SettingsUninstallDialog {
         width: root.width;
         height: root.height;
         delete-data: root.uninstall-delete-data;
         failed: root.uninstall-failed;
         delete-data-toggled => { root.uninstall-delete-data = !root.uninstall-delete-data; }
-        cancel => { root.uninstall-dialog-open = false; }
+        cancel => { root.back(); }
         confirm => { root.uninstall(root.uninstall-delete-data); }
     }
 

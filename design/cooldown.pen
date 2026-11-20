@@ -71671,6 +71671,10 @@
     "motion-cursor-hold": {
       "type": "number",
       "value": 120
+    },
+    "motion-push-offset": {
+      "type": "number",
+      "value": 30
     }
   },
   "fileToken": "cdfa3f0f-9494-4fb1-b76f-1be028de3488"

@@ -9,6 +9,15 @@ export component AppShell inherits VerticalLayout {
     in property <string> status-label;
     in property <bool> settings-active;
     in property <bool> about-active;
+    /// A pushed screen is shown: back arrow and title in the top bar (see `TopBar`).
+    in property <bool> pushed;
+    in property <string> title;
+    in property <string> headline-main: root.pushed ? root.title : "COOLDOWN";
+    in property <string> headline-accent: root.pushed ? "" : ".LOL";
+    in property <bool> cursor;
+    in property <string> back-tooltip: "Back (Esc)";
+    in property <bool> animated: true;
+    callback back-clicked;
     callback settings-clicked;
     callback about-clicked;
 
@@ -17,6 +26,14 @@ export component AppShell inherits VerticalLayout {
         status-label: root.status-label;
         settings-active: root.settings-active;
         about-active: root.about-active;
+        pushed: root.pushed;
+        title: root.title;
+        headline-main: root.headline-main;
+        headline-accent: root.headline-accent;
+        cursor: root.cursor;
+        back-tooltip: root.back-tooltip;
+        animated: root.animated;
+        back-clicked => { root.back-clicked(); }
         settings-clicked => { root.settings-clicked(); }
         about-clicked => { root.about-clicked(); }
     }

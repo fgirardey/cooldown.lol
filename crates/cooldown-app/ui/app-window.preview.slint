@@ -1,14 +1,37 @@
 // Preview of the whole app window: `just preview app-window`.
 //
-// The real AppWindow, routing included, fed with fixtures. Switch screens by
-// clicking, or edit `screen`, `connected` and `status-label` in the live
-// preview's Data tab. Each screen's states are in screens/*.preview.slint.
+// The real AppWindow fed with fixtures. Navigation belongs to Rust (`src/navigation.rs`):
+// here the moves are faked with a one-level stack, without the typing cursor. Edit `screen`,
+// `connected` and `status-label` in the live preview's Data tab. Each screen's states are in
+// screens/*.preview.slint.
 
-import { AppWindow } from "app-window.slint";
+import { AppWindow, Screen, Modal } from "app-window.slint";
 import { Fixtures } from "preview-kit/fixtures.slint";
 
 export component Preview inherits AppWindow {
     connected: true;
     status-label: Fixtures.status-lobby;
     version: Fixtures.version;
+    debug-tools: true;
+    back-title: self.screen == Screen.debug ? "Settings" : "History";
+
+    open-screen(screen) => { self.show(screen); }
+    push-screen(screen) => { self.show(screen); }
+    present(modal) => { self.modal = modal; }
+    back => {
+        if self.modal != Modal.none {
+            self.modal = Modal.none;
+        } else if self.screen == Screen.debug {
+            self.show(Screen.settings);
+        } else {
+            self.show(Screen.history);
+        }
+    }
+
+    function show(screen: Screen) {
+        self.screen = screen;
+        self.screen-title = screen == Screen.settings ? "Settings" : screen == Screen.about ? "About" : screen == Screen.debug ? "Debug events" : "";
+        self.headline-main = screen == Screen.history ? "COOLDOWN" : screen == Screen.settings ? "SETTINGS" : screen == Screen.about ? "ABOUT" : "DEBUG EVENTS";
+        self.headline-accent = screen == Screen.history ? ".LOL" : "";
+    }
 }

@@ -1,5 +1,6 @@
 // Settings screen: opt-in error reports, updates (alpha builds), shortcuts, startup and
-// uninstall (installed builds). Scrolls when it is taller than the window. The uninstall
+// uninstall (installed builds). Scrolls when it is taller than the window. Its title and the
+// way back are in the top bar (pushed screen, ADR-0018). The uninstall
 // confirmation is a dialog over the whole window: settings-uninstall-dialog.slint.
 //
 // Frames in design/cooldown.pen: `App shell / Settings / Default`,
@@ -8,7 +9,7 @@
 // `App shell / Settings / Scrolled to the bottom`.
 
 import { Theme } from "../theme.slint";
-import { BackLink } from "../components/back-link.slint";
+import { ForwardLink } from "../components/forward-link.slint";
 import { SettingRow } from "../components/setting-row.slint";
 import { SecondaryButton } from "../components/secondary-button.slint";
 
@@ -36,7 +37,7 @@ export component SettingsScreen inherits Rectangle {
     /// Scroll position (negative when scrolled down), and the content's height.
     in-out property <length> scroll-y <=> flick.content-y;
     out property <length> content-height: content.preferred-height;
-    callback back;
+    /// "Debug events ›": the parent pushes the debug screen.
     callback open-debug;
     /// The player clicked a switch; the parent decides whether the value changes.
     callback crash-reports-toggled;
@@ -61,24 +62,6 @@ export component SettingsScreen inherits Rectangle {
             padding-right: max(Theme.space-l, (self.width - 720px) / 2);
             spacing: Theme.space-m;
             alignment: start;
-
-            HorizontalLayout {
-                alignment: start;
-                BackLink {
-                    text: "History";
-                    clicked => { root.back(); }
-                }
-            }
-
-            Text {
-                font-family: Theme.font-display;
-                text: "SETTINGS";
-                color: Theme.text-primary;
-                font-size: Theme.font-size-title;
-                font-weight: 800;
-                font-italic: true;
-                letter-spacing: 1px;
-            }
 
             VerticalLayout {
                 Text {
@@ -285,7 +268,7 @@ export component SettingsScreen inherits Rectangle {
 
             if root.debug-tools: HorizontalLayout {
                 alignment: start;
-                BackLink {
+                ForwardLink {
                     text: "Debug events";
                     clicked => { root.open-debug(); }
                 }

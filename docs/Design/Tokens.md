@@ -73,6 +73,7 @@ Hover, pressed, focus, disabled and selected states. Buttons, icon buttons and t
 | `disabled-opacity` | 0.4 | Opacity of a disabled control (e.g. **Check now** while a check runs) |
 | `motion-fast` | 100ms | Hover and press transitions (ease-out) |
 | `motion-medium` | 200ms | Switch toggle, card expand and collapse, screen transitions (ease-out) |
+| `motion-push-offset` | 30px | How far a pushed screen slides in from, to the right ([[ADR-0018 Navigation stack]]) |
 | `motion-type-erase` | 10ms | Top bar headline: the cursor erases one character ([[ADR-0018 Navigation stack]]) |
 | `motion-type-char` | 18ms | Top bar headline: the cursor types one character |
 | `motion-type-phase-max` | 150ms | Top bar headline: longest erase or type phase; longer titles go faster |

@@ -1,0 +1,35 @@
+// One screen of the navigation stack (docs/Decisions/ADR-0018 Navigation stack.md). The
+// window stacks one layer per screen and keeps them built, so a screen under the one shown
+// keeps its scroll position and opened rows. The layer shown is opaque; the others are faded
+// out. A pushed screen slides in from the right while it fades in, and slides back out the
+// same way; the screen under it only fades.
+//
+// No Pencil frame: the motion is described in docs/Product/Screens.md (Navigation).
+
+import { Theme } from "../theme.slint";
+
+export component ScreenLayer inherits Rectangle {
+    /// The screen shown.
+    in property <bool> shown;
+    /// Under the screen shown (History under Settings, Settings under Debug): it waits in
+    /// place. Otherwise it waits `motion-push-offset` to the right, where a push slides it from.
+    in property <bool> below;
+    /// Plays the transitions (false when Windows' animation effects are off).
+    in property <bool> animated: true;
+    property <duration> duration: root.animated ? Theme.motion-medium : 0ms;
+
+    opacity: root.shown ? 1 : 0;
+    x: root.shown || root.below ? 0 : Theme.motion-push-offset;
+    // Hidden layers take no clicks, no hover and no tooltip.
+    visible: self.opacity > 0;
+    animate opacity, x {
+        duration: root.duration;
+        easing: ease-out;
+    }
+
+    VerticalLayout {
+        width: root.width;
+        height: root.height;
+        @children
+    }
+}

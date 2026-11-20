@@ -1,14 +1,13 @@
-// About screen: version, Slint licensing notice and Riot legal text.
+// About screen: version, Slint licensing notice and Riot legal text. Its title and the way
+// back are in the top bar (pushed screen, ADR-0018).
 //
 // Frame in design/cooldown.pen: `App shell / About / Default`.
 
 import { AboutSlint } from "std-widgets.slint";
 import { Theme } from "../theme.slint";
-import { BackLink } from "../components/back-link.slint";
 
 export component AboutScreen inherits VerticalLayout {
     in property <string> version;
-    callback back;
 
     // A 720 px column, centred in the window.
     padding-top: Theme.space-l;
@@ -17,24 +16,6 @@ export component AboutScreen inherits VerticalLayout {
     padding-right: max(Theme.space-l, (self.width - 720px) / 2);
     spacing: Theme.space-m;
     alignment: start;
-
-    HorizontalLayout {
-        alignment: start;
-        BackLink {
-            text: "History";
-            clicked => { root.back(); }
-        }
-    }
-
-    Text {
-        font-family: Theme.font-display;
-        text: "ABOUT";
-        color: Theme.text-primary;
-        font-size: Theme.font-size-title;
-        font-weight: 800;
-        font-italic: true;
-        letter-spacing: 1px;
-    }
 
     Text {
         font-family: Theme.font-body;

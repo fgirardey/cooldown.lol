@@ -1,6 +1,10 @@
-// Top bar: mark, wordmark, client status and the Settings and About buttons.
+// Top bar: the leading slot (the Mark on History, the back arrow on a pushed screen), the
+// headline (the wordmark, or the title of the pushed screen, retyped by a cursor on every
+// move), the client status and the Settings and About buttons. The leading slot and the
+// headline never move (docs/Decisions/ADR-0018 Navigation stack.md).
 //
-// Frame in design/cooldown.pen: `App shell / Top bar / Default`.
+// Frames in design/cooldown.pen: `App shell / Top bar / Default`, `App shell / Top bar / Pushed`,
+// `App shell / Top bar / Headline transition`.
 
 import { Theme } from "../theme.slint";
 import { Mark } from "../components/mark.slint";
@@ -12,28 +16,73 @@ export component TopBar inherits Rectangle {
     in property <string> status-label;
     in property <bool> settings-active;
     in property <bool> about-active;
+    /// A pushed screen is shown: the back arrow replaces the Mark.
+    in property <bool> pushed;
+    /// The pushed screen's title, upper case ("SETTINGS").
+    in property <string> title;
+    /// What the headline draws, in its two colours: the wordmark, or the title. The window
+    /// feeds it letter by letter while the cursor types (`src/headline.rs`).
+    in property <string> headline-main: root.pushed ? root.title : "COOLDOWN";
+    in property <string> headline-accent: root.pushed ? "" : ".LOL";
+    /// The typing cursor, after the last character.
+    in property <bool> cursor;
+    /// Names where the back arrow goes: "Back to History (Esc)".
+    in property <string> back-tooltip: "Back (Esc)";
+    /// Fades the leading slot (false when Windows' animation effects are off).
+    in property <bool> animated: true;
+    callback back-clicked;
     callback settings-clicked;
     callback about-clicked;
+    // Fade through: the one leaving fades out in the first half, the other in during the second.
+    property <duration> half: root.animated ? Theme.motion-medium / 2 : 0ms;
 
     height: 52px;
     background: Theme.surface;
 
     HorizontalLayout {
-        padding-left: Theme.space-m;
+        padding-left: Theme.space-s;
         padding-right: Theme.space-s;
         spacing: Theme.space-s;
 
-        VerticalLayout {
-            alignment: center;
-            Mark { }
+        // The Mark and the back arrow share the slot, so nothing after it moves.
+        Rectangle {
+            width: 36px;
+
+            Mark {
+                x: (parent.width - self.width) / 2;
+                y: (parent.height - self.height) / 2;
+                opacity: root.pushed ? 0 : 1;
+                animate opacity {
+                    duration: root.half;
+                    delay: root.pushed ? 0ms : root.half;
+                    easing: ease-out;
+                }
+            }
+
+            NavButton {
+                x: (parent.width - self.width) / 2;
+                y: (parent.height - self.height) / 2;
+                icon: @image-url("../images/icons/arrow-left.svg");
+                tooltip: root.back-tooltip;
+                opacity: root.pushed ? 1 : 0;
+                visible: self.opacity > 0;
+                animate opacity {
+                    duration: root.half;
+                    delay: root.pushed ? root.half : 0ms;
+                    easing: ease-out;
+                }
+                clicked => { root.back-clicked(); }
+            }
         }
 
-        // `COOLDOWN` and its `.LOL` in the accent colour.
+        // The wordmark (`.LOL` in the accent colour) or the title, and the typing cursor,
+        // packed together: the spacer after them takes the rest of the bar.
         HorizontalLayout {
-            padding-left: Theme.space-xs;
+            horizontal-stretch: 0;
+            alignment: start;
             Text {
                 font-family: Theme.font-display;
-                text: "COOLDOWN";
+                text: root.headline-main;
                 color: Theme.text-primary;
                 font-size: Theme.font-size-wordmark;
                 font-weight: 800;
@@ -43,13 +92,26 @@ export component TopBar inherits Rectangle {
             }
             Text {
                 font-family: Theme.font-display;
-                text: ".LOL";
+                text: root.headline-accent;
                 color: Theme.accent;
                 font-size: Theme.font-size-wordmark;
                 font-weight: 800;
                 font-italic: true;
                 letter-spacing: 1px;
                 vertical-alignment: center;
+            }
+            // A block slanted like the italic, in the accent colour.
+            if root.cursor: VerticalLayout {
+                alignment: center;
+                padding-left: 2px;
+                Path {
+                    width: 10px;
+                    height: 13px;
+                    viewbox-width: 10;
+                    viewbox-height: 13;
+                    commands: "M 3 0 L 10 0 L 7.4 13 L 0.4 13 Z";
+                    fill: Theme.accent;
+                }
             }
         }
 

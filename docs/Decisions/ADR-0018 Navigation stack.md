@@ -75,15 +75,20 @@ Navigation is a **stack of screens owned by Rust**, with modals kept apart from 
 - **Window title**: "cooldown.lol" on History and Welcome, "<Screen> — cooldown.lol" on pushed screens ("Settings — cooldown.lol"), for Alt+Tab and the taskbar.
 
 ### Code
-- `crates/cooldown-app/src/navigation.rs`: a pure **`Navigator`**, unit-tested.
+- `crates/cooldown-app/src/navigator.rs`: a pure **`Navigator`**, unit-tested.
   - State: `stack: Vec<Route>`, never empty, and `modal: Option<Modal>`.
-  - Moves: `open(route)` (the top bar rule above), `push(route)`, `back() -> bool` (`false` when there is nothing to close or pop), `pop_to_root()`, `reset(route)`.
-  - Each move also records whether it went forward or backward, for the transition.
-- `Route` and `Modal` are mirrored by Slint enums: `Screen` (`ui/screen.slint`) and a new `Modal`.
-- `app-window.slint` receives the current screen, the screen the back arrow returns to, the open modal and the direction of the last move. It reports moves through two callbacks, `navigate(Screen)` and `back()`. It no longer writes `screen` itself.
-- One Rust function applies the `Navigator` to the window after every move, whether the move came from the player or from Rust.
+  - Moves: `open(route)` (the top bar rule above), `push(route)`, `back() -> bool` (`false` when there is nothing to close or pop), `reset(route)`, `present(modal)`.
+  - Each move also records whether it went forward or backward.
+- `crates/cooldown-app/src/headline.rs`: the typing, pure and unit-tested. It gives the headline (in its two colours) and the cursor at any time after a move, from the `motion-type-*` tokens, which Rust reads from `Theme`.
+- `crates/cooldown-app/src/navigation.rs` binds them to the window, after every move, whether it came from the player or from Rust:
+  - it sets the screen, the modal, the screen titles and the headline frames, redrawn every 8 ms while the cursor types;
+  - it puts Settings back at the top when Settings is pushed;
+  - it handles Esc, Alt+←, ⌘[ and the mouse back button from the window's own input events (winit). They work wherever the focus and the pointer are, with no `FocusScope`.
+- `Route` and `Modal` are mirrored by Slint enums: `Screen` (`ui/screen.slint`) and `Modal` (`ui/modal.slint`).
+- `app-window.slint` receives that state and reports moves through `open-screen(Screen)` (top bar), `push-screen(Screen)` (links), `present(Modal)` and `back()` (back arrow, Cancel). It no longer writes `screen` itself.
+- Every screen of the shell has its own **`ScreenLayer`** (`ui/shell/screen-layer.slint`), stacked and always built. The layer shown is opaque; the others are faded out, and a pushed screen waits `motion-push-offset` to the right. So the transitions are bindings that Slint animates, with no direction to pass.
 - Screens stay pure: they only emit their own callbacks (`open-debug`, `cancel`, …), which `app-window.slint` turns into moves.
-- Reading Windows' Animation effects setting is platform code (`src/platform/`). macOS returns "on".
+- Reading Windows' Animation effects setting is platform code (`src/platform/`): `MinAnimate` in `HKCU\Control Panel\Desktop\WindowMetrics`, read once at launch. macOS returns "on".
 
 ## Alternatives considered
 - **A static hierarchy in Slint**: a `parent(screen)` function, where Back means "go to the parent". This is enough while the hierarchy has no parameters, and it costs no Rust. Rust still has to drive navigation (welcome, workout ready), though, and Slint can't hold a stack of its own, since it can't push to an array. Any screen with an argument (a game, a session) would need the stack anyway.
@@ -100,6 +105,7 @@ Navigation is a **stack of screens owned by Rust**, with modals kept apart from 
 - Navigation can be unit-tested in Rust, including the moves triggered by the app (workout ready, welcome).
 - History must no longer be built in an `if`: it stays built under the pushed screens. Its rows keep their opened state, so anything that rebuilds the sessions model must keep it too.
 - `TooltipLayer` keeps dismissing the tooltip on every move ([[ADR-0017 Tooltips drawn by the window]]).
-- Keys need a `FocusScope` at the root of the window that gets keys back after a click. The mouse back button needs a root `TouchArea` that sees `PointerEventButton.back`, which Slint 1.18 has, even when the pointer is over a control. Both are to check while implementing. If a control swallows the mouse back button, Rust can listen to the window's input instead.
+- The Back inputs depend on Slint's winit backend (`unstable-winit-030`, already used to bring the window to the front).
+- The app window preview (`just preview app-window`) fakes the navigation with a one-level stack, without typing.
 - The headline transition is drawn step by step in `App shell / Top bar / Headline transition` (`design/cooldown.pen`). The Settings and About frames use `App shell / Top bar / Pushed`.
-- To do: the forward link of Settings (debug builds only, no design yet), then the `Navigator`, the window and the previews.
+- Left for the post-game workout: popping back to History and the prompt waiting behind the uninstall confirmation or the welcome, when a workout is ready.

@@ -1,13 +1,13 @@
-// Previews of BackLink: `just preview components/back-link`.
+// Previews of ForwardLink: `just preview components/forward-link`.
 
 import { Theme } from "../theme.slint";
-import { BackLink } from "back-link.slint";
+import { ForwardLink } from "forward-link.slint";
 import { PreviewCase } from "../preview-kit/preview-case.slint";
 import { PreviewPlayground } from "../preview-kit/preview-playground.slint";
 
 // Edit the knobs in the live preview's Data tab; clicks show as the last action.
-export component BackLinkPlayground inherits Window {
-    in-out property <string> text: "History";
+export component ForwardLinkPlayground inherits Window {
+    in-out property <string> text: "Debug events";
 
     background: Theme.background;
     preferred-width: 360px;
@@ -15,7 +15,7 @@ export component BackLinkPlayground inherits Window {
     playground := PreviewPlayground {
         HorizontalLayout {
             alignment: start;
-            BackLink {
+            ForwardLink {
                 text: root.text;
                 clicked => { playground.log("clicked"); }
             }
@@ -25,7 +25,7 @@ export component BackLinkPlayground inherits Window {
 
 // Gallery of every variant (default component of the file).
 export component Preview inherits Window {
-    title: "BackLink";
+    title: "ForwardLink";
     background: Theme.background;
     preferred-width: 360px;
 
@@ -38,14 +38,14 @@ export component Preview inherits Window {
             label: "Default";
             HorizontalLayout {
                 alignment: start;
-                BackLink { text: "History"; }
+                ForwardLink { text: "Debug events"; }
             }
         }
         PreviewCase {
             label: "Long text";
             HorizontalLayout {
                 alignment: start;
-                BackLink { text: "Back to the previous screen"; }
+                ForwardLink { text: "Open the next screen with a long name"; }
             }
         }
     }
