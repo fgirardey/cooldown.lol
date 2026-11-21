@@ -22384,16 +22384,23 @@
               "enabled": false
             },
             "Ejey0": {
-              "id": "BqHgl",
+              "id": "WUldW",
               "type": "ref",
               "ref": "gyy5a",
               "name": "Hover tooltip",
               "x": 236.71875,
               "y": 80.05714285714285,
+              "fill": "#3B3934",
+              "stroke": "#D29922B3",
               "descendants": {
+                "a15K3": {
+                  "content": "THIS GAME",
+                  "fill": "$warning"
+                },
                 "ewiAm": {
                   "content": "22 %",
-                  "fill": "$warning"
+                  "fill": "$warning",
+                  "fontSize": 32
                 },
                 "L21dt": {
                   "fill": "$warning"
@@ -22401,17 +22408,31 @@
                 "rNjBw": {
                   "content": "Below average"
                 },
+                "Dh0zd": {
+                  "enabled": true,
+                  "fill": "#D2992259"
+                },
+                "qY5Dc": {
+                  "enabled": false
+                },
                 "SQ0m4": {
                   "content": "11"
                 },
                 "Fj2f9": {
-                  "fill": "#00000000",
-                  "stroke": "$border",
-                  "strokeWidth": 1
+                  "enabled": false
                 },
-                "HfPMz": {
-                  "content": "Same as this game",
-                  "fill": "$text-secondary"
+                "c2XJPK": {
+                  "enabled": true
+                },
+                "Kg7cV": {
+                  "fill": "#3B3934"
+                },
+                "RNfyy": {
+                  "fill": "#3B3934",
+                  "stroke": "#D29922B3"
+                },
+                "Kv0sI": {
+                  "enabled": true
                 }
               }
             }
@@ -23007,10 +23028,20 @@
               "id": "fWzkj",
               "name": "Tooltip",
               "reusable": true,
-              "fill": "$surface",
+              "fill": "$surface-raised",
               "cornerRadius": "$radius-chip",
-              "stroke": "$border",
+              "stroke": "$border-raised",
               "strokeWidth": 1,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "$shadow",
+                "offset": {
+                  "x": 0,
+                  "y": 6
+                },
+                "blur": 16
+              },
               "padding": [
                 6,
                 10
@@ -23028,6 +23059,37 @@
                   "fontFamily": "$font-body",
                   "fontSize": 12,
                   "fontWeight": "normal"
+                },
+                {
+                  "type": "rectangle",
+                  "id": "C66IGU",
+                  "layoutPosition": "absolute",
+                  "x": 114,
+                  "y": 0,
+                  "name": "Pointer cover",
+                  "fill": "$surface-raised",
+                  "width": 12,
+                  "height": 1
+                },
+                {
+                  "type": "path",
+                  "id": "JBVEy",
+                  "layoutPosition": "absolute",
+                  "x": 113,
+                  "y": -6,
+                  "name": "Pointer",
+                  "geometry": "M0 7l7-6.5 7 6.5",
+                  "viewBox": [
+                    0,
+                    0,
+                    14,
+                    7
+                  ],
+                  "fill": "$surface-raised",
+                  "width": 14,
+                  "height": 7,
+                  "stroke": "$border-raised",
+                  "strokeWidth": 1
                 }
               ]
             },
@@ -23037,7 +23099,7 @@
               "name": "History refresh / Tooltip / Idle",
               "fill": "$background",
               "layout": "vertical",
-              "gap": 4,
+              "gap": 11,
               "padding": 12,
               "alignItems": "end",
               "children": [
@@ -23055,6 +23117,12 @@
                   "descendants": {
                     "xp1r8": {
                       "content": "Read your latest games from the League client now. History also updates on its own after each game."
+                    },
+                    "C66IGU": {
+                      "x": 218
+                    },
+                    "JBVEy": {
+                      "x": 217
                     }
                   }
                 }
@@ -23066,7 +23134,7 @@
               "name": "History refresh / Tooltip / Updating",
               "fill": "$background",
               "layout": "vertical",
-              "gap": 4,
+              "gap": 11,
               "padding": 12,
               "alignItems": "end",
               "children": [
@@ -23084,6 +23152,12 @@
                   "descendants": {
                     "xp1r8": {
                       "content": "Reading your latest games from the League client…"
+                    },
+                    "C66IGU": {
+                      "x": 218
+                    },
+                    "JBVEy": {
+                      "x": 217
                     }
                   }
                 }
@@ -23095,7 +23169,7 @@
               "name": "History refresh / Tooltip / Waiting for login",
               "fill": "$background",
               "layout": "vertical",
-              "gap": 4,
+              "gap": 11,
               "padding": 12,
               "alignItems": "end",
               "children": [
@@ -23113,6 +23187,12 @@
                   "descendants": {
                     "xp1r8": {
                       "content": "Waiting for you to log in to the League client. Trying again every 10 s."
+                    },
+                    "C66IGU": {
+                      "x": 218
+                    },
+                    "JBVEy": {
+                      "x": 217
                     }
                   }
                 }
@@ -23124,7 +23204,7 @@
               "name": "History refresh / Tooltip / Client not answering",
               "fill": "$background",
               "layout": "vertical",
-              "gap": 4,
+              "gap": 11,
               "padding": 12,
               "alignItems": "end",
               "children": [
@@ -23142,6 +23222,12 @@
                   "descendants": {
                     "xp1r8": {
                       "content": "The League client isn't answering. Trying again every 10 s."
+                    },
+                    "C66IGU": {
+                      "x": 218
+                    },
+                    "JBVEy": {
+                      "x": 217
                     }
                   }
                 }
@@ -23153,7 +23239,7 @@
               "name": "History refresh / Tooltip / Offline",
               "fill": "$background",
               "layout": "vertical",
-              "gap": 4,
+              "gap": 11,
               "padding": 12,
               "alignItems": "end",
               "children": [
@@ -23171,6 +23257,12 @@
                   "descendants": {
                     "xp1r8": {
                       "content": "Open the League client to refresh History."
+                    },
+                    "C66IGU": {
+                      "x": 218
+                    },
+                    "JBVEy": {
+                      "x": 217
                     }
                   }
                 }
@@ -23182,7 +23274,7 @@
               "name": "Tooltip behaviour",
               "width": 320,
               "height": 330,
-              "content": "Tooltip (ADR-0017, Tokens > Tooltip): every control whose state needs a reason. Timing and placement from Material Design: opens 500 ms after the pointer rests on the control (fade in and grow from 0.8, 150 ms), stays 600 ms after it leaves (moving to another control switches the text at once), fades out in 75 ms. Centered under the control with a 4 px gap, above it when there is no room below, 8 px from the window edges; near a side edge, aligned with the control's start or end (here: the button's end). Stays inside the window, never takes clicks. Shown on disabled controls too: that is when the reason matters most. Text: font-size-caption, text-primary, wraps at 220 px."
+              "content": "Tooltip (ADR-0017, Tokens > Tooltip): every control whose state needs a reason. Timing and placement from Material Design: opens 300 ms after the pointer rests on the control (fade in and grow from 0.8, 150 ms), stays 100 ms after it leaves (moving to another control switches the text at once), fades out in 75 ms. Centered under the control, a pointer on its edge aimed at the control and 4 px from it, above it (pointer down) when there is no room below, on the roomier side when neither has room, 8 px from the window edges; near a side edge, aligned with the control's start or end (here: the button's end). Stays inside the window, never takes clicks. Shown on disabled controls too: that is when the reason matters most. Raised panel: surface-raised, border-raised outline, shadow (lighter tone for elevation, as Material does in dark mode). Text: font-size-caption, text-primary, wraps at 220 px."
             }
           ]
         },
@@ -23197,7 +23289,7 @@
               "id": "OmT01",
               "name": "Top bar / Tooltip / Back",
               "width": 180,
-              "height": 89,
+              "height": 96,
               "fill": "$background",
               "layout": "none",
               "children": [
@@ -23226,11 +23318,17 @@
                   "ref": "fWzkj",
                   "name": "Tooltip",
                   "x": 8,
-                  "y": 48,
+                  "y": 55,
                   "descendants": {
                     "xp1r8": {
                       "content": "Back to History (Esc)",
                       "textGrowth": "auto"
+                    },
+                    "C66IGU": {
+                      "x": 12
+                    },
+                    "JBVEy": {
+                      "x": 11
                     }
                   }
                 }
@@ -23241,7 +23339,7 @@
               "id": "rhcP2",
               "name": "Top bar / Tooltip / Settings",
               "width": 148,
-              "height": 89,
+              "height": 96,
               "fill": "$background",
               "layout": "none",
               "children": [
@@ -23291,11 +23389,17 @@
                   "ref": "fWzkj",
                   "name": "Tooltip",
                   "x": 44.5,
-                  "y": 48,
+                  "y": 55,
                   "descendants": {
                     "xp1r8": {
                       "content": "Settings",
                       "textGrowth": "auto"
+                    },
+                    "C66IGU": {
+                      "x": 49
+                    },
+                    "JBVEy": {
+                      "x": 48
                     }
                   }
                 }
@@ -23306,7 +23410,7 @@
               "id": "b9DCmD",
               "name": "Top bar / Tooltip / About",
               "width": 148,
-              "height": 89,
+              "height": 96,
               "fill": "$background",
               "layout": "none",
               "children": [
@@ -23356,11 +23460,17 @@
                   "ref": "fWzkj",
                   "name": "Tooltip",
                   "x": 86,
-                  "y": 48,
+                  "y": 55,
                   "descendants": {
                     "xp1r8": {
                       "content": "About",
                       "textGrowth": "auto"
+                    },
+                    "C66IGU": {
+                      "x": 8
+                    },
+                    "JBVEy": {
+                      "x": 7
                     }
                   }
                 }
@@ -23372,7 +23482,7 @@
               "name": "Settings / Check now / Tooltip / Idle",
               "fill": "$background",
               "layout": "vertical",
-              "gap": 4,
+              "gap": 11,
               "padding": 12,
               "alignItems": "center",
               "children": [
@@ -23398,6 +23508,12 @@
                     "xp1r8": {
                       "content": "Look for a new alpha build now.",
                       "textGrowth": "auto"
+                    },
+                    "C66IGU": {
+                      "x": 94
+                    },
+                    "JBVEy": {
+                      "x": 93
                     }
                   }
                 }
@@ -23409,7 +23525,7 @@
               "name": "Settings / Check now / Tooltip / Busy",
               "fill": "$background",
               "layout": "vertical",
-              "gap": 4,
+              "gap": 11,
               "padding": 12,
               "alignItems": "center",
               "children": [
@@ -23435,6 +23551,12 @@
                   "descendants": {
                     "xp1r8": {
                       "content": "A check or a download is running. Wait for it to finish."
+                    },
+                    "C66IGU": {
+                      "x": 114
+                    },
+                    "JBVEy": {
+                      "x": 113
                     }
                   }
                 }
@@ -23446,7 +23568,7 @@
               "name": "Game row / Expand / Tooltip / Collapsed",
               "fill": "$background",
               "layout": "vertical",
-              "gap": 4,
+              "gap": 11,
               "padding": 12,
               "alignItems": "center",
               "children": [
@@ -23482,6 +23604,12 @@
                     "xp1r8": {
                       "content": "Show details",
                       "textGrowth": "auto"
+                    },
+                    "C66IGU": {
+                      "x": 40.5
+                    },
+                    "JBVEy": {
+                      "x": 39.5
                     }
                   }
                 }
@@ -23493,7 +23621,7 @@
               "name": "Game row / Expand / Tooltip / Expanded",
               "fill": "$background",
               "layout": "vertical",
-              "gap": 4,
+              "gap": 11,
               "padding": 12,
               "alignItems": "center",
               "children": [
@@ -23529,6 +23657,12 @@
                     "xp1r8": {
                       "content": "Hide details",
                       "textGrowth": "auto"
+                    },
+                    "C66IGU": {
+                      "x": 37.5
+                    },
+                    "JBVEy": {
+                      "x": 36.5
                     }
                   }
                 }
@@ -23539,7 +23673,7 @@
               "id": "iiPMS",
               "name": "Champion portrait / Tooltip / Role",
               "width": 120,
-              "height": 111,
+              "height": 118,
               "fill": "$background",
               "layout": "none",
               "children": [
@@ -23557,11 +23691,17 @@
                   "ref": "fWzkj",
                   "name": "Tooltip",
                   "x": 18.5,
-                  "y": 70,
+                  "y": 77,
                   "descendants": {
                     "xp1r8": {
                       "content": "Bottom",
                       "textGrowth": "auto"
+                    },
+                    "C66IGU": {
+                      "x": 24.5
+                    },
+                    "JBVEy": {
+                      "x": 23.5
                     }
                   }
                 }
@@ -23573,7 +23713,7 @@
               "name": "Game row / Played / Tooltip",
               "fill": "$background",
               "layout": "vertical",
-              "gap": 4,
+              "gap": 11,
               "padding": 12,
               "alignItems": "center",
               "children": [
@@ -23596,6 +23736,12 @@
                     "xp1r8": {
                       "content": "Sunday 1 November 2026, 20:35",
                       "textGrowth": "auto"
+                    },
+                    "C66IGU": {
+                      "x": 97
+                    },
+                    "JBVEy": {
+                      "x": 96
                     }
                   }
                 }
@@ -23615,10 +23761,20 @@
               "name": "Game row / Details / Exercise / Tooltip",
               "reusable": true,
               "width": 264,
-              "fill": "$surface",
+              "fill": "$surface-raised",
               "cornerRadius": "$radius-chip",
-              "stroke": "$border",
+              "stroke": "$border-raised",
               "strokeWidth": 1,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "$shadow",
+                "offset": {
+                  "x": 0,
+                  "y": 6
+                },
+                "blur": 16
+              },
               "layout": "vertical",
               "gap": 8,
               "padding": [
@@ -23626,6 +23782,17 @@
                 12
               ],
               "children": [
+                {
+                  "type": "text",
+                  "id": "a15K3",
+                  "name": "Eyebrow",
+                  "fill": "$text-secondary",
+                  "content": "WHAT IF",
+                  "fontFamily": "$font-body",
+                  "fontSize": 10,
+                  "fontWeight": "700",
+                  "letterSpacing": 0.8
+                },
                 {
                   "type": "frame",
                   "id": "AtURE",
@@ -23687,9 +23854,12 @@
                 {
                   "type": "rectangle",
                   "id": "Dh0zd",
+                  "x": 12,
+                  "y": 79,
                   "name": "Divider",
-                  "fill": "$border",
-                  "width": "fill_container",
+                  "enabled": false,
+                  "fill": "$border-raised",
+                  "width": "fill_container(240)",
                   "height": 1
                 },
                 {
@@ -23700,6 +23870,16 @@
                   "gap": 8,
                   "alignItems": "center",
                   "children": [
+                    {
+                      "type": "icon",
+                      "id": "qY5Dc",
+                      "name": "Arrow",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "arrow-right",
+                      "library": "lucide",
+                      "fill": "$text-secondary"
+                    },
                     {
                       "id": "x3uzFc",
                       "type": "ref",
@@ -23767,6 +23947,33 @@
                           "fontWeight": "600"
                         }
                       ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "c2XJPK",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Status pill",
+                      "enabled": false,
+                      "fill": "#8B949E1F",
+                      "cornerRadius": "$radius-chip",
+                      "padding": [
+                        2,
+                        6
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Bx0th",
+                          "name": "Status label",
+                          "fill": "$text-secondary",
+                          "content": "0/11 · skipped",
+                          "fontFamily": "$font-body",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        }
+                      ]
                     }
                   ]
                 },
@@ -23777,7 +23984,7 @@
                   "x": 126,
                   "y": 0,
                   "name": "Pointer cover",
-                  "fill": "$surface",
+                  "fill": "$surface-raised",
                   "width": 12,
                   "height": 1
                 },
@@ -23789,13 +23996,83 @@
                   "y": -6,
                   "name": "Pointer",
                   "geometry": "M0 7l7-6.5 7 6.5",
-                  "fill": "$surface",
+                  "viewBox": [
+                    0,
+                    0,
+                    14,
+                    7
+                  ],
+                  "fill": "$surface-raised",
                   "width": 14,
                   "height": 7,
-                  "stroke": "$border",
+                  "stroke": "$border-raised",
                   "strokeWidth": 1
+                },
+                {
+                  "type": "text",
+                  "id": "Kv0sI",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Target gap",
+                  "enabled": false,
+                  "fill": "$text-secondary",
+                  "content": "−9 pts to target 31 %",
+                  "fontFamily": "$font-body",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
                 }
               ]
+            },
+            {
+              "id": "ti66Z",
+              "type": "ref",
+              "ref": "gyy5a",
+              "name": "Game row / Details / Exercise / Tooltip / This game",
+              "fill": "#3B3934",
+              "stroke": "#D29922B3",
+              "descendants": {
+                "a15K3": {
+                  "content": "THIS GAME",
+                  "fill": "$warning"
+                },
+                "ewiAm": {
+                  "content": "22 %",
+                  "fill": "$warning",
+                  "fontSize": 32
+                },
+                "L21dt": {
+                  "fill": "$warning"
+                },
+                "rNjBw": {
+                  "content": "Below average"
+                },
+                "Dh0zd": {
+                  "enabled": true,
+                  "fill": "#D2992259"
+                },
+                "qY5Dc": {
+                  "enabled": false
+                },
+                "SQ0m4": {
+                  "content": "11"
+                },
+                "Fj2f9": {
+                  "enabled": false
+                },
+                "c2XJPK": {
+                  "enabled": true
+                },
+                "Kg7cV": {
+                  "fill": "#3B3934"
+                },
+                "RNfyy": {
+                  "fill": "#3B3934",
+                  "stroke": "#D29922B3"
+                },
+                "Kv0sI": {
+                  "enabled": true
+                }
+              }
             },
             {
               "id": "H5JJ09",
@@ -23846,7 +24123,7 @@
                 },
                 "Fj2f9": {
                   "fill": "#00000000",
-                  "stroke": "$border",
+                  "stroke": "$border-raised",
                   "strokeWidth": 1
                 },
                 "HfPMz": {
@@ -25331,6 +25608,18 @@
     "motion-push-offset": {
       "type": "number",
       "value": 30
+    },
+    "surface-raised": {
+      "type": "color",
+      "value": "#262C36"
+    },
+    "border-raised": {
+      "type": "color",
+      "value": "#444C56"
+    },
+    "shadow": {
+      "type": "color",
+      "value": "#01040999"
     }
   },
   "fileToken": "cdfa3f0f-9494-4fb1-b76f-1be028de3488"

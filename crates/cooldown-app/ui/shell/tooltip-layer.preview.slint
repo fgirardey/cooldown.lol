@@ -1,11 +1,13 @@
 // Previews of TooltipLayer: `just preview shell/tooltip-layer`. Its placement under the History
 // refresh is in `screens/history-refresh.preview.slint` (the `History refresh / Tooltip / *`
-// frames); here, the other rules: centered, above at the bottom edge, kept off the side edges.
+// frames); here, the other rules: centered, above at the bottom edge, kept off the side edges,
+// with the pointer still aimed at the control, for a text and a cost curve's tooltip.
 
 import { Theme } from "../theme.slint";
 import { TooltipLayer } from "tooltip-layer.slint";
 import { PreviewCase } from "../preview-kit/preview-case.slint";
 import { PreviewPlayground } from "../preview-kit/preview-playground.slint";
+import { StatZone } from "../models.slint";
 
 // A control at (x, y) and the tooltip held open for it.
 component Placed inherits Rectangle {
@@ -13,9 +15,12 @@ component Placed inherits Rectangle {
     in property <length> anchor-y;
     in property <string> text: "Read your latest games from the League client now.";
     in property <length> frame-width: 360px;
+    in property <length> frame-height: 120px;
+    /// A cost curve's structured tooltip instead of the text.
+    in property <bool> curve;
 
     width: root.frame-width;
-    height: 120px;
+    height: root.frame-height;
     background: Theme.background;
     border-width: 1px;
     border-color: Theme.border;
@@ -31,7 +36,24 @@ component Placed inherits Rectangle {
 
     TooltipLayer {
         always-open: true;
-        request: { text: root.text, x: root.anchor-x, y: root.anchor-y, width: 32px, height: 32px };
+        request: {
+            text: root.text,
+            x: root.anchor-x,
+            y: root.anchor-y,
+            width: 32px,
+            height: 32px,
+            has-curve: root.curve,
+            curve: {
+                value: "27 %",
+                noun: "damage share",
+                zone: StatZone.average,
+                exercise-icon: @image-url("../images/icons/burpee.svg"),
+                amount: "5",
+                unit: "burpees",
+                difference: -6,
+                difference-label: "−6 vs this game",
+            },
+        };
     }
 }
 
@@ -64,7 +86,7 @@ export component Preview inherits Window {
         alignment: start;
 
         PreviewCase {
-            label: "Centered under the control, 4 px gap";
+            label: "Centered under the control, 4 px to the tip of the pointer";
             Placed { anchor-x: 164px; anchor-y: 12px; }
         }
 
@@ -86,6 +108,31 @@ export component Preview inherits Window {
         PreviewCase {
             label: "Window narrower than the tooltip: it wraps to fit, 8 px from both edges";
             Placed { frame-width: 150px; anchor-x: 59px; anchor-y: 12px; }
+        }
+
+        PreviewCase {
+            label: "Bottom-right corner: above, aligned with its end";
+            Placed { anchor-x: 324px; anchor-y: 84px; }
+        }
+
+        PreviewCase {
+            label: "Top-left corner, control touching the edges";
+            Placed { anchor-x: 0px; anchor-y: 0px; }
+        }
+
+        PreviewCase {
+            label: "Cost curve tooltip near the left edge: kept in, pointer on the control";
+            Placed { curve: true; frame-height: 170px; anchor-x: 16px; anchor-y: 12px; }
+        }
+
+        PreviewCase {
+            label: "Cost curve tooltip at the bottom-right corner: above, pointer down";
+            Placed { curve: true; frame-height: 170px; anchor-x: 320px; anchor-y: 130px; }
+        }
+
+        PreviewCase {
+            label: "No room above nor below: the roomier side, kept inside the window";
+            Placed { curve: true; frame-height: 120px; anchor-x: 164px; anchor-y: 44px; }
         }
     }
 }

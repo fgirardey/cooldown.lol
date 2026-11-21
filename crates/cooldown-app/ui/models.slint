@@ -95,6 +95,14 @@ export struct CurveTooltipData {
     difference: int,
     /// "−6 vs this game", "Same as this game".
     difference-label: string,
+    /// The game itself (the pointer on its dot) rather than another value: the status and the
+    /// gap to target replace the difference.
+    this-game: bool,
+    /// "0/11 · skipped", "11/11 · complete", "8/11 · 3 missing", in `status-color`.
+    status: string,
+    status-color: color,
+    /// "−9 pts to target 31 %", empty on target.
+    target-gap: string,
 }
 
 /// A tooltip to show: its content and the control it explains, in window coordinates (see
@@ -125,6 +133,9 @@ export struct ExerciseData {
     target: string,
     /// "−72 CS", "−9 pts", or empty on target and for the plank.
     gap: string,
+    /// For the game's tooltip on its cost curve: "−9 pts to target 31 %", "2 deaths over target
+    /// 3"; empty on target.
+    target-gap: string,
     done: int,
     due: int,
     /// "s" for the plank, empty for repetitions.

@@ -6,7 +6,7 @@ date: 2026-11-14
 # ADR-0017 Tooltips drawn by the window
 
 ## Context
-Controls explain their state in a tooltip ([[Tokens#Tooltip]]), starting with the History refresh, and other parts of the app will show details on hover (a champion portrait, for example). The tooltip follows Material Design's timing and placement: it opens 500 ms after the pointer rests on the control and stays 600 ms after it leaves; it sits centered under the control, or above it when there is no room below, and 8 px from the window edges. It must never take the pointer: the control under it keeps its clicks and hover, disabled or not.
+Controls explain their state in a tooltip ([[Tokens#Tooltip]]), starting with the History refresh, and other parts of the app will show details on hover (a champion portrait, for example). The tooltip follows Material Design's timing and placement: it opens after the pointer rests on the control (300 ms, quicker than MDC Web's 500 ms) and stays briefly after it leaves (100 ms, shorter than MDC Web's 600 ms, which lingered); it sits centered under the control, or above it when there is no room below, and 8 px from the window edges. It must never take the pointer: the control under it keeps its clicks and hover, disabled or not.
 
 Slint 1.18 cannot do this with a popup:
 - Its built-in `Tooltip` is input-transparent, but it places itself at the pointer, and its delay and offset can't be changed.
@@ -17,6 +17,7 @@ Slint 1.18 cannot do this with a popup:
 - The window draws its **one tooltip** itself: `TooltipLayer` (`ui/shell/tooltip-layer.slint`), the last child of `app-window.slint`, so it is above everything, never clipped by a scroll view, and click-through (it has no `TouchArea`). The layer handles the timing and placement.
 - A control asks for a tooltip by being wrapped in **`TooltipAnchor`** (`ui/components/tooltip-anchor.slint`). It is a `TouchArea` that only watches the pointer: it reports its text and its place in the window (`absolute-position`, size) to the `Tooltips` **UI global** (`ui/tooltips.slint`), which `app-window.slint` passes to the layer.
 - `TooltipAnchor` writing `Tooltips` is the **one exception** to pure components (`.claude/rules/slint.md`). `Tooltips` holds what is drawn under the pointer, never app state, and only `TooltipAnchor` writes it.
+- Every tooltip has a **pointer** on the edge facing its control, aimed at the control's centre wherever the panel is shifted to stay in the window, and the panel is a raised surface (lighter tone, outline, shadow) so it reads against the dark screens ([[Tokens#Tooltip]]). When neither side of the control has room, the layer puts it on the roomier side, inside the window.
 - The tooltip stays **inside the window**. Its content is data: a text (`TooltipText`), or a structured layout the request carries as a struct, like a cost curve's tooltip (`CurveTooltip`, from `TooltipRequest.curve`). A chart's tooltip can follow a point inside its anchor (`TooltipAnchor.spot`) instead of sitting under the whole anchor.
 
 ## Alternatives considered
@@ -26,6 +27,6 @@ Slint 1.18 cannot do this with a popup:
 
 ## Consequences
 - Adding a tooltip is one wrapper. The timing, placement and look are in one place.
-- Moving from one control to the next while a tooltip is shown switches its text at once, without the 500 ms delay.
+- Moving from one control to the next while a tooltip is shown switches its text at once, without the opening delay.
 - A control removed while the pointer is on it sends no leave. `app-window.slint` dismisses the tooltip when the screen changes, the case that happens. A control removed in place would leave its tooltip until the next hover.
 - Previews that need hover add a `TooltipLayer` bound to `Tooltips`, like the app window. Stories hold the layer open (`always-open`) since they can't hover.

@@ -62,11 +62,14 @@ export component CostCurve inherits Rectangle {
     // except near a marker of the curve (the game's dot, the floor, the average, the target),
     // where it snaps to that marker's value; only the labels round the value like the stat is
     // shown.
-    property <length> pointer-x: clamp(hover.mouse-x, 0px, root.plot-width);
-    property <float> pointer-progress: (root.pointer-x / root.plot-width - root.floor-at) / root.span;
+    // The hover area reaches `near-distance` past the curve on every side, beyond the plot: the
+    // pointer is read in the plot's coordinates, its x kept within the plot.
     property <length> near-distance: 32px;
+    property <length> pointer-x: clamp(hover.mouse-x + hover.x, 0px, root.plot-width);
+    property <length> pointer-y: hover.mouse-y + hover.y;
+    property <float> pointer-progress: (root.pointer-x / root.plot-width - root.floor-at) / root.span;
     property <bool> hovering: hover.has-hover
-        && abs(hover.mouse-y - root.y-of(root.amount-of(root.pointer-progress))) <= root.near-distance;
+        && abs(root.pointer-y - root.y-of(root.amount-of(root.pointer-progress))) <= root.near-distance;
     property <length> snap-distance: 10px;
     // What the hover snapped to: 0 nothing, 1 the game's dot, 2 the floor, 3 the average,
     // 4 the target.
@@ -90,6 +93,11 @@ export component CostCurve inherits Rectangle {
     property <length> hover-x: root.x-of(root.hover-progress);
     property <length> hover-y: root.y-of(root.hover-amount);
     property <int> hover-difference: root.hover-due - root.exercise.due;
+    // What became of the game's amount, for its tooltip: "0/11 · skipped", "8/11 · 3 missing".
+    property <string> game-status: root.exercise.done + root.exercise.unit + "/" + root.exercise.due + root.exercise.unit + " · "
+        + (root.exercise.skipped ? "skipped"
+            : root.exercise.done >= root.exercise.due ? "complete"
+            : (root.exercise.due - root.exercise.done) + root.exercise.unit + " missing");
     property <StatZone> hover-zone: root.hover-progress <= 0 ? StatZone.floor
         : root.hover-progress < root.average ? StatZone.below-average
         : StatZone.average;
@@ -410,20 +418,24 @@ export component CostCurve inherits Rectangle {
 
     // Last, so it sees the pointer over everything else. On the game's dot, the dot, its
     // projections and its labels stand for the hover's.
+    // Reaches past the plot, which does not clip it: a band `near-distance` around the curve,
+    // from the 0 line to the max, and as far beyond both ends.
     hover := TooltipAnchor {
-        x: 0px;
-        y: 0px;
-        width: root.plot-width;
-        height: root.height;
+        x: -root.near-distance;
+        y: root.zero-y - root.near-distance;
+        width: root.plot-width + 2 * root.near-distance;
+        height: root.max-y - root.zero-y + 2 * root.near-distance;
         mouse-cursor: root.hovering ? MouseCursor.none : MouseCursor.default;
         spot: true;
-        spot-x: root.hover-x;
-        spot-y: root.hover-y;
+        spot-x: root.hover-x - self.x;
+        spot-y: root.hover-y - self.y;
         // The sentence stays as the tooltip's text, for what reads it aloud. Away from the curve,
         // no tooltip.
-        tooltip: !root.hovering ? "" : "At " + root.hover-label + " " + root.exercise.curve.noun + ": "
+        tooltip: !root.hovering ? "" : (root.on-game ? "This game, " : "At ") + root.hover-label + " " + root.exercise.curve.noun + ": "
             + root.amount-text(root.hover-due) + ", "
-            + root.difference-text(root.hover-difference) + ".";
+            + (root.on-game
+                ? root.game-status + (root.exercise.target-gap != "" ? ", " + root.exercise.target-gap : "")
+                : root.difference-text(root.hover-difference)) + ".";
         has-curve: true;
         curve: {
             value: root.hover-label,
@@ -435,6 +447,12 @@ export component CostCurve inherits Rectangle {
             unit: root.hover-due == 1 ? root.exercise.unit-label-one : root.exercise.unit-label,
             difference: root.hover-difference,
             difference-label: root.difference-label(root.hover-difference),
+            this-game: root.on-game,
+            status: root.game-status,
+            status-color: root.exercise.skipped ? Theme.text-secondary
+                : root.exercise.done >= root.exercise.due ? Theme.success
+                : Theme.warning,
+            target-gap: root.exercise.target-gap,
         };
     }
 }

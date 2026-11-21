@@ -95,6 +95,9 @@ pub struct ExerciseView {
     pub zone: Zone,
     pub target: String,
     pub gap: String,
+    /// How far from the target, for the game's tooltip on its cost curve: "−9 pts to target
+    /// 31 %", "2 deaths over target 3"; empty on target.
+    pub target_gap: String,
     pub due: u32,
     pub unit: &'static str,
     pub capped: bool,
@@ -278,6 +281,7 @@ impl ExerciseView {
             zone: zone(self.zone),
             target: self.target.clone().into(),
             gap: self.gap.clone().into(),
+            target_gap: self.target_gap.clone().into(),
             // Games from before cooldown.lol: nothing was done.
             done: 0,
             due: int(self.due),
@@ -504,6 +508,7 @@ fn exercise(
         } else {
             String::new()
         },
+        target_gap: target_gap(kind, gap, &value_label(kind, benchmarks.target)),
         due: amount.due,
         unit: if deaths { "s" } else { "" },
         capped: amount.capped,
@@ -517,6 +522,18 @@ fn exercise(
             average_label: value_label(kind, benchmarks.average),
             target_label: value_label(kind, benchmarks.target),
         },
+    }
+}
+
+/// "−9 pts to target 31 %", "−72 CS to target 9.0", "2 deaths over target 3"; empty on target.
+fn target_gap(kind: StatKind, gap: f64, target: &str) -> String {
+    if gap <= 0.0 {
+        String::new()
+    } else if kind == StatKind::Deaths {
+        let deaths = if gap > 1.0 { "deaths" } else { "death" };
+        format!("{gap:.0} {deaths} over target {target}")
+    } else {
+        format!("−{} {} to target {target}", gap.ceil(), gap_unit(kind))
     }
 }
 
@@ -848,6 +865,18 @@ mod tests {
         assert_eq!(
             (burpees.due, burpees.cap, plank.unit, plank.cap),
             (5, 15, "s", 90)
+        );
+        assert_eq!(burpees.target_gap, "−70 CS to target 9.0");
+        assert_eq!(squats.target_gap, "−7 pts to target 32 %");
+        // 3 deaths: on target.
+        assert_eq!(plank.target_gap, "");
+        assert_eq!(
+            target_gap(StatKind::Deaths, 1.0, "3"),
+            "1 death over target 3"
+        );
+        assert_eq!(
+            target_gap(StatKind::Deaths, 4.0, "3"),
+            "4 deaths over target 3"
         );
         let curve = &burpees.curve;
         assert_eq!(

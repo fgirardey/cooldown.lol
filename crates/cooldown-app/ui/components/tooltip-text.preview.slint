@@ -8,12 +8,13 @@ import { PreviewPlayground } from "../preview-kit/preview-playground.slint";
 // Pencil frame `Tooltip` (story not named `Tooltip`: that is Slint's own element).
 export component TooltipDefault inherits Rectangle {
     width: 240px;
-    height: 60px;
+    height: 60px + Theme.tooltip-pointer;
     background: Theme.background;
 
+    // Room above for the pointer.
     TooltipText {
         x: 0;
-        y: 0;
+        y: Theme.tooltip-pointer;
         text: "Read your latest games from the League client now. History also updates on its own after each game.";
     }
 }

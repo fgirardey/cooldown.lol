@@ -2,9 +2,10 @@
 // view, never takes the pointer. Fed by the `Tooltips` UI global (docs/Decisions/ADR-0017).
 //
 // Timing and placement follow Material Design's tooltip (docs/Design/Tokens.md, Tooltip):
-// opens 500ms after the pointer rests on the control, stays 600ms after it leaves (so moving to
-// a neighbour switches the text at once), centered under the control with a 4px gap, above it
-// when there is no room below, 8px from the window edges, narrowed to fit a narrow window.
+// opens 300ms after the pointer rests on the control, stays 100ms after it leaves (so moving to
+// a neighbour switches the text at once), centered under the control with a 4px gap before the
+// tip of its pointer, above it when there is no room below (on the roomier side when neither
+// has room, kept inside the window), 8px from the window edges, narrowed to fit a narrow window. Wherever the panel goes, its pointer stays aimed at the control.
 //
 // It draws a text (`TooltipText`), or a cost curve's structured tooltip (`CurveTooltip`) when
 // the request carries one.
@@ -29,13 +30,17 @@ export component TooltipLayer inherits Rectangle {
     property <length> h: root.request.has-curve ? curve-panel.height : panel.height;
     property <length> margin: Theme.tooltip-window-margin;
 
-    // A cost curve's tooltip has a pointer: the gap grows by as much as it sticks out.
-    property <length> gap: root.request.has-curve ? Theme.tooltip-gap + Theme.tooltip-pointer : Theme.tooltip-gap;
+    // The gap runs to the tip of the pointer.
+    property <length> gap: Theme.tooltip-gap + Theme.tooltip-pointer;
 
-    // Below the control when it fits, else above when that fits, else below.
+    // Below the control when it fits, else above when that fits, else on the side with more
+    // room, kept inside the window (it may then cover the control).
     property <length> below-y: root.request.y + root.request.height + root.gap;
     property <length> above-y: root.request.y - root.gap - root.h;
-    property <bool> above: root.below-y + root.h + root.margin > root.height && root.above-y >= root.margin;
+    property <bool> fits-below: root.below-y + root.h + root.margin <= root.height;
+    property <bool> fits-above: root.above-y >= root.margin;
+    property <bool> above: !root.fits-below
+        && (root.fits-above || root.request.y > root.height - root.request.y - root.request.height);
 
     // Centered on the control, else aligned with its start, then its end, else kept off the edges.
     property <length> center-x: root.request.x + (root.request.width - root.w) / 2;
@@ -66,12 +71,16 @@ export component TooltipLayer inherits Rectangle {
         : root.start-x >= root.margin && root.start-x <= root.max-x ? root.start-x
         : root.end-x >= root.margin && root.end-x <= root.max-x ? root.end-x
         : max(root.margin, min(root.center-x, root.max-x));
-    property <length> panel-y: root.above ? root.above-y : root.below-y;
+    property <length> panel-y: root.above
+        ? min(max(root.margin, root.above-y), root.height - root.h - root.margin)
+        : max(root.margin, min(root.below-y, root.height - root.h - root.margin));
 
     panel := TooltipText {
         x: root.panel-x;
         y: root.panel-y;
         text: root.request.text;
+        pointer-up: !root.above;
+        pointer-x: root.request.x + root.request.width / 2 - root.panel-x;
         // A window narrower than the tooltip: it wraps to fit between the margins.
         max-content-width: max(0px, min(Theme.tooltip-max-width, root.width - 2 * root.margin - 2 * self.horizontal-padding));
         visible: !root.request.has-curve && self.opacity > 0;
@@ -96,7 +105,7 @@ export component TooltipLayer inherits Rectangle {
         x: root.panel-x;
         y: root.panel-y;
         data: root.request.curve;
-        pointer-on-top: !root.above;
+        pointer-up: !root.above;
         pointer-x: root.request.x + root.request.width / 2 - root.panel-x;
         visible: root.request.has-curve && self.opacity > 0;
         opacity: root.open ? 1 : 0;

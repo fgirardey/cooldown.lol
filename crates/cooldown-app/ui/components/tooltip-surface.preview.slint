@@ -1,0 +1,33 @@
+// Previews of TooltipSurface: `just preview components/tooltip-surface`. With content, see the
+// tooltip previews (`tooltip-text`, `curve-tooltip`, `shell/tooltip-layer`).
+
+import { Theme } from "../theme.slint";
+import { TooltipSurface } from "tooltip-surface.slint";
+import { PreviewCase } from "../preview-kit/preview-case.slint";
+
+// Gallery of every variant (default component of the file).
+export component Preview inherits Window {
+    title: "TooltipSurface";
+    background: Theme.background;
+
+    VerticalLayout {
+        padding: Theme.space-l;
+        spacing: Theme.space-l;
+        alignment: start;
+
+        PreviewCase {
+            label: "Pointer up, centred";
+            TooltipSurface { panel-width: 160px; panel-height: 40px; }
+        }
+
+        PreviewCase {
+            label: "Pointer down, near the left corner (kept 12 px off it)";
+            TooltipSurface { panel-width: 160px; panel-height: 40px; up: false; pointer-x: 4px; }
+        }
+
+        PreviewCase {
+            label: "Pointer up, near the right corner";
+            TooltipSurface { panel-width: 160px; panel-height: 40px; pointer-x: 150px; }
+        }
+    }
+}
