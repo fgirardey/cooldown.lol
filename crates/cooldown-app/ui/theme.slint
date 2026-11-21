@@ -51,7 +51,17 @@ export global Theme {
     out property <float> tint-row-mid: 0.08;
     out property <float> tint-row-muted: 0.15;
     out property <float> tint-row-muted-mid: 0.05;
-    out property <float> tint-curve: 0.08;
+    out property <float> tint-curve: 0.25;
+    out property <float> tint-gauge-zone: 0.50;
+
+    // A cost curve in a History row's details: `text-secondary` at these opacities for its
+    // lines, the zone colour for the halo of the game's dot, and the stat's watermark.
+    out property <float> curve-zero-line: 0.6;
+    out property <float> curve-grid: 0.25;
+    out property <float> curve-target-line: 0.5;
+    out property <float> curve-projection: 0.6;
+    out property <float> curve-halo: 0.2;
+    out property <float> watermark-opacity: 0.3;
 
     // Interaction
     out property <float> state-opacity-hover: 0.08;
@@ -89,7 +99,8 @@ export global Theme {
     out property <length> font-size-body: 14px;
     out property <length> font-size-wordmark: 18px;
     out property <length> font-size-title: 20px;
-    out property <length> font-size-equation: 22px;
+    out property <length> font-size-result: 22px;
+    out property <length> font-size-watermark: 30px;
     out property <length> font-size-headline: 32px;
     out property <length> font-size-display: 40px;
     out property <length> font-size-hero: 96px;

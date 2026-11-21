@@ -1,0 +1,44 @@
+// Previews of DashedLine: `just preview components/dashed-line`.
+
+import { Theme } from "../theme.slint";
+import { DashedLine } from "dashed-line.slint";
+import { PreviewCase } from "../preview-kit/preview-case.slint";
+
+// Gallery of every variant (default component of the file).
+export component Preview inherits Window {
+    title: "DashedLine";
+    background: Theme.background;
+
+    VerticalLayout {
+        padding: Theme.space-m;
+        spacing: Theme.space-m;
+        alignment: start;
+
+        PreviewCase {
+            label: "Dashed (projections)";
+            Rectangle {
+                width: 300px;
+                height: 8px;
+                DashedLine { width: 300px; y: 4px; tint: Theme.text-secondary.with-alpha(Theme.curve-projection); }
+            }
+        }
+
+        PreviewCase {
+            label: "Dotted (mid amount)";
+            Rectangle {
+                width: 300px;
+                height: 8px;
+                DashedLine { width: 300px; y: 4px; dash: 1px; gap: 3px; tint: Theme.text-secondary.with-alpha(Theme.curve-grid); }
+            }
+        }
+
+        PreviewCase {
+            label: "Vertical, text-primary (hover)";
+            Rectangle {
+                width: 8px;
+                height: 72px;
+                DashedLine { vertical: true; height: 72px; x: 4px; tint: Theme.text-primary; }
+            }
+        }
+    }
+}

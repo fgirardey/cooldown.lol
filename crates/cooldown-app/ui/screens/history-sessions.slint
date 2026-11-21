@@ -57,18 +57,6 @@ export component HistorySessions inherits VerticalLayout {
             horizontal-stretch: 1;
         }
 
-        Text {
-            font-family: Theme.font-body;
-            text: root.workouts
-                ? "Each exercise pays for one stat under its target"
-                : "Red = under your target · tick = target for the role";
-            color: Theme.text-secondary;
-            font-size: Theme.font-size-caption;
-            vertical-alignment: center;
-            // Against the refresh: the push takes the free space.
-            horizontal-stretch: 0;
-        }
-
         HistoryRefresh {
             horizontal-stretch: 0;
             updated: root.updated;

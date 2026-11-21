@@ -33,17 +33,7 @@ export component HistoryRefresh inherits HorizontalLayout {
         ? "The League client isn't answering. Trying again every 10 s."
         : "Read your latest games from the League client now. History also updates on its own after each game.";
 
-    spacing: Theme.space-m;
     alignment: end;
-
-    VerticalLayout {
-        alignment: center;
-        Rectangle {
-            width: 1px;
-            height: 16px;
-            background: Theme.border;
-        }
-    }
 
     HorizontalLayout {
         spacing: Theme.space-s;

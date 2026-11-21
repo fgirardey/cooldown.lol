@@ -267,12 +267,11 @@ mod tests {
         assert_eq!(imported.map(|i| i.stored), Some(45));
         let games = store.games("p1").unwrap();
         assert_eq!(games.len(), 45);
-        // Bottom, 30 min: 240 target CS, 150 CS = 90 missed / 5 = 18 burpees.
-        assert!(
-            games
-                .iter()
-                .all(|game| game.workout.is_some_and(|w| w.burpees.due == 18))
-        );
+        // Bottom, 30 min, 150 CS: 5.0 CS per minute, under the floor (5.5): the max, 15 burpees.
+        assert!(games.iter().all(|game| {
+            game.workout
+                .is_some_and(|w| w.burpees.due == 15 && w.burpees.capped)
+        }));
     }
 
     #[tokio::test]

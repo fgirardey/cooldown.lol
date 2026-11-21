@@ -1,0 +1,93 @@
+// One line of a History row's details: the cost curve of the exercise's stat, then the result
+// in a fixed-width column so the lines align: the exercise's pictogram, the number done over
+// due, the exercise, and its status as a symbol (complete, missing some, skipped).
+//
+// `Game row / Details / Exercise` in design/cooldown.pen (`/ Hover` for the curve's hover).
+
+import { Theme } from "../theme.slint";
+import { ExerciseData } from "../models.slint";
+import { Icon } from "icon.slint";
+import { CostCurve } from "cost-curve.slint";
+
+export component ExerciseDetail inherits HorizontalLayout {
+    in property <ExerciseData> exercise;
+    /// Burpee, squat or plank pictogram.
+    in property <image> exercise-icon;
+
+    property <bool> complete: !root.exercise.skipped && root.exercise.done >= root.exercise.due;
+
+    spacing: 20px;
+
+    CostCurve {
+        horizontal-stretch: 1;
+        exercise: root.exercise;
+    }
+
+    HorizontalLayout {
+        width: 262px;
+        padding-left: 12px;
+        spacing: 14px;
+        alignment: start;
+
+        Icon {
+            source: root.exercise-icon;
+            width: 56px;
+            height: 56px;
+            colorize: Theme.text-primary;
+            y: (parent.height - self.height) / 2;
+        }
+
+        VerticalLayout {
+            width: 104px;
+            spacing: Theme.space-xs;
+            alignment: center;
+
+            HorizontalLayout {
+                spacing: Theme.space-xs;
+                alignment: start;
+
+                Text {
+                    font-family: Theme.font-display;
+                    text: root.exercise.done + root.exercise.unit;
+                    color: root.exercise.skipped ? Theme.text-secondary : Theme.text-primary;
+                    font-size: Theme.font-size-display;
+                    font-weight: 800;
+                    font-italic: true;
+                    vertical-alignment: bottom;
+                }
+
+                Text {
+                    font-family: Theme.font-display;
+                    text: "/" + root.exercise.due + root.exercise.unit;
+                    color: Theme.text-secondary;
+                    font-size: Theme.font-size-result;
+                    font-weight: 700;
+                    font-italic: true;
+                    vertical-alignment: bottom;
+                }
+            }
+
+            Text {
+                font-family: Theme.font-display;
+                text: root.exercise.name;
+                color: root.exercise.skipped ? Theme.text-secondary : Theme.text-primary;
+                font-size: Theme.font-size-result;
+                font-weight: 800;
+                font-italic: true;
+                letter-spacing: 1px;
+            }
+        }
+
+        Icon {
+            source: root.exercise.skipped ? @image-url("../images/icons/circle-x.svg")
+                : root.complete ? @image-url("../images/icons/circle-check.svg")
+                : @image-url("../images/icons/circle-dot.svg");
+            width: 24px;
+            height: 24px;
+            colorize: root.exercise.skipped ? Theme.text-secondary
+                : root.complete ? Theme.success
+                : Theme.warning;
+            y: (parent.height - self.height) / 2;
+        }
+    }
+}

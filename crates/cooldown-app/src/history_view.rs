@@ -1,22 +1,22 @@
 //! What the History screen shows, from the stored games: sessions with their labels, and one
-//! row per game with its stats against the role's targets and the workout they turned into.
+//! row per game with its stats against the role's benchmarks and the workout they turned into.
 //! Plain data (no Slint types), so it is built off the UI thread and unit-tested;
 //! [`SessionView::to_slint`] hands it to the window.
 
 use std::path::PathBuf;
 
-use chrono::{Datelike, NaiveDate, NaiveDateTime};
-use cooldown_core::workout::{
-    Amount, BURPEES_CAP, PLANK_CAP, PLANK_SECS_PER_DEATH, SQUATS_CAP, StatKind, Target,
-};
+use chrono::{Datelike, NaiveDate, NaiveDateTime, Timelike};
+use cooldown_core::workout::{BURPEES, DEATHS, PLANK, SQUATS, Scale};
 use cooldown_core::{
-    Game, GameResult, NoWorkoutReason, PlayerStats, Role, Session, group_into_sessions,
-    role_targets,
+    Amount, Benchmarks, Game, GameResult, JudgedStat, NoWorkoutReason, PlayerStats, Role, Session,
+    StatKind, Zone, group_into_sessions, role_stats,
 };
-use slint::{ComponentHandle, Image, ModelRc, SharedString, VecModel};
+use slint::{ComponentHandle, Image, ModelRc, VecModel};
 
 use crate::champion_catalog::{ChampionInfo, initials};
-use crate::{AppWindow, ExerciseData, GameRowData, RoleIcons, SessionData, StatData, TermData};
+use crate::{
+    AppWindow, CostCurveData, ExerciseData, GameRowData, RoleIcons, SessionData, StatData, StatZone,
+};
 
 /// One session: its header and its games.
 #[derive(Debug, Clone, PartialEq)]
@@ -41,6 +41,9 @@ pub struct GameView {
     pub result: GameResult,
     /// "34:12".
     pub length: String,
+    /// When the game ended: "2h ago", and "Sunday 1 November 2026, 20:35".
+    pub played: String,
+    pub played_at: String,
     pub kills: u32,
     pub deaths: u32,
     pub assists: u32,
@@ -56,10 +59,22 @@ pub struct GameView {
 #[derive(Debug, Clone, PartialEq)]
 pub struct StatView {
     pub value: String,
-    pub under: bool,
+    /// The game's total: "269", "21.3k", "7/11".
+    pub total: String,
+    /// The plain gauge's filled part, 0 to 1.
     pub fill: f32,
-    /// Where the role's target sits on the gauge, when the formula judges this stat.
-    pub target: Option<f32>,
+    /// The role's benchmarks, when the formula judges this stat.
+    pub judged: Option<JudgedView>,
+}
+
+/// A judged stat of the Games view: its zone and the benchmark gauge.
+#[derive(Debug, Clone, PartialEq)]
+pub struct JudgedView {
+    pub zone: Zone,
+    /// Where the average sits on the gauge, 0 (floor) to 1 (target).
+    pub average: f32,
+    pub floor_label: String,
+    pub target_label: String,
 }
 
 /// The workout part of a row.
@@ -71,45 +86,34 @@ pub enum WorkoutView {
     NoWorkout { reason: String },
 }
 
-/// One exercise: the stat behind it, the amount due and the formula.
+/// One exercise: the stat behind it, the amount due and its cost curve.
 #[derive(Debug, Clone, PartialEq)]
 pub struct ExerciseView {
     pub name: &'static str,
-    pub pays_for: String,
-    /// The stat behind it; `None` for the plank, paid by deaths.
-    pub stat: Option<StatKind>,
-    pub stat_label: &'static str,
+    pub stat: StatKind,
     pub value: String,
+    pub zone: Zone,
     pub target: String,
     pub gap: String,
-    pub under: bool,
     pub due: u32,
     pub unit: &'static str,
-    pub unit_label: &'static str,
     pub capped: bool,
     pub cap: u32,
-    pub terms: Vec<Term>,
+    pub curve: CurveView,
 }
 
-/// A piece of the formula left of the "=".
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Term {
-    Operator(&'static str),
-    Number {
-        text: String,
-        caption: String,
-        tone: Tone,
-    },
-}
-
-/// How a number of the formula is coloured.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Tone {
-    Plain,
-    /// The player's own value, under target.
-    Under,
-    /// The formula's constant.
-    Factor,
+/// The cost curve of an exercise (see `CostCurveData` in `ui/models.slint`).
+#[derive(Debug, Clone, PartialEq)]
+pub struct CurveView {
+    pub benchmarks: Benchmarks,
+    pub scale: Scale,
+    /// Where the game stands, 0 at the floor, 1 at the target.
+    pub progress: f64,
+    /// The game's amount before rounding.
+    pub amount: f64,
+    pub floor_label: String,
+    pub average_label: String,
+    pub target_label: String,
 }
 
 /// The sessions of `games`, newest first, ready to show.
@@ -161,7 +165,7 @@ pub fn session_views(
                 games: session
                     .games()
                     .iter()
-                    .map(|game| game_view(game, champion))
+                    .map(|game| game_view(game, now, local, champion))
                     .collect(),
             }
         })
@@ -213,16 +217,36 @@ impl GameView {
             win: self.result == GameResult::Win,
             remake: self.result == GameResult::Remake,
             length: self.length.clone().into(),
+            played: self.played.clone().into(),
+            played_at: self.played_at.clone().into(),
             kills: int(self.kills),
             deaths: int(self.deaths),
             assists: int(self.assists),
             kda_ratio: self.kda_ratio.clone().into(),
-            stats: model(self.stats.iter().map(|stat| StatData {
-                value: stat.value.clone().into(),
-                under: stat.under,
-                fill: stat.fill,
-                has_target: stat.target.is_some(),
-                target: stat.target.unwrap_or_default(),
+            stats: model(self.stats.iter().map(|stat| {
+                StatData {
+                    value: stat.value.clone().into(),
+                    total: stat.total.clone().into(),
+                    judged: stat.judged.is_some(),
+                    zone: stat
+                        .judged
+                        .as_ref()
+                        .map_or(StatZone::Average, |judged| zone(judged.zone)),
+                    fill: stat.fill,
+                    average: stat.judged.as_ref().map_or(0.0, |judged| judged.average),
+                    floor_label: stat
+                        .judged
+                        .as_ref()
+                        .map_or_else(Default::default, |judged| {
+                            judged.floor_label.as_str().into()
+                        }),
+                    target_label: stat
+                        .judged
+                        .as_ref()
+                        .map_or_else(Default::default, |judged| {
+                            judged.target_label.as_str().into()
+                        }),
+                }
             })),
             status: status.into(),
             has_workout: matches!(self.workout, WorkoutView::Skipped(_)),
@@ -234,48 +258,58 @@ impl GameView {
 
 impl ExerciseView {
     fn to_slint(&self) -> ExerciseData {
+        let (unit_label, unit_label_one) = match self.name {
+            "BURPEES" => ("burpees", "burpee"),
+            "SQUATS" => ("squats", "squat"),
+            _ => ("plank", "plank"),
+        };
+        let curve = &self.curve;
         ExerciseData {
             name: self.name.into(),
-            pays_for: self.pays_for.clone().into(),
             stat: match self.stat {
-                Some(StatKind::CsPerMinute) => crate::StatKind::CsPerMinute,
-                Some(StatKind::DamageShare) => crate::StatKind::DamageShare,
-                Some(StatKind::KillParticipation) => crate::StatKind::KillParticipation,
-                Some(StatKind::VisionPerMinute) => crate::StatKind::VisionPerMinute,
-                None => crate::StatKind::Deaths,
+                StatKind::CsPerMinute => crate::StatKind::CsPerMinute,
+                StatKind::DamageShare => crate::StatKind::DamageShare,
+                StatKind::KillParticipation => crate::StatKind::KillParticipation,
+                StatKind::VisionPerMinute => crate::StatKind::VisionPerMinute,
+                StatKind::Deaths => crate::StatKind::Deaths,
             },
-            stat_label: self.stat_label.into(),
+            stat_label: stat_label(self.stat).into(),
             value: self.value.clone().into(),
+            zone: zone(self.zone),
             target: self.target.clone().into(),
             gap: self.gap.clone().into(),
-            under: self.under,
             // Games from before cooldown.lol: nothing was done.
             done: 0,
             due: int(self.due),
             unit: self.unit.into(),
-            unit_label: self.unit_label.into(),
+            unit_label: unit_label.into(),
+            unit_label_one: unit_label_one.into(),
             capped: self.capped,
             cap_label: format!("max {}{}", self.cap, self.unit).into(),
-            terms: model(self.terms.iter().map(|term| match term {
-                Term::Operator(text) => TermData {
-                    operator: true,
-                    text: (*text).into(),
-                    caption: SharedString::new(),
-                    under: false,
-                    factor: false,
+            skipped: true,
+            #[allow(clippy::cast_possible_truncation)] // Small numbers, for drawing.
+            curve: CostCurveData {
+                average: curve.benchmarks.average_progress() as f32,
+                progress: curve.progress as f32,
+                max: int(curve.scale.max),
+                mid: int(curve.scale.mid),
+                amount: curve.amount as f32,
+                floor_label: curve.floor_label.clone().into(),
+                average_label: curve.average_label.clone().into(),
+                target_label: curve.target_label.clone().into(),
+                floor: curve.benchmarks.floor as f32,
+                target: curve.benchmarks.target as f32,
+                decimals: match self.stat {
+                    StatKind::CsPerMinute | StatKind::VisionPerMinute => 1,
+                    _ => 0,
                 },
-                Term::Number {
-                    text,
-                    caption,
-                    tone,
-                } => TermData {
-                    operator: false,
-                    text: text.clone().into(),
-                    caption: caption.clone().into(),
-                    under: *tone == Tone::Under,
-                    factor: *tone == Tone::Factor,
-                },
-            })),
+                suffix: match self.stat {
+                    StatKind::DamageShare | StatKind::KillParticipation => " %",
+                    _ => "",
+                }
+                .into(),
+                noun: stat_noun(self.stat).into(),
+            },
         }
     }
 }
@@ -293,14 +327,37 @@ fn session_label(day: NaiveDate, today: NaiveDate, rank: usize) -> String {
 }
 
 fn weekday(day: NaiveDate) -> &'static str {
-    ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][day.weekday().num_days_from_monday() as usize]
+    &WEEKDAYS[day.weekday().num_days_from_monday() as usize][..3]
 }
 
 fn month(day: NaiveDate) -> &'static str {
-    [
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-    ][day.month0() as usize]
+    &MONTHS[day.month0() as usize][..3]
 }
+
+const WEEKDAYS: [&str; 7] = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+];
+
+const MONTHS: [&str; 12] = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+];
 
 /// "5 games · before cooldown.lol".
 fn session_subtitle(session: &Session) -> String {
@@ -313,17 +370,22 @@ fn session_subtitle(session: &Session) -> String {
     }
 }
 
-fn game_view(game: &Game, champion: &impl Fn(u32) -> Option<ChampionInfo>) -> GameView {
+fn game_view(
+    game: &Game,
+    now: i64,
+    local: &impl Fn(i64) -> NaiveDateTime,
+    champion: &impl Fn(u32) -> Option<ChampionInfo>,
+) -> GameView {
     let info = champion(game.champion_id);
-    let targets = game.role.map(role_targets);
+    let judged = game.role.map(role_stats);
     let stats = game
         .stats
-        .map_or_else(Default::default, |stats| stat_views(game, &stats, targets));
-    let workout = match (game.workout, game.stats, targets) {
+        .map_or_else(Default::default, |stats| stat_views(game, &stats, judged));
+    let workout = match (game.workout, game.stats, judged) {
         (Some(workout), Some(stats), Some((main, secondary))) => WorkoutView::Skipped(vec![
-            stat_exercise(Exercise::Burpees, main, workout.burpees, game, &stats),
-            stat_exercise(Exercise::Squats, secondary, workout.squats, game, &stats),
-            plank_exercise(workout.plank, game.deaths),
+            exercise("BURPEES", main, BURPEES, workout.burpees, game, &stats),
+            exercise("SQUATS", secondary, SQUATS, workout.squats, game, &stats),
+            exercise("PLANK", DEATHS, PLANK, workout.plank, game, &stats),
         ]),
         _ => WorkoutView::NoWorkout {
             reason: no_workout_reason(game),
@@ -339,6 +401,8 @@ fn game_view(game: &Game, champion: &impl Fn(u32) -> Option<ChampionInfo>) -> Ga
         queue: queue_name(game.queue_id),
         result: game.result,
         length: format!("{}:{:02}", game.duration_secs / 60, game.duration_secs % 60),
+        played: played_ago(now - game.ended_at()),
+        played_at: played_at(local(game.ended_at())),
         kills: game.kills,
         deaths: game.deaths,
         assists: game.assists,
@@ -351,11 +415,37 @@ fn game_view(game: &Game, champion: &impl Fn(u32) -> Option<ChampionInfo>) -> Ga
     }
 }
 
-/// The Games view's four stats, each against the role's target when the formula judges it.
+/// "5m ago", "2h ago", "3d ago": how long ago a game ended, `seconds` ago.
+fn played_ago(seconds: i64) -> String {
+    let minutes = (seconds / 60).max(1);
+    if minutes < 60 {
+        format!("{minutes}m ago")
+    } else if minutes < 24 * 60 {
+        format!("{}h ago", minutes / 60)
+    } else {
+        format!("{}d ago", minutes / (24 * 60))
+    }
+}
+
+/// "Sunday 1 November 2026, 20:35".
+fn played_at(time: NaiveDateTime) -> String {
+    let day = time.date();
+    format!(
+        "{} {} {} {}, {:02}:{:02}",
+        WEEKDAYS[day.weekday().num_days_from_monday() as usize],
+        day.day(),
+        MONTHS[day.month0() as usize],
+        day.year(),
+        time.hour(),
+        time.minute()
+    )
+}
+
+/// The Games view's four stats, each against the role's benchmarks when the formula judges it.
 fn stat_views(
     game: &Game,
     stats: &PlayerStats,
-    targets: Option<(Target, Target)>,
+    judged: Option<(JudgedStat, JudgedStat)>,
 ) -> Vec<StatView> {
     [
         StatKind::CsPerMinute,
@@ -366,193 +456,75 @@ fn stat_views(
     .into_iter()
     .map(|kind| {
         let value = kind.value(game, stats);
-        let target = targets
+        let judged = judged
             .into_iter()
             .flat_map(|(main, secondary)| [main, secondary])
-            .find(|target| target.kind == kind);
-        let scale = gauge_scale(kind);
+            .find(|judged| judged.kind == kind);
         #[allow(clippy::cast_possible_truncation)] // A fraction between 0 and 1.
-        let fraction = |value: f64| (value / scale).clamp(0.0, 1.0) as f32;
+        let fill = (value / gauge_scale(kind)).clamp(0.0, 1.0) as f32;
         StatView {
             value: value_label(kind, value),
-            under: target.is_some_and(|target| value < target.value),
-            fill: fraction(value),
-            target: target.map(|target| fraction(target.value)),
+            total: total_label(kind, game, stats),
+            fill,
+            #[allow(clippy::cast_possible_truncation)] // A fraction between 0 and 1.
+            judged: judged.map(|judged| JudgedView {
+                zone: judged.benchmarks.zone(value),
+                average: judged.benchmarks.average_progress() as f32,
+                floor_label: value_label(kind, judged.benchmarks.floor),
+                target_label: value_label(kind, judged.benchmarks.target),
+            }),
         }
     })
     .collect()
 }
 
-/// Burpees or squats.
-#[derive(Clone, Copy)]
-enum Exercise {
-    Burpees,
-    Squats,
-}
-
-/// The exercise paid by a stat: value, target, gap and the formula.
-fn stat_exercise(
-    exercise: Exercise,
-    target: Target,
+/// The exercise paid by a stat: value against the benchmarks, gap, amount and cost curve.
+fn exercise(
+    name: &'static str,
+    judged: JudgedStat,
+    scale: Scale,
     amount: Amount,
     game: &Game,
     stats: &PlayerStats,
 ) -> ExerciseView {
-    let kind = target.kind;
+    let kind = judged.kind;
+    let benchmarks = judged.benchmarks;
     let value = kind.value(game, stats);
-    let gap = target.gap(game, stats);
-    let under = gap > 0.0;
-    let (name, rank, singular, cap, per_unit) = match exercise {
-        Exercise::Burpees => (
-            "BURPEES",
-            "Main",
-            "burpee",
-            BURPEES_CAP,
-            kind.burpees_per_unit(),
-        ),
-        Exercise::Squats => (
-            "SQUATS",
-            "Secondary",
-            "squat",
-            SQUATS_CAP,
-            kind.squats_per_unit(),
-        ),
-    };
-    let unit = gap_unit(kind);
-    let terms = formula_terms(target, game, stats, under, per_unit, singular);
+    let gap = judged.gap(game, stats);
+    let deaths = kind == StatKind::Deaths;
     ExerciseView {
         name,
-        pays_for: format!("{rank} stat · {}", stat_label(kind)),
-        stat: Some(kind),
-        stat_label: stat_label(kind),
+        stat: kind,
         value: value_label(kind, value),
-        target: format!("/ {}", value_label(kind, target.value)),
-        gap: if under {
-            format!("−{} {unit}", gap.ceil())
+        zone: benchmarks.zone(value),
+        target: format!("/ {}", value_label(kind, benchmarks.target)),
+        // The plank shows no gap: the deaths over the target are the value itself.
+        gap: if gap > 0.0 && !deaths {
+            format!("−{} {}", gap.ceil(), gap_unit(kind))
         } else {
             String::new()
         },
-        under,
         due: amount.due,
-        unit: "",
-        unit_label: match exercise {
-            Exercise::Burpees => "burpees",
-            Exercise::Squats => "squats",
+        unit: if deaths { "s" } else { "" },
+        capped: amount.capped,
+        cap: scale.max,
+        curve: CurveView {
+            benchmarks,
+            scale,
+            progress: benchmarks.progress(value),
+            amount: benchmarks.amount(value, scale),
+            floor_label: value_label(kind, benchmarks.floor),
+            average_label: value_label(kind, benchmarks.average),
+            target_label: value_label(kind, benchmarks.target),
         },
-        capped: amount.capped,
-        cap,
-        terms,
     }
 }
 
-/// The formula of a stat's exercise, left of the "=": "( target × minutes − total ) ÷ factor" for
-/// the per-minute stats, "( target − value ) × factor" for the shares.
-fn formula_terms(
-    target: Target,
-    game: &Game,
-    stats: &PlayerStats,
-    under: bool,
-    per_unit: f64,
-    singular: &str,
-) -> Vec<Term> {
-    let kind = target.kind;
-    let tone = if under { Tone::Under } else { Tone::Plain };
-    let number = |text: String, caption: String, tone| Term::Number {
-        text,
-        caption,
-        tone,
-    };
-    let unit = gap_unit(kind);
-    let value = kind.value(game, stats);
-    let mut terms = vec![Term::Operator("(")];
-    match kind {
-        StatKind::CsPerMinute | StatKind::VisionPerMinute => {
-            let (short, total) = match kind {
-                StatKind::CsPerMinute => ("CS", f64::from(stats.cs)),
-                _ => ("vision", f64::from(stats.vision_score)),
-            };
-            terms.extend([
-                number(
-                    format!("{:.1}", target.value),
-                    format!("target {short} / min"),
-                    Tone::Plain,
-                ),
-                Term::Operator("×"),
-                number(minutes_label(game), "minutes".to_owned(), Tone::Plain),
-                Term::Operator("−"),
-                number(
-                    format!("{total:.0}"),
-                    format!("your {}", total_name(kind)),
-                    tone,
-                ),
-            ]);
-        }
-        StatKind::DamageShare | StatKind::KillParticipation => terms.extend([
-            number(
-                format!("{:.0} %", target.value),
-                "target".to_owned(),
-                Tone::Plain,
-            ),
-            Term::Operator("−"),
-            number(
-                format!("{value:.0} %"),
-                format!("your {}", stat_label(kind).to_lowercase()),
-                tone,
-            ),
-        ]),
-    }
-    terms.push(Term::Operator(")"));
-    if per_unit < 1.0 {
-        terms.extend([
-            Term::Operator("÷"),
-            number(
-                format!("{:.0}", 1.0 / per_unit),
-                format!("{unit} per {singular}"),
-                Tone::Factor,
-            ),
-        ]);
-    } else {
-        terms.extend([
-            Term::Operator("×"),
-            number(
-                format!("{per_unit:.0}"),
-                format!("{singular}s per {}", singular_unit(unit)),
-                Tone::Factor,
-            ),
-        ]);
-    }
-    terms
-}
-
-/// The plank: every death costs the same.
-fn plank_exercise(amount: Amount, deaths: u32) -> ExerciseView {
-    ExerciseView {
-        name: "PLANK",
-        pays_for: "Every death".to_owned(),
-        stat: None,
-        stat_label: "Deaths",
-        value: deaths.to_string(),
-        target: format!("× {PLANK_SECS_PER_DEATH} s"),
-        gap: String::new(),
-        under: deaths > 0,
-        due: amount.due,
-        unit: "s",
-        unit_label: "plank",
-        capped: amount.capped,
-        cap: PLANK_CAP,
-        terms: vec![
-            Term::Number {
-                text: deaths.to_string(),
-                caption: "deaths".to_owned(),
-                tone: if deaths > 0 { Tone::Under } else { Tone::Plain },
-            },
-            Term::Operator("×"),
-            Term::Number {
-                text: format!("{PLANK_SECS_PER_DEATH} s"),
-                caption: "per death".to_owned(),
-                tone: Tone::Factor,
-            },
-        ],
+fn zone(zone: Zone) -> StatZone {
+    match zone {
+        Zone::Floor => StatZone::Floor,
+        Zone::BelowAverage => StatZone::BelowAverage,
+        Zone::Average => StatZone::Average,
     }
 }
 
@@ -563,23 +535,54 @@ fn stat_label(kind: StatKind) -> &'static str {
         StatKind::VisionPerMinute => "Vision per minute",
         StatKind::DamageShare => "Damage share",
         StatKind::KillParticipation => "Kill participation",
+        StatKind::Deaths => "Deaths",
     }
 }
 
-/// "8.5" for the per-minute stats, "24 %" for the shares.
+/// The stat in a sentence: "At 27 % damage share: …".
+fn stat_noun(kind: StatKind) -> &'static str {
+    match kind {
+        StatKind::CsPerMinute => "CS per minute",
+        StatKind::VisionPerMinute => "vision per minute",
+        StatKind::DamageShare => "damage share",
+        StatKind::KillParticipation => "kill participation",
+        StatKind::Deaths => "deaths",
+    }
+}
+
+/// "8.5" for the per-minute stats, "24 %" for the shares, "6" for the deaths.
 fn value_label(kind: StatKind, value: f64) -> String {
     match kind {
         StatKind::CsPerMinute | StatKind::VisionPerMinute => format!("{value:.1}"),
         StatKind::DamageShare | StatKind::KillParticipation => format!("{value:.0} %"),
+        StatKind::Deaths => format!("{value:.0}"),
     }
 }
 
-/// The value at which a gauge is full.
+/// The game's total behind a stat: "269" CS, "21.3k" damage, "7/11" kills taken part in,
+/// "22" vision score.
+fn total_label(kind: StatKind, game: &Game, stats: &PlayerStats) -> String {
+    match kind {
+        StatKind::CsPerMinute => stats.cs.to_string(),
+        StatKind::VisionPerMinute => stats.vision_score.to_string(),
+        StatKind::DamageShare if stats.damage_to_champions >= 1_000 => {
+            format!("{:.1}k", f64::from(stats.damage_to_champions) / 1_000.0)
+        }
+        StatKind::DamageShare => stats.damage_to_champions.to_string(),
+        StatKind::KillParticipation => {
+            format!("{}/{}", game.kills + game.assists, stats.team_kills)
+        }
+        StatKind::Deaths => game.deaths.to_string(),
+    }
+}
+
+/// The value at which a plain gauge is full.
 fn gauge_scale(kind: StatKind) -> f64 {
     match kind {
         StatKind::CsPerMinute => 10.0,
         StatKind::VisionPerMinute => 3.0,
         StatKind::DamageShare | StatKind::KillParticipation => 100.0,
+        StatKind::Deaths => 20.0,
     }
 }
 
@@ -589,28 +592,7 @@ fn gap_unit(kind: StatKind) -> &'static str {
         StatKind::CsPerMinute => "CS",
         StatKind::VisionPerMinute => "vision",
         StatKind::DamageShare | StatKind::KillParticipation => "pts",
-    }
-}
-
-fn singular_unit(unit: &str) -> &str {
-    if unit == "pts" { "point" } else { unit }
-}
-
-/// "CS", "vision score": the total the per-minute target is compared with.
-fn total_name(kind: StatKind) -> &'static str {
-    match kind {
-        StatKind::VisionPerMinute => "vision score",
-        _ => "CS",
-    }
-}
-
-/// "28" or "34.2".
-fn minutes_label(game: &Game) -> String {
-    let minutes = f64::from(game.duration_secs) / 60.0;
-    if game.duration_secs.is_multiple_of(60) {
-        format!("{minutes:.0}")
-    } else {
-        format!("{minutes:.1}")
+        StatKind::Deaths => "deaths",
     }
 }
 
@@ -673,7 +655,7 @@ fn model<T: Clone + 'static>(items: impl Iterator<Item = T>) -> ModelRc<T> {
 #[cfg(test)]
 mod tests {
     use chrono::{DateTime, Utc};
-    use cooldown_core::workout::{Amount, Workout};
+    use cooldown_core::workout::Workout;
     use cooldown_core::{GameSource, PlayerStats};
 
     use super::*;
@@ -782,21 +764,49 @@ mod tests {
     }
 
     #[test]
-    fn stats_are_red_under_the_target_of_the_role_only() {
-        // Bottom: CS per minute (8.0) pays burpees, damage share (28 %) pays squats.
+    fn a_row_says_when_the_game_was_played() {
+        // Started an hour ago, 30 minutes long: ended 30 minutes ago.
+        let view = &views(&[game(1, NOW - HOUR)])[0].games[0];
+        assert_eq!(view.played, "30m ago");
+        assert_eq!(view.played_at, "Sunday 8 November 2026, 11:30");
+        assert_eq!(played_ago(20), "1m ago");
+        assert_eq!(played_ago(2 * HOUR + 59 * 60), "2h ago");
+        assert_eq!(played_ago(3 * 24 * HOUR + HOUR), "3d ago");
+    }
+
+    #[test]
+    fn judged_stats_take_their_zone_and_the_others_stay_plain() {
+        // Bottom: CS per minute (5.5 / 7.0 / 9.0) pays burpees, damage share (20 / 26 / 32 %)
+        // pays squats.
         let stats = &views(&[game(1, NOW - HOUR)])[0].games[0].stats;
         let values: Vec<&str> = stats.iter().map(|stat| stat.value.as_str()).collect();
         assert_eq!(values, ["6.7", "25 %", "64 %", "0.7"]);
-        let under: Vec<bool> = stats.iter().map(|stat| stat.under).collect();
-        assert_eq!(under, [true, true, false, false]);
-        let targets: Vec<bool> = stats.iter().map(|stat| stat.target.is_some()).collect();
-        assert_eq!(targets, [true, true, false, false]);
-        assert!((stats[0].target.unwrap() - 0.8).abs() < 1e-6);
+        let totals: Vec<&str> = stats.iter().map(|stat| stat.total.as_str()).collect();
+        assert_eq!(totals, ["200", "20.0k", "16/25", "20"]);
+        let zones: Vec<Option<Zone>> = stats
+            .iter()
+            .map(|stat| stat.judged.as_ref().map(|judged| judged.zone))
+            .collect();
+        assert_eq!(
+            zones,
+            [
+                Some(Zone::BelowAverage),
+                Some(Zone::BelowAverage),
+                None,
+                None
+            ]
+        );
+        let cs = stats[0].judged.as_ref().unwrap();
+        assert_eq!(
+            (cs.floor_label.as_str(), cs.target_label.as_str()),
+            ("5.5", "9.0")
+        );
+        assert!((cs.average - 1.5 / 3.5).abs() < 1e-6);
         assert!((stats[2].fill - 0.64).abs() < 1e-6);
     }
 
     #[test]
-    fn each_exercise_shows_its_stat_and_formula() {
+    fn each_exercise_shows_its_stat_against_the_target_and_its_curve() {
         let WorkoutView::Skipped(exercises) = &views(&[game(1, NOW - HOUR)])[0].games[0].workout
         else {
             panic!("a workout");
@@ -804,41 +814,53 @@ mod tests {
         let [burpees, squats, plank] = exercises.as_slice() else {
             panic!("three exercises");
         };
-        assert_eq!(burpees.pays_for, "Main stat · CS per minute");
+        let shown = |exercise: &ExerciseView| {
+            (
+                exercise.value.clone(),
+                exercise.target.clone(),
+                exercise.gap.clone(),
+                exercise.zone,
+            )
+        };
+        // 30 minutes: 9.0 x 30 - 200 = 70 missed CS; 32 - 25 = 7 points; no gap for the plank.
+        assert_eq!(
+            shown(burpees),
+            (
+                "6.7".into(),
+                "/ 9.0".into(),
+                "−70 CS".into(),
+                Zone::BelowAverage
+            )
+        );
+        assert_eq!(
+            shown(squats),
+            (
+                "25 %".into(),
+                "/ 32 %".into(),
+                "−7 pts".into(),
+                Zone::BelowAverage
+            )
+        );
+        assert_eq!(
+            shown(plank),
+            ("3".into(), "/ 3".into(), String::new(), Zone::Average)
+        );
+        assert_eq!(
+            (burpees.due, burpees.cap, plank.unit, plank.cap),
+            (5, 15, "s", 90)
+        );
+        let curve = &burpees.curve;
         assert_eq!(
             (
-                burpees.value.as_str(),
-                burpees.target.as_str(),
-                burpees.gap.as_str()
+                curve.floor_label.as_str(),
+                curve.average_label.as_str(),
+                curve.target_label.as_str()
             ),
-            ("6.7", "/ 8.0", "−40 CS")
+            ("5.5", "7.0", "9.0")
         );
-        assert_eq!(burpees.due, 5);
-        let texts = |exercise: &ExerciseView| -> Vec<String> {
-            exercise
-                .terms
-                .iter()
-                .map(|term| match term {
-                    Term::Operator(text) => (*text).to_owned(),
-                    Term::Number { text, .. } => text.clone(),
-                })
-                .collect()
-        };
-        assert_eq!(
-            texts(burpees),
-            ["(", "8.0", "×", "30", "−", "200", ")", "÷", "5"]
-        );
-        assert_eq!(squats.gap, "−3 pts");
-        assert_eq!(texts(squats), ["(", "28 %", "−", "25 %", ")", "×", "5"]);
-        assert!(matches!(
-            squats.terms.last(),
-            Some(Term::Number { caption, tone: Tone::Factor, .. }) if caption == "squats per point"
-        ));
-        assert_eq!(
-            (plank.value.as_str(), plank.target.as_str()),
-            ("3", "× 10 s")
-        );
-        assert_eq!((plank.due, plank.unit), (30, "s"));
+        // 6.67 CS per minute: a third of the way from the floor to the target.
+        assert!((curve.progress - (200.0 / 30.0 - 5.5) / 3.5).abs() < 1e-9);
+        assert!(curve.amount > 7.0 && curve.amount < 15.0);
     }
 
     #[test]

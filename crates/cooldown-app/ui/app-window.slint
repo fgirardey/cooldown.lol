@@ -16,7 +16,7 @@ import { AppShell } from "shell/app-shell.slint";
 import { WelcomeScreen } from "screens/welcome.slint";
 import { HistoryEmpty } from "screens/history.slint";
 import { HistorySessions } from "screens/history-sessions.slint";
-import { SessionData, GameRowData, StatData, ExerciseData, TermData, StatKind, RefreshState } from "models.slint";
+import { SessionData, GameRowData, StatData, ExerciseData, CostCurveData, StatZone, StatKind, RefreshState } from "models.slint";
 import { RoleIcons } from "role-icons.slint";
 import { AboutScreen } from "screens/about.slint";
 import { SettingsScreen } from "screens/settings.slint";
@@ -25,7 +25,7 @@ import { DebugScreen } from "screens/debug.slint";
 import { TooltipLayer } from "shell/tooltip-layer.slint";
 import { Tooltips } from "tooltips.slint";
 
-export { Theme, Screen, Modal, SessionData, GameRowData, StatData, ExerciseData, TermData, StatKind, RefreshState, RoleIcons }
+export { Theme, Screen, Modal, SessionData, GameRowData, StatData, ExerciseData, CostCurveData, StatZone, StatKind, RefreshState, RoleIcons }
 
 export component AppWindow inherits Window {
     // "Settings — cooldown.lol" on a pushed screen, for Alt+Tab and the taskbar.

@@ -10,6 +10,9 @@
 //         Rectangle { … the control … }
 //     }
 //
+// With `spot`, the tooltip explains a point inside the anchor instead of the whole of it (the
+// value under the pointer on a chart): it sits under `spot-x`, `spot-y` and follows it.
+//
 // It only watches the pointer: clicks and hover still reach the control, disabled or not.
 // It writes the `Tooltips` UI global (docs/Decisions/ADR-0017), the one exception to pure
 // components.
@@ -20,19 +23,40 @@ export component TooltipAnchor inherits TouchArea {
     /// Empty: no tooltip.
     in property <string> tooltip;
 
+    /// The tooltip explains the point at `spot-x`, `spot-y` (in the anchor's coordinates).
+    in property <bool> spot;
+    in property <length> spot-x;
+    in property <length> spot-y;
+
     property <int> ticket;
+    // The spot as a small square, so the tooltip clears a marker drawn on it.
+    property <length> spot-size: 10px;
+    property <length> target-x: root.absolute-position.x + (root.spot ? root.spot-x - root.spot-size / 2 : 0px);
+    property <length> target-y: root.absolute-position.y + (root.spot ? root.spot-y - root.spot-size / 2 : 0px);
 
     changed has-hover => {
         if self.has-hover && root.tooltip != "" {
             root.ticket = Tooltips.enter({
                 text: root.tooltip,
-                x: root.absolute-position.x,
-                y: root.absolute-position.y,
-                width: root.width,
-                height: root.height,
+                x: root.target-x,
+                y: root.target-y,
+                width: root.spot ? root.spot-size : root.width,
+                height: root.spot ? root.spot-size : root.height,
             });
         } else {
             Tooltips.leave(root.ticket);
+        }
+    }
+
+    changed target-x => {
+        if root.spot && self.has-hover {
+            Tooltips.move(root.ticket, root.target-x, root.target-y);
+        }
+    }
+
+    changed target-y => {
+        if root.spot && self.has-hover {
+            Tooltips.move(root.ticket, root.target-x, root.target-y);
         }
     }
 

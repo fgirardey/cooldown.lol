@@ -23,8 +23,9 @@ pub struct Game {
     /// What the [`crate::workout`] formula needs besides the fields above. `None` when the
     /// game's details could not be read.
     pub stats: Option<PlayerStats>,
-    /// The amounts due, computed with the formula when the game was stored (a later change of
-    /// the formula does not rewrite them). `None` when the game has no workout, see
+    /// The amounts due, computed with the formula when the game was stored. A later change of
+    /// the formula does not rewrite a tracked game's; an imported game, never offered its
+    /// workout, gets the new amounts. `None` when the game has no workout, see
     /// [`Game::no_workout_reason`].
     pub workout: Option<Workout>,
 }

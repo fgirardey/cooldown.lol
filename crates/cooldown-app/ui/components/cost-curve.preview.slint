@@ -1,0 +1,76 @@
+// Previews of CostCurve: `just preview components/cost-curve`. Hover a curve to see what
+// another value would have cost.
+
+import { Theme } from "../theme.slint";
+import { CostCurve } from "cost-curve.slint";
+import { Fixtures } from "../preview-kit/fixtures.slint";
+import { PreviewCase } from "../preview-kit/preview-case.slint";
+
+// `Cost curve` of `Game row / Details / Exercise`: Mid, damage share below the average.
+export component CostCurveBelowAverage inherits Rectangle {
+    width: 947px;
+    height: 112px;
+    background: Theme.surface;
+
+    CostCurve {
+        width: parent.width;
+        exercise: Fixtures.game-ahri-no-image.exercises[0];
+    }
+}
+
+// Gallery of every variant (default component of the file).
+export component Preview inherits Window {
+    title: "CostCurve";
+    background: Theme.background;
+
+    VerticalLayout {
+        padding: Theme.space-m;
+        spacing: Theme.space-m;
+        alignment: start;
+
+        PreviewCase {
+            label: "Below the average (damage share, Mid)";
+            CostCurveBelowAverage { }
+        }
+
+        PreviewCase {
+            label: "At the floor or worse: the max (CS per minute)";
+            Rectangle {
+                width: 947px;
+                height: 112px;
+                background: Theme.surface;
+                CostCurve { width: parent.width; exercise: Fixtures.game-jinx.exercises[0]; }
+            }
+        }
+
+        PreviewCase {
+            label: "Past the target: waived";
+            Rectangle {
+                width: 947px;
+                height: 112px;
+                background: Theme.surface;
+                CostCurve { width: parent.width; exercise: Fixtures.game-kaisa.exercises[1]; }
+            }
+        }
+
+        PreviewCase {
+            label: "Deaths, fewer is better (plank)";
+            Rectangle {
+                width: 947px;
+                height: 112px;
+                background: Theme.surface;
+                CostCurve { width: parent.width; exercise: Fixtures.game-garen.exercises[2]; }
+            }
+        }
+
+        PreviewCase {
+            label: "Narrow";
+            Rectangle {
+                width: 600px;
+                height: 112px;
+                background: Theme.surface;
+                CostCurve { width: parent.width; exercise: Fixtures.game-miss-fortune.exercises[1]; }
+            }
+        }
+    }
+}

@@ -97,7 +97,7 @@ The canvas is a stack of three parts, each opening on a huge `Section / <number>
 | Frame | Shows |
 |---|---|
 | `Button / <Primary, Secondary, Danger>` | 44 px buttons, optional leading icon |
-| `Button / Primary / Small` | Inline Start button of a pending game row |
+| `Button / Primary / Small` | Inline Start button of a pending game row; optional leading 14 px icon (`Icon`, hidden by default, a dumbbell in the pending rows) |
 | `Icon button` | 36 px icon button (top bar navigation, dialog close) |
 | `Text link` | Text link with optional leading icon (Back, Later) |
 | `Switch / <Off, On>` | On/off switch, reusable components |

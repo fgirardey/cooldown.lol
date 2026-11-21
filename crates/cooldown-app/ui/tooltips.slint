@@ -29,6 +29,14 @@ export global Tooltips {
         }
     }
 
+    /// The spot the tooltip of `ticket` explains moved under the pointer (a point on a chart).
+    public function move(ticket: int, x: length, y: length) {
+        if ticket == self.last-ticket {
+            self.request.x = x;
+            self.request.y = y;
+        }
+    }
+
     /// The pointer left the control holding `ticket`. Ignored when another control took over
     /// meanwhile: the leave of one control and the enter of its neighbour come in either order.
     public function leave(ticket: int) {

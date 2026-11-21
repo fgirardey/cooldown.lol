@@ -1,0 +1,32 @@
+// A 1 px dashed or dotted line, horizontal or vertical (Slint paths draw no dashes): the
+// projections and the grid of a cost curve.
+//
+// `Player projections`, `Hover projections` and `Grid` of the `Game row / Details / Exercise`
+// component in design/cooldown.pen.
+
+import { Theme } from "../theme.slint";
+
+export component DashedLine inherits Rectangle {
+    /// Along y instead of x.
+    in property <bool> vertical;
+    in property <color> tint: Theme.text-secondary;
+    /// Length of a dash, and of the gap after it: 3 px dashes, or 1 px dots with `dash: 1px`
+    /// and `gap: 3px`.
+    in property <length> dash: 3px;
+    in property <length> gap: 3px;
+
+    property <length> length: root.vertical ? root.height : root.width;
+    property <int> count: root.length > 0 ? ceil(root.length / (root.dash + root.gap)) : 0;
+
+    width: root.vertical ? 1px : 0px;
+    height: root.vertical ? 0px : 1px;
+    clip: true;
+
+    for index in root.count: Rectangle {
+        x: root.vertical ? 0px : index * (root.dash + root.gap);
+        y: root.vertical ? index * (root.dash + root.gap) : 0px;
+        width: root.vertical ? 1px : root.dash;
+        height: root.vertical ? root.dash : 1px;
+        background: root.tint;
+    }
+}

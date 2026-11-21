@@ -60,7 +60,19 @@ Tints of a History row in the Games view ([[History#Game rows]]): the result's c
 | `tint-row-mid` | 0.08 | Win or loss tint, at 28 % |
 | `tint-row-muted` | 0.15 | `text-secondary` tint of a game without workout, at the stripe |
 | `tint-row-muted-mid` | 0.05 | Same, at 28 % |
-| `tint-curve` | 0.08 | `danger` tint under a cost curve, left of the game, in the row's details |
+| `tint-curve` | 0.25 | `danger` → `warning` → `success` gradient between a cost curve and its 0 line, in the row's details |
+| `tint-gauge-zone` | 0.50 | `danger` → `warning` → `success` gradient of a benchmark gauge in a Games row |
+
+Lines of a cost curve in a History row's details ([[History#Game rows]]): `text-secondary` at these opacities, except the halo, in the zone colour of the game's dot.
+
+| Token | Value | Usage |
+|---|---|---|
+| `curve-zero-line` | 0.6 | The 0 line, at the top |
+| `curve-grid` | 0.25 | Dotted line at the mid amount |
+| `curve-target-line` | 0.5 | Vertical line at the target |
+| `curve-projection` | 0.6 | Dashed lines from the game's dot to the axes |
+| `curve-halo` | 0.2 | Halo around the game's dot |
+| `watermark-opacity` | 0.3 | The stat's pictogram and name behind the curve |
 
 ## Interaction
 Hover, pressed, focus, disabled and selected states. Buttons, icon buttons and text links are Pencil components in `Controls library`, with one reusable instance per state (`Button / Primary / Hover`, …) and a **State rules** table (trigger, visual change, tokens, motion, cursor); switches and workout cards are in the `Interaction states` section of the `Foundations` board. Every interactive control adds a **state layer** in its content colour (Material), filled and outlined buttons also **shrink** while pressed (iOS), and every change eases out.
@@ -117,14 +129,15 @@ The tooltip stays inside the window. It never takes clicks or hover, and it clos
 ## Typography
 | Token | Size | Usage |
 |---|---|---|
-| `font-size-micro` | 10px | A game's cap ("max 30") |
-| `font-size-small` | 11px | Captions of the formula in a History row's details |
+| `font-size-micro` | 10px | A game's max ("max 15"), the scale of a benchmark gauge |
+| `font-size-small` | 11px | Axis labels of a cost curve in a History row's details |
 | `font-size-caption` | 12px | Small labels (top bar status) |
 | `font-size-label` | 13px | Workout status, view switch, exercise names |
 | `font-size-body` | 14px | Body text |
 | `font-size-wordmark` | 18px | "COOLDOWN.LOL" wordmark in the top bar |
 | `font-size-title` | 20px | Titles, stat values of History rows |
-| `font-size-equation` | 22px | Numbers and operators of the formula in a History row's details |
+| `font-size-result` | 22px | Results of the Games view, the game's value on a cost curve, "/due" and the exercise in a row's details |
+| `font-size-watermark` | 30px | The stat's name behind a cost curve |
 | `font-size-headline` | 32px | Welcome headline |
 | `font-size-display` | 40px | Big numbers (clock, stats) |
 | `font-size-hero` | 96px | The one number to read from a distance (workout step count, plank countdown) |
