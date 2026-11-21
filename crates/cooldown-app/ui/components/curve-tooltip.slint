@@ -1,0 +1,227 @@
+// The tooltip of a cost curve's hover, in two kinds that look apart, an eyebrow naming each:
+// - WHAT IF, for any value on the curve: a neutral, compact readout. The value in its zone's
+//   colour with the stat, its zone, then an arrow to the exercise's amount at that value and a
+//   chip with the difference with the game;
+// - THIS GAME, on the game's dot: a result card, its panel tinted and outlined in the zone
+//   colour. A bigger value, its zone, then under a divider the amount due with a pill saying
+//   what became of it ("0/11 · skipped") and the gap to target. A pointer on its edge aims at the marker it explains. The
+// window's `TooltipLayer` draws it; the curve asks for it with `TooltipAnchor`.
+//
+// `Game row / Details / Exercise / Tooltip` (and `/ This game`, `/ More`, `/ Same`, `/ Waived`,
+// `/ Plank`) in design/cooldown.pen.
+
+import { Theme } from "../theme.slint";
+import { CurveTooltipData, StatZone } from "../models.slint";
+import { Icon } from "icon.slint";
+import { TooltipSurface } from "tooltip-surface.slint";
+
+export component CurveTooltip inherits Rectangle {
+    in property <CurveTooltipData> data;
+    /// The pointer: on the top edge (the tooltip is under its marker) or the bottom one, centred
+    /// on `pointer-x` from the left edge, kept off the corners.
+    in property <bool> pointer-up: true;
+    in property <length> pointer-x: root.width / 2;
+
+
+    property <color> tone: root.data.waived ? Theme.success
+        : root.data.zone == StatZone.floor ? Theme.danger
+        : root.data.zone == StatZone.below-average ? Theme.warning
+        : Theme.success;
+    property <bool> game: root.data.this-game;
+    property <color> difference-tone: root.data.difference < 0 ? Theme.success
+        : root.data.difference > 0 ? Theme.danger
+        : Theme.text-secondary;
+
+    width: 264px;
+    height: content.preferred-height;
+
+    // The raised panel and its pointer, behind the content.
+    TooltipSurface {
+        x: 0px;
+        y: -Theme.tooltip-pointer;
+        panel-width: root.width;
+        panel-height: root.height;
+        up: root.pointer-up;
+        pointer-x: root.pointer-x;
+        fill: root.game ? Theme.surface-raised.mix(root.tone, 1 - Theme.tint-tooltip-game) : Theme.surface-raised;
+        outline: root.game ? root.tone.with-alpha(Theme.tint-tooltip-game-outline) : Theme.border-raised;
+    }
+
+    content := VerticalLayout {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 12px;
+        padding-right: 12px;
+        spacing: Theme.space-s;
+
+        Text {
+            font-family: Theme.font-body;
+            text: root.game ? "THIS GAME" : "WHAT IF";
+            color: root.game ? root.tone : Theme.text-secondary;
+            font-size: Theme.font-size-micro;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+        }
+
+        HorizontalLayout {
+            spacing: 6px;
+            alignment: start;
+
+            Text {
+                font-family: Theme.font-display;
+                text: root.data.value;
+                color: root.tone;
+                font-size: root.game ? Theme.font-size-headline : Theme.font-size-title;
+                font-weight: 800;
+                font-italic: true;
+                vertical-alignment: bottom;
+            }
+
+            Text {
+                font-family: Theme.font-body;
+                text: root.data.noun;
+                color: Theme.text-secondary;
+                font-size: Theme.font-size-caption;
+                vertical-alignment: bottom;
+            }
+        }
+
+        HorizontalLayout {
+            spacing: 6px;
+            alignment: start;
+
+            Rectangle {
+                width: 6px;
+                height: 6px;
+                y: (parent.height - self.height) / 2;
+                border-radius: self.width / 2;
+                background: root.tone;
+            }
+
+            Text {
+                font-family: Theme.font-body;
+                text: root.data.waived ? "Target reached"
+                    : root.data.zone == StatZone.floor ? "At the floor or worse"
+                    : root.data.zone == StatZone.below-average ? "Below average"
+                    : "Average or better";
+                color: Theme.text-secondary;
+                font-size: Theme.font-size-small;
+                vertical-alignment: center;
+            }
+        }
+
+        if root.game: Rectangle {
+            height: 1px;
+            background: root.tone.with-alpha(Theme.tint-tooltip-game-divider);
+        }
+
+        HorizontalLayout {
+            spacing: Theme.space-s;
+
+            // What if: an arrow from the value to what it would cost.
+            if !root.game: Icon {
+                source: @image-url("../images/icons/arrow-right.svg");
+                width: 14px;
+                height: 14px;
+                colorize: Theme.text-secondary;
+                y: (parent.height - self.height) / 2;
+            }
+
+            Icon {
+                source: root.data.exercise-icon;
+                width: 28px;
+                height: 28px;
+                colorize: Theme.text-primary;
+                y: (parent.height - self.height) / 2;
+            }
+
+            HorizontalLayout {
+                spacing: Theme.space-xs;
+                alignment: start;
+
+                Text {
+                    font-family: Theme.font-display;
+                    text: root.data.amount;
+                    color: Theme.text-primary;
+                    font-size: Theme.font-size-result;
+                    font-weight: 800;
+                    font-italic: true;
+                    vertical-alignment: center;
+                }
+
+                Text {
+                    font-family: Theme.font-body;
+                    text: root.data.unit;
+                    color: Theme.text-primary;
+                    font-size: Theme.font-size-label;
+                    font-weight: 600;
+                    vertical-alignment: center;
+                }
+            }
+
+            Rectangle {
+                horizontal-stretch: 1;
+            }
+
+            // The game: a pill saying what became of the amount due.
+            if root.game: VerticalLayout {
+                alignment: center;
+
+                Rectangle {
+                    border-radius: Theme.radius-chip;
+                    background: root.data.status-color.with-alpha(Theme.tint-header);
+
+                    HorizontalLayout {
+                        padding-top: 2px;
+                        padding-bottom: 2px;
+                        padding-left: 6px;
+                        padding-right: 6px;
+
+                        Text {
+                            font-family: Theme.font-body;
+                            text: root.data.status;
+                            color: root.data.status-color;
+                            font-size: Theme.font-size-small;
+                            font-weight: 600;
+                        }
+                    }
+                }
+            }
+
+            // Another value: the difference with the game, filled in its colour, outlined when
+            // the same.
+            if !root.game: VerticalLayout {
+                alignment: center;
+
+                Rectangle {
+                    border-radius: Theme.radius-chip;
+                    background: root.data.difference == 0 ? transparent : root.difference-tone.with-alpha(Theme.tint-header);
+                    border-width: root.data.difference == 0 ? 1px : 0px;
+                    border-color: Theme.border-raised;
+
+                    HorizontalLayout {
+                        padding-top: 2px;
+                        padding-bottom: 2px;
+                        padding-left: 6px;
+                        padding-right: 6px;
+
+                        Text {
+                            font-family: Theme.font-body;
+                            text: root.data.difference-label;
+                            color: root.difference-tone;
+                            font-size: Theme.font-size-small;
+                            font-weight: 600;
+                        }
+                    }
+                }
+            }
+        }
+
+        if root.game && root.data.target-gap != "": Text {
+            font-family: Theme.font-body;
+            text: root.data.target-gap;
+            color: Theme.text-secondary;
+            font-size: Theme.font-size-small;
+        }
+    }
+}

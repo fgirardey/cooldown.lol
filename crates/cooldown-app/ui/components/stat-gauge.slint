@@ -1,10 +1,14 @@
-// A stat of the Games view: pictogram, value, a gauge with the role's target tick, and the
-// stat's name. Red when under the target.
+// A stat of the Games view: pictogram, value, a gauge, and under them the stat's name with the
+// game's total. A stat the formula judges for the role gets a benchmark gauge from the role's
+// floor (left) to its target (right, with a tick), blended from `danger` to `success` at the
+// average, and its value takes its zone's colour; hovering the row shows the floor and the
+// target above the gauge. The others have a plain gauge and stay `text-primary`.
 //
-// `Stat · *` columns of the `Game row / Games / *` components in design/cooldown.pen.
+// `Stat · *` columns of the `Game row / Games / *` components in design/cooldown.pen
+// (`Game row / Games / Hover` for the scale).
 
 import { Theme } from "../theme.slint";
-import { StatData, StatKind } from "../models.slint";
+import { StatData, StatKind, StatZone } from "../models.slint";
 import { StatIcon } from "stat-icon.slint";
 
 export component StatGauge inherits VerticalLayout {
@@ -14,8 +18,17 @@ export component StatGauge inherits VerticalLayout {
     in property <string> caption;
     /// False when the game's stats could not be read: a dash instead of the value.
     in property <bool> known: true;
+    /// The row is hovered: the benchmark gauge shows its scale.
+    in property <bool> row-hovered;
 
-    property <color> tone: root.known && root.stat.under ? Theme.danger : Theme.text-primary;
+    property <color> tone: !root.known || !root.stat.judged ? Theme.text-primary
+        : root.stat.zone == StatZone.floor ? Theme.danger
+        : root.stat.zone == StatZone.below-average ? Theme.warning
+        : Theme.success;
+
+    // Gradient stops of the benchmark gauge: `warning` halfway to the average, `success` from it.
+    property <float> warning-at: root.stat.average / 2;
+    property <float> success-at: root.stat.average;
 
     spacing: 5px;
     alignment: center;
@@ -31,10 +44,9 @@ export component StatGauge inherits VerticalLayout {
             y: (parent.height - self.height) / 2;
         }
 
-        // 40 px in the design, in Barlow Condensed; wider with the system font until it is bundled.
         Text {
             font-family: Theme.font-display;
-            min-width: 40px;
+            width: 40px;
             text: root.known ? root.stat.value : "—";
             color: root.tone;
             font-size: Theme.font-size-title;
@@ -43,8 +55,8 @@ export component StatGauge inherits VerticalLayout {
             vertical-alignment: center;
         }
 
-        // The track; the tick marks the role's target.
-        if root.known: Rectangle {
+        // The plain gauge: the track and the filled part.
+        if root.known && !root.stat.judged: Rectangle {
             width: 62px;
             height: 6px;
             y: (parent.height - self.height) / 2;
@@ -55,24 +67,71 @@ export component StatGauge inherits VerticalLayout {
                 x: 0px;
                 width: parent.width * root.stat.fill;
                 border-radius: parent.border-radius;
-                background: root.tone;
+                background: Theme.text-primary;
             }
+        }
 
-            if root.stat.has-target: Rectangle {
-                x: parent.width * root.stat.target - self.width / 2;
+        // The benchmark gauge: the scale from the floor to the target, the tick at the target.
+        if root.known && root.stat.judged: Rectangle {
+            width: 62px;
+            height: 6px;
+            y: (parent.height - self.height) / 2;
+            border-radius: self.height / 2;
+            background: @linear-gradient(90deg,
+                Theme.danger.with-alpha(Theme.tint-gauge-zone) 0%,
+                Theme.warning.with-alpha(Theme.tint-gauge-zone) root.warning-at,
+                Theme.success.with-alpha(Theme.tint-gauge-zone) root.success-at,
+                Theme.success.with-alpha(Theme.tint-gauge-zone) 100%);
+
+            Rectangle {
+                x: parent.width - self.width;
                 y: -3px;
                 width: 2px;
                 height: 12px;
                 border-radius: self.width / 2;
-                background: Theme.text-secondary;
+                background: Theme.text-primary;
+            }
+
+            if root.row-hovered: Text {
+                x: 0px;
+                y: -14px;
+                width: 30px;
+                font-family: Theme.font-body;
+                text: root.stat.floor-label;
+                color: Theme.text-secondary;
+                font-size: Theme.font-size-micro;
+            }
+
+            if root.row-hovered: Text {
+                x: parent.width - self.width;
+                y: -14px;
+                width: 30px;
+                font-family: Theme.font-body;
+                text: root.stat.target-label;
+                color: Theme.text-secondary;
+                font-size: Theme.font-size-micro;
+                horizontal-alignment: right;
             }
         }
     }
 
-    Text {
-        font-family: Theme.font-body;
-        text: root.caption;
-        color: Theme.text-secondary;
-        font-size: Theme.font-size-caption;
+    HorizontalLayout {
+        spacing: 5px;
+        alignment: start;
+
+        Text {
+            font-family: Theme.font-body;
+            text: root.caption;
+            color: Theme.text-secondary;
+            font-size: Theme.font-size-caption;
+        }
+
+        if root.known: Text {
+            font-family: Theme.font-body;
+            text: root.stat.total;
+            color: Theme.text-primary;
+            font-size: Theme.font-size-caption;
+            font-weight: 600;
+        }
     }
 }

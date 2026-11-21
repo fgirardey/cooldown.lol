@@ -13,16 +13,6 @@ export enum RefreshState {
     client-silent,
 }
 
-/// A tooltip to show: its text and the control it explains, in window coordinates (see
-/// `tooltips.slint`).
-export struct TooltipRequest {
-    text: string,
-    x: length,
-    y: length,
-    width: length,
-    height: length,
-}
-
 /// A stat behind an exercise, for its pictogram.
 export enum StatKind {
     cs-per-minute,
@@ -32,60 +22,133 @@ export enum StatKind {
     deaths,
 }
 
-/// A piece of an exercise's formula: an operator ("(", "×", "−", ")", "÷"), or a number with its
-/// caption.
-export struct TermData {
-    operator: bool,
-    text: string,
-    /// "target CS / min", "your CS", "CS per burpee".
-    caption: string,
-    /// The player's own value under target: red.
-    under: bool,
-    /// The formula's constant (per burpee, per death): green.
-    factor: bool,
+/// Where a judged stat stands against the role's benchmarks: `danger` at the floor or worse,
+/// `warning` up to the average, `success` from the average on.
+export enum StatZone {
+    floor,
+    below-average,
+    average,
 }
 
-/// A stat of the Games view: its value and a gauge with the role's target.
+/// A stat of the Games view: its value, a gauge and the game's total.
 export struct StatData {
     /// "8.5", "24 %".
     value: string,
-    /// Under the role's target: the value and the gauge are red.
-    under: bool,
-    /// The gauge's filled part, 0 to 1.
+    /// "269", "21.3k", "7/11".
+    total: string,
+    /// The formula judges this stat for the role: a benchmark gauge from the floor to the
+    /// target, and the value in its zone's colour. A plain gauge in `text-primary` otherwise.
+    judged: bool,
+    zone: StatZone,
+    /// Plain gauge: the filled part, 0 to 1.
     fill: float,
-    /// Only the stats the formula judges for the role have a target.
-    has-target: bool,
-    /// Where the target tick sits on the gauge, 0 to 1.
+    /// Benchmark gauge: where the average sits, 0 (floor) to 1 (target).
+    average: float,
+    /// Benchmark gauge, shown while the row is hovered: "5.5" and "9.0".
+    floor-label: string,
+    target-label: string,
+}
+
+/// The cost curve of an exercise: the amount for every value of its stat. Positions run from
+/// the floor (0) to the target (1), whichever way the stat goes.
+export struct CostCurveData {
+    /// Where the average sits.
+    average: float,
+    /// Where the game stands; below 0 under the floor, above 1 past the target.
+    progress: float,
+    /// The amount at the floor or worse, and at the average.
+    max: int,
+    mid: int,
+    /// The game's amount before rounding, for the dot.
+    amount: float,
+    /// "18 %", "25 %", "31 %".
+    floor-label: string,
+    average-label: string,
+    target-label: string,
+    /// The benchmarks as numbers, to name the value under the pointer.
+    floor: float,
     target: float,
+    /// Decimals of a value: 1 for the per-minute stats, 0 otherwise.
+    decimals: int,
+    /// " %" for the shares, empty otherwise.
+    suffix: string,
+    /// "damage share", "CS per minute", "deaths".
+    noun: string,
+}
+
+/// The structured tooltip of a cost curve's hover: the value under the pointer and what it
+/// would cost (see `components/curve-tooltip.slint`).
+export struct CurveTooltipData {
+    /// "27 %", "4".
+    value: string,
+    /// "damage share", "deaths".
+    noun: string,
+    zone: StatZone,
+    /// At the target or better: the exercise is waived.
+    waived: bool,
+    exercise-icon: image,
+    /// "5", "15s".
+    amount: string,
+    /// "burpees", "burpee", "plank".
+    unit: string,
+    /// The amount minus the game's: its sign gives the chip's colour.
+    difference: int,
+    /// "−6 vs this game", "Same as this game".
+    difference-label: string,
+    /// The game itself (the pointer on its dot) rather than another value: the status and the
+    /// gap to target replace the difference.
+    this-game: bool,
+    /// "0/11 · skipped", "11/11 · complete", "8/11 · 3 missing", in `status-color`.
+    status: string,
+    status-color: color,
+    /// "−9 pts to target 31 %", empty on target.
+    target-gap: string,
+}
+
+/// A tooltip to show: its content and the control it explains, in window coordinates (see
+/// `tooltips.slint`).
+export struct TooltipRequest {
+    /// The text, and for a structured tooltip, what it says in a sentence.
+    text: string,
+    x: length,
+    y: length,
+    width: length,
+    height: length,
+    /// A cost curve's structured tooltip instead of the text.
+    has-curve: bool,
+    curve: CurveTooltipData,
 }
 
 /// One exercise of a game: the stat that pays for it and the amount due.
 export struct ExerciseData {
     /// "BURPEES".
     name: string,
-    /// "Main stat · CS per minute".
-    pays-for: string,
     stat: StatKind,
     /// "CS per minute", "Deaths".
     stat-label: string,
     /// "3.0", "19 %", "7".
     value: string,
-    /// "/ 8.0", "/ 28 %", "× 10 s".
+    zone: StatZone,
+    /// "/ 9.0", "/ 32 %", "/ 3".
     target: string,
-    /// "−171 CS", "−9 pts", or empty on target.
+    /// "−72 CS", "−9 pts", or empty on target and for the plank.
     gap: string,
-    under: bool,
+    /// For the game's tooltip on its cost curve: "−9 pts to target 31 %", "2 deaths over target
+    /// 3"; empty on target.
+    target-gap: string,
     done: int,
     due: int,
     /// "s" for the plank, empty for repetitions.
     unit: string,
-    /// "burpees", "squats", "plank".
+    /// "burpees", "squats", "plank", and "burpee", "squat", "plank" for one.
     unit-label: string,
-    /// The game's cap applied: "max 30".
+    unit-label-one: string,
+    /// The stat was at its floor or worse, the max applies: "max 15".
     capped: bool,
     cap-label: string,
-    /// The formula, left of the "=": operators and numbers with their captions.
-    terms: [TermData],
+    /// Never offered (games from before cooldown.lol).
+    skipped: bool,
+    curve: CostCurveData,
 }
 
 /// One game row of the History screen, for both views (Games and Workouts).
@@ -108,6 +171,10 @@ export struct GameRowData {
     remake: bool,
     /// "34:12".
     length: string,
+    /// When the game ended: "2h ago", and in full for its tooltip,
+    /// "Sunday 1 November 2026, 20:35".
+    played: string,
+    played-at: string,
     kills: int,
     deaths: int,
     assists: int,

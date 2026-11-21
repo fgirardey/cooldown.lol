@@ -1,10 +1,11 @@
 // An exercise of the Workouts view: the stat behind it (value, target, gap), an arrow, then the
-// amount done over due with a bar, and the cap when the game hit it.
+// amount done over due with a bar, and the max when the stat was at its floor or worse. The
+// value takes its zone's colour.
 //
 // `Exercise B / S / P` of the `Game row / Workouts / *` components in design/cooldown.pen.
 
 import { Theme } from "../theme.slint";
-import { ExerciseData } from "../models.slint";
+import { ExerciseData, StatZone } from "../models.slint";
 import { Icon } from "icon.slint";
 import { StatIcon } from "stat-icon.slint";
 
@@ -45,7 +46,9 @@ export component ExerciseColumn inherits HorizontalLayout {
             Text {
                 font-family: Theme.font-display;
                 text: root.exercise.value;
-                color: root.exercise.under ? Theme.danger : Theme.text-primary;
+                color: root.exercise.zone == StatZone.floor ? Theme.danger
+                    : root.exercise.zone == StatZone.below-average ? Theme.warning
+                    : Theme.success;
                 font-size: Theme.font-size-title;
                 font-weight: 800;
                 font-italic: true;

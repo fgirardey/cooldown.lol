@@ -39,6 +39,7 @@ export component GameRowWorkoutsSkipped inherits Rectangle {
     }
 }
 
+// Hover a cost curve to see what another value would have cost.
 // Pencil frame `Game row / Games / Done expanded`, with a game from before cooldown.lol.
 export component GameRowGamesExpanded inherits Rectangle {
     width: 1216px;
@@ -62,8 +63,17 @@ export component Preview inherits Window {
         alignment: start;
 
         PreviewCase {
-            label: "Game row / Games / Skipped";
+            label: "Game row / Games / Skipped (hover the row for the scale of the gauges)";
             GameRowGamesSkipped { }
+        }
+
+        PreviewCase {
+            label: "Before cooldown.lol, below the average";
+            Rectangle {
+                width: 1216px;
+                height: 64px;
+                GameRow { game: Fixtures.game-miss-fortune; }
+            }
         }
 
         PreviewCase {

@@ -8,6 +8,7 @@ use std::collections::HashSet;
 use std::path::Path;
 use std::sync::{Arc, Mutex, MutexGuard};
 
+use cooldown_core::workout;
 use cooldown_core::{Amount, Game, GameResult, GameSource, PlayerStats, Role, Workout};
 use rusqlite::{Connection, OptionalExtension, params};
 
@@ -50,9 +51,58 @@ impl HistoryStore {
         connection.pragma_update(None, "journal_mode", "WAL")?;
         connection.pragma_update(None, "synchronous", "NORMAL")?;
         migrate(&connection, found)?;
-        Ok(Self {
+        let store = Self {
             connection: Arc::new(Mutex::new(connection)),
-        })
+        };
+        store.recompute_imported_workouts()?;
+        Ok(store)
+    }
+
+    /// Gives every imported game the workout of this version's formula. Those games were never
+    /// offered their workout, so their amounts follow the formula when it changes; a tracked
+    /// game keeps the workout it was given. Returns how many games changed.
+    ///
+    /// # Errors
+    /// The database cannot be read or written. Nothing is changed then (one transaction).
+    fn recompute_imported_workouts(&self) -> Result<usize, HistoryError> {
+        let mut connection = self.lock();
+        let transaction = connection.transaction()?;
+        let mut changed = 0;
+        {
+            let mut select = transaction.prepare(SELECT_IMPORTED_WITH_STATS)?;
+            let games: Vec<(String, Game)> = select
+                .query_map([], |row| Ok((row.get(22)?, stored_game(row)?)))?
+                .filter_map(|row| match row {
+                    Ok((puuid, stored)) => Some((puuid, stored.into_game()?)),
+                    Err(error) => {
+                        tracing::debug!(%error, "skipped a stored game this version cannot read");
+                        None
+                    }
+                })
+                .collect();
+            let mut update = transaction.prepare(UPDATE_WORKOUT)?;
+            for (puuid, game) in games {
+                let workout = workout::compute(&game);
+                if workout == game.workout {
+                    continue;
+                }
+                changed += update.execute(params![
+                    puuid,
+                    i64::try_from(game.game_id).unwrap_or(i64::MAX),
+                    workout.map(|w| w.burpees.due),
+                    workout.map(|w| w.burpees.capped),
+                    workout.map(|w| w.squats.due),
+                    workout.map(|w| w.squats.capped),
+                    workout.map(|w| w.plank.due),
+                    workout.map(|w| w.plank.capped),
+                ])?;
+            }
+        }
+        transaction.commit()?;
+        if changed > 0 {
+            tracing::info!(changed, "recomputed the workouts of imported games");
+        }
+        Ok(changed)
     }
 
     /// Stores `games` of `puuid` and returns how many were stored or completed.
@@ -146,36 +196,7 @@ impl HistoryStore {
     pub fn games(&self, puuid: &str) -> Result<Vec<Game>, HistoryError> {
         let connection = self.lock();
         let mut select = connection.prepare_cached(SELECT_GAMES)?;
-        let rows = select.query_map([puuid], |row| {
-            Ok(StoredGame {
-                game_id: row.get(0)?,
-                source: row.get(1)?,
-                started_at: row.get(2)?,
-                duration_secs: row.get(3)?,
-                queue_id: row.get(4)?,
-                champion_id: row.get(5)?,
-                role: row.get(6)?,
-                result: row.get(7)?,
-                kills: row.get(8)?,
-                deaths: row.get(9)?,
-                assists: row.get(10)?,
-                stats: StoredStats {
-                    cs: row.get(11)?,
-                    vision_score: row.get(12)?,
-                    damage_to_champions: row.get(13)?,
-                    team_kills: row.get(14)?,
-                    team_damage_to_champions: row.get(15)?,
-                },
-                workout: StoredWorkout {
-                    burpees_due: row.get(16)?,
-                    burpees_capped: row.get(17)?,
-                    squats_due: row.get(18)?,
-                    squats_capped: row.get(19)?,
-                    plank_due: row.get(20)?,
-                    plank_capped: row.get(21)?,
-                },
-            })
-        })?;
+        let rows = select.query_map([puuid], stored_game)?;
         let mut games = Vec::new();
         for row in rows {
             if let Some(game) = row?.into_game() {
@@ -275,6 +296,19 @@ const SELECT_GAMES: &str = "SELECT game_id, source, started_at, duration_secs, q
         squats_due, squats_capped, plank_due, plank_capped
      FROM games WHERE puuid = ?1 ORDER BY started_at DESC, game_id DESC";
 
+/// The imported games stored with their stats, whose workout the formula decides; the columns
+/// of [`SELECT_GAMES`], then the player.
+const SELECT_IMPORTED_WITH_STATS: &str = "SELECT game_id, source, started_at, duration_secs,
+        queue_id, champion_id, role, result, kills, deaths, assists, cs, vision_score,
+        damage_to_champions, team_kills, team_damage_to_champions, burpees_due, burpees_capped,
+        squats_due, squats_capped, plank_due, plank_capped, puuid
+     FROM games WHERE source = 'imported' AND cs IS NOT NULL";
+
+const UPDATE_WORKOUT: &str = "UPDATE games SET
+        burpees_due = ?3, burpees_capped = ?4, squats_due = ?5, squats_capped = ?6,
+        plank_due = ?7, plank_capped = ?8
+     WHERE puuid = ?1 AND game_id = ?2 AND source = 'imported'";
+
 /// The schema version of this cooldown.lol: the number of migrations.
 #[allow(clippy::cast_possible_truncation)] // a handful of migrations
 const SCHEMA_VERSION: u32 = MIGRATIONS.len() as u32;
@@ -289,6 +323,38 @@ fn migrate(connection: &Connection, found: u32) -> Result<(), HistoryError> {
         ))?;
     }
     Ok(())
+}
+
+/// Reads a row of [`SELECT_GAMES`] (or [`SELECT_IMPORTED_WITH_STATS`]).
+fn stored_game(row: &rusqlite::Row<'_>) -> rusqlite::Result<StoredGame> {
+    Ok(StoredGame {
+        game_id: row.get(0)?,
+        source: row.get(1)?,
+        started_at: row.get(2)?,
+        duration_secs: row.get(3)?,
+        queue_id: row.get(4)?,
+        champion_id: row.get(5)?,
+        role: row.get(6)?,
+        result: row.get(7)?,
+        kills: row.get(8)?,
+        deaths: row.get(9)?,
+        assists: row.get(10)?,
+        stats: StoredStats {
+            cs: row.get(11)?,
+            vision_score: row.get(12)?,
+            damage_to_champions: row.get(13)?,
+            team_kills: row.get(14)?,
+            team_damage_to_champions: row.get(15)?,
+        },
+        workout: StoredWorkout {
+            burpees_due: row.get(16)?,
+            burpees_capped: row.get(17)?,
+            squats_due: row.get(18)?,
+            squats_capped: row.get(19)?,
+            plank_due: row.get(20)?,
+            plank_capped: row.get(21)?,
+        },
+    })
 }
 
 /// A row as stored; codes are turned into [`Game`] values in [`StoredGame::into_game`].
@@ -429,8 +495,9 @@ fn role_from_code(code: &str) -> Option<Role> {
 mod tests {
     use super::*;
 
+    /// An imported game with the workout of the formula, as the import stores it.
     fn game(game_id: u64, started_at: i64) -> Game {
-        Game {
+        let game = Game {
             game_id,
             source: GameSource::Imported,
             started_at,
@@ -449,20 +516,21 @@ mod tests {
                 team_kills: 30,
                 team_damage_to_champions: 70_000,
             }),
-            workout: Some(Workout {
-                burpees: Amount {
-                    due: 6,
-                    capped: false,
-                },
-                squats: Amount {
-                    due: 50,
-                    capped: true,
-                },
-                plank: Amount {
-                    due: 40,
-                    capped: false,
-                },
-            }),
+            workout: None,
+        };
+        Game {
+            workout: workout::compute(&game),
+            ..game
+        }
+    }
+
+    /// Amounts no version of the formula gives that game.
+    fn stale_workout() -> Workout {
+        let amount = |due| Amount { due, capped: true };
+        Workout {
+            burpees: amount(30),
+            squats: amount(50),
+            plank: amount(180),
         }
     }
 
@@ -565,6 +633,30 @@ mod tests {
         let reopened = HistoryStore::open(&dir).unwrap();
         assert_eq!(reopened.games("p1").unwrap(), [game(1, 100)]);
         // Windows cannot delete a file that is still open.
+        drop(reopened);
+        std::fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn reopening_gives_imported_games_the_workout_of_the_formula() {
+        let dir = temp_dir("recompute");
+        let tracked = Game {
+            game_id: 2,
+            source: GameSource::Tracked,
+            workout: Some(stale_workout()),
+            ..game(2, 200)
+        };
+        let stale = Game {
+            workout: Some(stale_workout()),
+            ..game(1, 100)
+        };
+        HistoryStore::open(&dir)
+            .unwrap()
+            .import_games("p1", &[stale, tracked.clone()])
+            .unwrap();
+        let reopened = HistoryStore::open(&dir).unwrap();
+        // Newest first: the tracked game keeps the workout it was given.
+        assert_eq!(reopened.games("p1").unwrap(), [tracked, game(1, 100)]);
         drop(reopened);
         std::fs::remove_dir_all(dir).unwrap();
     }

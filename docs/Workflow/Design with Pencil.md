@@ -10,7 +10,7 @@
 
 ## Organising the file
 Conventions are in `design/README.md`. Summary:
-- Sections, top to bottom: `Foundations`, `Primitives`, `Core components`, then one row of screens per flow.
+- Three parts, top to bottom, each under a huge banner: `01 Foundations`, `02 Components`, `03 Screens` (one row of screens per flow).
 - Frames: `<Feature> / <Screen> / <State>`, matching the notes in [[Features]].
 - Every UI state gets a frame (empty, loading, nominal, error).
 - A component with several states has a `… / Base` component; each state is an instance of it with overrides, so a change to the base reaches every state.

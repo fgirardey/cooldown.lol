@@ -1,6 +1,6 @@
 // A game of the History screen: a 64 px row (game, then the stats in the Games view or the
-// exercises in the Workouts view, the workout status and a chevron), opening on the formula of
-// each exercise. A stripe on the left and a tint fading from it show the result in the Games
+// exercises in the Workouts view, the workout status and a chevron), opening on the cost curve
+// of each exercise. A stripe on the left and a tint fading from it show the result in the Games
 // view.
 //
 // Components `Game row / Games / *` and `Game row / Workouts / *` in design/cooldown.pen; only
@@ -12,7 +12,7 @@ import { GameSummary } from "game-summary.slint";
 import { KdaStat } from "kda-stat.slint";
 import { StatGauge } from "stat-gauge.slint";
 import { ExerciseColumn } from "exercise-column.slint";
-import { ExerciseEquation } from "exercise-equation.slint";
+import { ExerciseDetail } from "exercise-detail.slint";
 import { WorkoutStatus } from "workout-status.slint";
 import { ExpandButton } from "expand-button.slint";
 
@@ -47,98 +47,103 @@ export component GameRow inherits Rectangle {
             root.tone.with-alpha(0) 60%);
     }
 
-    content := VerticalLayout {
-        HorizontalLayout {
-            height: 64px;
-            padding-left: 3px + 20px;
-            padding-right: 12px;
-            spacing: 20px;
-
-            GameSummary {
-                game: root.game;
-                workouts: root.workouts;
-            }
-
-            if !root.workouts: HorizontalLayout {
-                horizontal-stretch: 5;
-                spacing: 20px;
-
-                // Equal columns, whatever their content.
-                KdaStat {
-                    horizontal-stretch: 1;
-                    preferred-width: 120px;
-                    kills: root.game.kills;
-                    deaths: root.game.deaths;
-                    assists: root.game.assists;
-                    ratio: root.game.kda-ratio;
-                }
-
-                for kind[index] in [
-                    StatKind.cs-per-minute,
-                    StatKind.damage-share,
-                    StatKind.kill-participation,
-                    StatKind.vision-per-minute,
-                ]: StatGauge {
-                    horizontal-stretch: 1;
-                    preferred-width: 120px;
-                    kind: kind;
-                    known: root.game.stats.length > index;
-                    stat: root.game.stats[index];
-                    caption: ["CS per minute", "Damage share", "Kill participation", "Vision per minute"][index];
-                }
-            }
-
-            if root.workouts && root.game.has-workout: HorizontalLayout {
-                horizontal-stretch: 3;
-                spacing: 20px;
-                for exercise[index] in root.game.exercises: ExerciseColumn {
-                    horizontal-stretch: 1;
-                    preferred-width: 200px;
-                    exercise: exercise;
-                    exercise-icon: root.exercise-icons[index];
-                }
-            }
-
-            if root.workouts && !root.game.has-workout: Rectangle {
-                horizontal-stretch: 3;
-            }
-
-            WorkoutStatus {
-                status: root.game.status;
-                has-workout: root.game.has-workout;
-                reason: root.game.reason;
-            }
-
-            VerticalLayout {
-                alignment: center;
-                width: 28px;
-                if root.game.has-workout: ExpandButton {
-                    expanded: root.expanded;
-                    clicked => { root.expanded = !root.expanded; }
-                }
-            }
-        }
-
-        if root.expanded && root.game.has-workout: Rectangle {
-            height: details.preferred-height;
-
-            // The line between the row and its details.
-            Rectangle {
-                y: 0px;
-                height: 1px;
-                background: Theme.border;
-            }
-
-            details := VerticalLayout {
-                padding-top: 22px;
-                padding-right: 12px;
-                padding-bottom: Theme.space-l;
+    // Only watches the pointer, for the scale of the benchmark gauges: its children keep their
+    // clicks and hover.
+    hover := TouchArea {
+        content := VerticalLayout {
+            HorizontalLayout {
+                height: 64px;
                 padding-left: 3px + 20px;
-                spacing: Theme.space-l;
+                padding-right: 12px;
+                spacing: 20px;
 
-                for exercise[index] in root.game.exercises: ExerciseEquation {
-                    exercise: exercise;
-                    exercise-icon: root.exercise-icons[index];
+                GameSummary {
+                    game: root.game;
+                    workouts: root.workouts;
+                }
+
+                if !root.workouts: HorizontalLayout {
+                    horizontal-stretch: 5;
+                    spacing: 20px;
+
+                    // Equal columns, whatever their content.
+                    KdaStat {
+                        horizontal-stretch: 1;
+                        preferred-width: 120px;
+                        kills: root.game.kills;
+                        deaths: root.game.deaths;
+                        assists: root.game.assists;
+                        ratio: root.game.kda-ratio;
+                    }
+
+                    for kind[index] in [
+                        StatKind.cs-per-minute,
+                        StatKind.damage-share,
+                        StatKind.kill-participation,
+                        StatKind.vision-per-minute,
+                    ]: StatGauge {
+                        horizontal-stretch: 1;
+                        preferred-width: 120px;
+                        kind: kind;
+                        known: root.game.stats.length > index;
+                        stat: root.game.stats[index];
+                        caption: ["CS per minute", "Damage share", "Kill participation", "Vision per minute"][index];
+                        row-hovered: hover.has-hover;
+                    }
+                }
+
+                if root.workouts && root.game.has-workout: HorizontalLayout {
+                    horizontal-stretch: 3;
+                    spacing: 20px;
+                    for exercise[index] in root.game.exercises: ExerciseColumn {
+                        horizontal-stretch: 1;
+                        preferred-width: 200px;
+                        exercise: exercise;
+                        exercise-icon: root.exercise-icons[index];
+                    }
+                }
+
+                if root.workouts && !root.game.has-workout: Rectangle {
+                    horizontal-stretch: 3;
+                }
+
+                WorkoutStatus {
+                    status: root.game.status;
+                    has-workout: root.game.has-workout;
+                    reason: root.game.reason;
+                }
+
+                VerticalLayout {
+                    alignment: center;
+                    width: 28px;
+                    if root.game.has-workout: ExpandButton {
+                        expanded: root.expanded;
+                        clicked => { root.expanded = !root.expanded; }
+                    }
+                }
+            }
+
+            if root.expanded && root.game.has-workout: Rectangle {
+                height: details.preferred-height;
+
+                // The line between the row and its details.
+                Rectangle {
+                    y: 0px;
+                    height: 1px;
+                    background: Theme.border;
+                }
+
+                details := VerticalLayout {
+                    padding-top: 20px;
+                    padding-right: Theme.space-m;
+                    padding-bottom: 20px;
+                    padding-left: 3px + 20px;
+                    spacing: 22px;
+
+                    for exercise[index] in root.game.exercises: ExerciseDetail {
+                        exercise: exercise;
+                        exercise-icon: root.exercise-icons[index];
+                    }
                 }
             }
         }

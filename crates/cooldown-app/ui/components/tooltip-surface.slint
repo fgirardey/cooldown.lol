@@ -1,0 +1,87 @@
+// The surface of a tooltip: a raised panel and its pointer drawn as one outline, so the pointer
+// blends into the panel (one fill, one continuous stroke) in every renderer, over a backdrop
+// that casts the shadow. A tooltip panel puts it first, over its whole area: it reaches out by
+// `tooltip-pointer` above and below the panel for the pointer.
+//
+// `Tooltip` and `Game row / Details / Exercise / Tooltip` components (and their `Pointer`) in
+// design/cooldown.pen.
+
+import { Theme } from "../theme.slint";
+
+export component TooltipSurface inherits Rectangle {
+    /// The pointer is on the top edge, pointing up (the tooltip is under its control); on the
+    /// bottom edge otherwise.
+    in property <bool> up: true;
+    /// The pointer's centre, from the panel's left edge, kept off the corners.
+    in property <length> pointer-x: root.panel-width / 2;
+    /// The panel's size; the surface is taller by the pointer, above and below.
+    in property <length> panel-width;
+    in property <length> panel-height;
+    /// The panel's colours: raised by default; the game's own tooltip tints them.
+    in property <color> fill: Theme.surface-raised;
+    in property <color> outline: Theme.border-raised;
+
+    // In path units (logical pixels), the stroke inset by half its width to stay crisp.
+    property <float> w: root.panel-width / 1px;
+    property <float> h: root.panel-height / 1px;
+    property <float> p: Theme.tooltip-pointer / 1px;
+    property <float> r: Theme.radius-chip / 1px;
+    property <float> i: 0.5;
+    property <float> c: clamp(root.pointer-x, 12px, root.panel-width - 12px) / 1px;
+    property <float> top: root.p + root.i;
+    property <float> bottom: root.p + root.h - root.i;
+    property <float> left: root.i;
+    property <float> right: root.w - root.i;
+
+    width: root.panel-width;
+    height: root.panel-height + 2 * Theme.tooltip-pointer;
+
+    // Casts the shadow, behind the outline.
+    Rectangle {
+        x: 0px;
+        y: Theme.tooltip-pointer;
+        width: root.panel-width;
+        height: root.panel-height;
+        border-radius: Theme.radius-chip;
+        background: root.fill;
+        drop-shadow-color: Theme.shadow;
+        drop-shadow-blur: Theme.shadow-raised-blur;
+        drop-shadow-offset-y: Theme.shadow-raised-offset;
+    }
+
+    // Clockwise from the top-left corner; the pointer on the top edge going right, or on the
+    // bottom edge going left.
+    Path {
+        x: 0px;
+        y: 0px;
+        width: root.width;
+        height: root.height;
+        viewbox-x: 0;
+        viewbox-y: 0;
+        viewbox-width: self.width / 1px;
+        viewbox-height: self.height / 1px;
+        // Drawn at the computed coordinates: the default fit shrinks a stroked path to its box.
+        fit: ImageFit.preserve;
+        fill: root.fill;
+        stroke: root.outline;
+        stroke-width: 1px;
+        commands: "M " + (root.left + root.r) + " " + root.top
+            + (root.up
+                ? " L " + (root.c - root.p) + " " + root.top + " L " + root.c + " " + root.i
+                    + " L " + (root.c + root.p) + " " + root.top
+                : "")
+            + " L " + (root.right - root.r) + " " + root.top
+            + " Q " + root.right + " " + root.top + " " + root.right + " " + (root.top + root.r)
+            + " L " + root.right + " " + (root.bottom - root.r)
+            + " Q " + root.right + " " + root.bottom + " " + (root.right - root.r) + " " + root.bottom
+            + (root.up
+                ? ""
+                : " L " + (root.c + root.p) + " " + root.bottom + " L " + root.c + " " + (root.bottom + root.p)
+                    + " L " + (root.c - root.p) + " " + root.bottom)
+            + " L " + (root.left + root.r) + " " + root.bottom
+            + " Q " + root.left + " " + root.bottom + " " + root.left + " " + (root.bottom - root.r)
+            + " L " + root.left + " " + (root.top + root.r)
+            + " Q " + root.left + " " + root.top + " " + (root.left + root.r) + " " + root.top
+            + " Z";
+    }
+}

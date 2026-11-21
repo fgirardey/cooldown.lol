@@ -1,6 +1,6 @@
 # Design tokens
 
-Single reference for the visual foundations. **Mirrored 1:1** in `crates/cooldown-app/ui/theme.slint` (global `Theme`) and in the `Foundations` page of `design/cooldown.pen`.
+Single reference for the visual foundations. **Mirrored 1:1** in `crates/cooldown-app/ui/theme.slint` (global `Theme`) and in the `Foundations` board of `design/cooldown.pen`.
 
 When a value changes: update Pencil, this note and `theme.slint` in the same commit.
 
@@ -20,6 +20,9 @@ Colours come from the brand direction chosen in Pencil (see [[Brand]]): a K/DA r
 | `warning` | `#d29922` | Partial workouts, sessions with some workouts missed, a game's cap applied |
 | `info` | `#58a6ff` | Wins (result, stripe and tint of a History row, "W" chip) |
 | `scrim` | `#010409c7` | Dims the window behind a dialog (workout prompt, uninstall confirmation) |
+| `surface-raised` | `#262c36` | Panels floating above the screen (tooltips): a lighter tone than `surface`, as Material shows elevation in dark mode |
+| `border-raised` | `#444c56` | Outline of a raised panel |
+| `shadow` | `#01040999` | Shadow under a raised panel |
 
 `accent` and `success` share a value on purpose (green is the brand colour), but keep the roles separate in code.
 
@@ -42,11 +45,11 @@ Colours come from the brand direction chosen in Pencil (see [[Brand]]): a K/DA r
 | `radius-panel` | 10px (session panel, champion portrait) |
 
 ## Session panel
-Tints of a session panel ([[History#Session summary]]): the session's colour (`text-secondary` for a session of games from before cooldown.lol) at these opacities. They are Pencil variables, but the `Session / *` components still use literal values.
+Tints of a session panel ([[History#Session summary]]): the session's colour (`text-secondary` for a session of games from before cooldown.lol) at these opacities. They are Pencil variables, but the `Session header / *` components still use literal values.
 
 | Token | Value | Usage |
 |---|---|---|
-| `tint-header` | 0.12 | Summary header background |
+| `tint-header` | 0.12 | Summary header background; the difference chip of a cost curve's tooltip |
 | `tint-line` | 0.4 | Line under the summary header |
 | `tint-games` | 0.04 | Games area background |
 | `muted-opacity` | 0.75 | "No workout" card |
@@ -60,10 +63,25 @@ Tints of a History row in the Games view ([[History#Game rows]]): the result's c
 | `tint-row-mid` | 0.08 | Win or loss tint, at 28 % |
 | `tint-row-muted` | 0.15 | `text-secondary` tint of a game without workout, at the stripe |
 | `tint-row-muted-mid` | 0.05 | Same, at 28 % |
-| `tint-curve` | 0.08 | `danger` tint under a cost curve, left of the game, in the row's details |
+| `tint-curve` | 0.25 | `danger` → `warning` → `success` gradient between a cost curve and its 0 line, in the row's details |
+| `tint-gauge-zone` | 0.50 | `danger` → `warning` → `success` gradient of a benchmark gauge in a Games row |
+
+Lines of a cost curve in a History row's details ([[History#Game rows]]): `text-secondary` at these opacities, except the halo, in the zone colour of the game's dot.
+
+| Token | Value | Usage |
+|---|---|---|
+| `curve-zero-line` | 0.6 | The 0 line, at the top |
+| `curve-grid` | 0.25 | Dotted line at the mid amount |
+| `curve-target-line` | 0.5 | Vertical line at the target |
+| `curve-projection` | 0.6 | Dashed lines from the game's dot to the axes |
+| `curve-halo` | 0.2 | Halo around the game's dot |
+| `watermark-opacity` | 0.3 | The stat's pictogram and name behind the curve |
+| `tint-tooltip-game` | 0.12 | The zone colour mixed into the panel of the game's own tooltip ("THIS GAME"), pointer included |
+| `tint-tooltip-game-outline` | 0.7 | Its outline, in the zone colour |
+| `tint-tooltip-game-divider` | 0.35 | Its divider, in the zone colour |
 
 ## Interaction
-Hover, pressed, focus, disabled and selected states. Buttons, icon buttons and text links are Pencil components in `Controls library`, with one reusable instance per state (`Button / Primary / Hover`, …) and a **State rules** table (trigger, visual change, tokens, motion, cursor); switches and workout cards are in the `Interaction states` section of the `Foundations` page. Every interactive control adds a **state layer** in its content colour (Material), filled and outlined buttons also **shrink** while pressed (iOS), and every change eases out.
+Hover, pressed, focus, disabled and selected states. Buttons, icon buttons and text links are Pencil components in `Controls library`, with one reusable instance per state (`Button / Primary / Hover`, …) and a **State rules** table (trigger, visual change, tokens, motion, cursor); switches and workout cards are in the `Interaction states` section of the `Foundations` board. Every interactive control adds a **state layer** in its content colour (Material), filled and outlined buttons also **shrink** while pressed (iOS), and every change eases out.
 
 | Token | Value | Usage |
 |---|---|---|
@@ -92,24 +110,27 @@ A control whose state needs a reason (a disabled button, a running task) explain
 
 Disabled controls show it too: the anchor goes around the faded part.
 
-Look: `surface` panel, 1px `border` outline, `radius-chip`, padding 6px × 10px, text in `font-size-caption` and `text-primary`, wrapped at `tooltip-max-width`.
+Look: `surface-raised` panel with a 1px `border-raised` outline and a `shadow` (`shadow-raised-blur`, `shadow-raised-offset`), `radius-chip`, padding 6px × 10px, text in `font-size-caption` and `text-primary`, wrapped at `tooltip-max-width`. A **pointer** on the edge facing the control aims at its centre (or at the spot a chart's tooltip explains), kept 12px off the corners. Panel and pointer are one outline (`TooltipSurface`: one fill, one continuous stroke), with the shadow cast by a backdrop behind it. In dark mode Material shows elevation with a lighter container tone and a shadow rather than a stronger outline (its rich tooltip is `surface-container` at elevation level 2, its plain tooltip `inverse-surface`); the raised tone follows that, while staying dark.
 
 Timing and placement follow Material Design's tooltip (MDC Web values):
 
 | Token | Value | Usage |
 |---|---|---|
-| `tooltip-show-delay` | 500ms | The pointer rests this long on the control before the tooltip opens |
-| `tooltip-hide-delay` | 600ms | The tooltip stays this long after the pointer leaves; moving to another control meanwhile switches the text at once |
+| `tooltip-show-delay` | 300ms | The pointer rests this long on the control before the tooltip opens (quicker than MDC Web's 500ms, still long enough not to flash tooltips at a pointer crossing controls) |
+| `tooltip-hide-delay` | 100ms | The tooltip stays this long after the pointer leaves, just enough to reach a neighbouring control and switch the text at once (MDC Web's 600ms lingered too long) |
 | `tooltip-enter` | 150ms | Fades in and grows from `tooltip-enter-scale`, from the control's side (deceleration curve `cubic-bezier(0, 0, 0.2, 1)`) |
 | `tooltip-exit` | 75ms | Fades out (acceleration curve `cubic-bezier(0.4, 0, 1, 1)`) |
 | `tooltip-enter-scale` | 0.8 | Scale the tooltip grows from |
-| `tooltip-gap` | 4px | Between the control and the tooltip |
+| `tooltip-gap` | 4px | Between the control and the tip of the tooltip's pointer |
 | `tooltip-window-margin` | 8px | The tooltip keeps this far from the window edges |
 | `tooltip-max-width` | 220px | Width of the text before it wraps |
+| `tooltip-pointer` | 7px | How far the pointer sticks out toward the control (a triangle twice as wide); the panel sits this much further from the control |
+| `shadow-raised-blur` | 16px | Blur of a raised panel's shadow |
+| `shadow-raised-offset` | 6px | How far down a raised panel's shadow falls |
 
 Placement:
-- **Vertically:** under the control; above it when there is no room below, keeping `tooltip-window-margin` from the edges.
-- **Horizontally:** centered on the control. When centering would get closer to a window edge than the margin, aligned with the control's start, then with its end. As a last resort, kept off the edges.
+- **Vertically:** under the control, pointer on top; above it when there is no room below, pointer at the bottom, keeping `tooltip-window-margin` from the edges. When neither side has room (a tall tooltip in a short window), on the side with more room, kept inside the window even if it covers the control.
+- **Horizontally:** centered on the control. When centering would get closer to a window edge than the margin, aligned with the control's start, then with its end. As a last resort, kept off the edges. Wherever the panel goes, its pointer stays aimed at the control.
 - **Narrow window:** when the window is narrower than the tooltip plus both margins, the tooltip narrows to fit between them and its text wraps more.
 
 The tooltip stays inside the window. It never takes clicks or hover, and it closes when the pointer leaves the window or the screen changes.
@@ -117,14 +138,15 @@ The tooltip stays inside the window. It never takes clicks or hover, and it clos
 ## Typography
 | Token | Size | Usage |
 |---|---|---|
-| `font-size-micro` | 10px | A game's cap ("max 30") |
-| `font-size-small` | 11px | Captions of the formula in a History row's details |
+| `font-size-micro` | 10px | A game's max ("max 15"), the scale of a benchmark gauge |
+| `font-size-small` | 11px | Axis labels of a cost curve in a History row's details |
 | `font-size-caption` | 12px | Small labels (top bar status) |
 | `font-size-label` | 13px | Workout status, view switch, exercise names |
 | `font-size-body` | 14px | Body text |
 | `font-size-wordmark` | 18px | "COOLDOWN.LOL" wordmark in the top bar |
 | `font-size-title` | 20px | Titles, stat values of History rows |
-| `font-size-equation` | 22px | Numbers and operators of the formula in a History row's details |
+| `font-size-result` | 22px | Results of the Games view, the game's value on a cost curve, "/due" and the exercise in a row's details |
+| `font-size-watermark` | 30px | The stat's name behind a cost curve |
 | `font-size-headline` | 32px | Welcome headline |
 | `font-size-display` | 40px | Big numbers (clock, stats) |
 | `font-size-hero` | 96px | The one number to read from a distance (workout step count, plank countdown) |

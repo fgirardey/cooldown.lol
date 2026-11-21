@@ -1,0 +1,115 @@
+// Previews of ExerciseDetail: `just preview components/exercise-detail`.
+
+import { Theme } from "../theme.slint";
+import { ExerciseDetail } from "exercise-detail.slint";
+import { Fixtures } from "../preview-kit/fixtures.slint";
+import { PreviewCase } from "../preview-kit/preview-case.slint";
+
+// Pencil frame `Game row / Details / Exercise`, with a game from before cooldown.lol (skipped).
+export component GameRowDetailsExercise inherits Rectangle {
+    width: 1177px;
+    height: 112px;
+    background: Theme.surface;
+
+    ExerciseDetail {
+        exercise: Fixtures.game-ahri-no-image.exercises[0];
+        exercise-icon: @image-url("../images/icons/burpee.svg");
+    }
+}
+
+// Gallery of every variant (default component of the file).
+export component Preview inherits Window {
+    title: "ExerciseDetail";
+    background: Theme.background;
+
+    VerticalLayout {
+        padding: Theme.space-m;
+        spacing: Theme.space-m;
+        alignment: start;
+
+        PreviewCase {
+            label: "Game row / Details / Exercise (skipped)";
+            GameRowDetailsExercise { }
+        }
+
+        PreviewCase {
+            label: "Narrow row (700 px): the curve narrows, the result keeps its width";
+            Rectangle {
+                width: 700px;
+                height: 112px;
+                background: Theme.surface;
+                ExerciseDetail {
+                    exercise: Fixtures.game-miss-fortune.exercises[0];
+                    exercise-icon: @image-url("../images/icons/burpee.svg");
+                }
+            }
+        }
+
+        PreviewCase {
+            label: "Very narrow row (480 px): the result compacts, smaller bends, watermark elides";
+            Rectangle {
+                width: 480px;
+                height: 112px;
+                background: Theme.surface;
+                ExerciseDetail {
+                    exercise: Fixtures.game-ahri-no-image.exercises[0];
+                    exercise-icon: @image-url("../images/icons/burpee.svg");
+                }
+            }
+        }
+
+        PreviewCase {
+            label: "Complete";
+            Rectangle {
+                width: 1177px;
+                height: 112px;
+                background: Theme.surface;
+                ExerciseDetail {
+                    exercise: {
+                        name: Fixtures.game-miss-fortune.exercises[1].name,
+                        stat: Fixtures.game-miss-fortune.exercises[1].stat,
+                        stat-label: Fixtures.game-miss-fortune.exercises[1].stat-label,
+                        value: Fixtures.game-miss-fortune.exercises[1].value,
+                        zone: Fixtures.game-miss-fortune.exercises[1].zone,
+                        target: Fixtures.game-miss-fortune.exercises[1].target,
+                        gap: Fixtures.game-miss-fortune.exercises[1].gap,
+                        done: Fixtures.game-miss-fortune.exercises[1].due,
+                        due: Fixtures.game-miss-fortune.exercises[1].due,
+                        unit-label: "squats",
+                        unit-label-one: "squat",
+                        cap-label: "max 30",
+                        curve: Fixtures.game-miss-fortune.exercises[1].curve,
+                    };
+                    exercise-icon: @image-url("../images/icons/squat.svg");
+                }
+            }
+        }
+
+        PreviewCase {
+            label: "Missing some (plank)";
+            Rectangle {
+                width: 1177px;
+                height: 112px;
+                background: Theme.surface;
+                ExerciseDetail {
+                    exercise: {
+                        name: "PLANK",
+                        stat: Fixtures.game-garen.exercises[2].stat,
+                        stat-label: "Deaths",
+                        value: "6",
+                        zone: Fixtures.game-garen.exercises[2].zone,
+                        target: "/ 3",
+                        done: 30,
+                        due: 45,
+                        unit: "s",
+                        unit-label: "plank",
+                        unit-label-one: "plank",
+                        cap-label: "max 90s",
+                        curve: Fixtures.game-garen.exercises[2].curve,
+                    };
+                    exercise-icon: @image-url("../images/icons/plank.svg");
+                }
+            }
+        }
+    }
+}

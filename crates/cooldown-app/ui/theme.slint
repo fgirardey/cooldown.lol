@@ -23,6 +23,9 @@ export global Theme {
     out property <color> warning: #d29922;
     out property <color> info: #58a6ff;
     out property <color> scrim: #010409c7;
+    out property <color> surface-raised: #262c36;
+    out property <color> border-raised: #444c56;
+    out property <color> shadow: #01040999;
 
     // Spacing (logical pixels)
     out property <length> space-xs: 4px;
@@ -51,7 +54,23 @@ export global Theme {
     out property <float> tint-row-mid: 0.08;
     out property <float> tint-row-muted: 0.15;
     out property <float> tint-row-muted-mid: 0.05;
-    out property <float> tint-curve: 0.08;
+    out property <float> tint-curve: 0.25;
+    out property <float> tint-gauge-zone: 0.50;
+
+    // A cost curve in a History row's details: `text-secondary` at these opacities for its
+    // lines, the zone colour for the halo of the game's dot, and the stat's watermark.
+    out property <float> curve-zero-line: 0.6;
+    out property <float> curve-grid: 0.25;
+    out property <float> curve-target-line: 0.5;
+    out property <float> curve-projection: 0.6;
+    out property <float> curve-halo: 0.2;
+    out property <float> watermark-opacity: 0.3;
+
+    // The game's own tooltip on its cost curve: its panel tinted with the zone colour, outlined
+    // and divided in it.
+    out property <float> tint-tooltip-game: 0.12;
+    out property <float> tint-tooltip-game-outline: 0.7;
+    out property <float> tint-tooltip-game-divider: 0.35;
 
     // Interaction
     out property <float> state-opacity-hover: 0.08;
@@ -70,14 +89,17 @@ export global Theme {
     out property <length> focus-ring-width: 2px;
 
     // Tooltip (timing and placement from Material Design)
-    out property <duration> tooltip-show-delay: 500ms;
-    out property <duration> tooltip-hide-delay: 600ms;
+    out property <duration> tooltip-show-delay: 300ms;
+    out property <duration> tooltip-hide-delay: 100ms;
     out property <duration> tooltip-enter: 150ms;
     out property <duration> tooltip-exit: 75ms;
     out property <float> tooltip-enter-scale: 0.8;
     out property <length> tooltip-gap: 4px;
     out property <length> tooltip-window-margin: 8px;
     out property <length> tooltip-max-width: 220px;
+    out property <length> tooltip-pointer: 7px;
+    out property <length> shadow-raised-blur: 16px;
+    out property <length> shadow-raised-offset: 6px;
 
     // Typography
     out property <string> font-display: "Barlow Condensed";
@@ -89,7 +111,8 @@ export global Theme {
     out property <length> font-size-body: 14px;
     out property <length> font-size-wordmark: 18px;
     out property <length> font-size-title: 20px;
-    out property <length> font-size-equation: 22px;
+    out property <length> font-size-result: 22px;
+    out property <length> font-size-watermark: 30px;
     out property <length> font-size-headline: 32px;
     out property <length> font-size-display: 40px;
     out property <length> font-size-hero: 96px;

@@ -1,0 +1,436 @@
+// The cost curve of an exercise, in a History row's details: the amount the workout formula
+// gives for every value of its stat, from the worst value on the left to the best on the right.
+// The y axis runs down from 0 (top) to the max, so improving reads as climbing. The area
+// between the 0 line and the curve is tinted from `danger` to `success` at the benchmarks; the
+// game is a dot in its zone's colour. Hovering shows what another value would have cost, in a
+// structured tooltip (`CurveTooltip`) that holds everything about it: no projection or readout
+// on the axes. The hover only takes over near the curve: there the system cursor is hidden and
+// the hover marker stands for it. Near a marker of the curve the hover snaps to it.
+//
+// `Cost curve` of the `Game row / Details / Exercise` component in design/cooldown.pen, and
+// `Game row / Details / Exercise / Hover` for the hover, `/ Hover snapped` once it snaps.
+
+import { Theme } from "../theme.slint";
+import { ExerciseData, StatZone } from "../models.slint";
+import { StatIcon } from "stat-icon.slint";
+import { DashedLine } from "dashed-line.slint";
+import { TooltipAnchor } from "tooltip-anchor.slint";
+
+export component CostCurve inherits Rectangle {
+    in property <ExerciseData> exercise;
+    /// Burpee, squat or plank pictogram, for the hover's tooltip.
+    in property <image> exercise-icon;
+
+    // The plot, then a 10 px gap and the column of the y labels.
+    property <length> label-width: 40px;
+    property <length> plot-width: root.width - root.label-width - 10px;
+    property <length> zero-y: 14px;
+    property <length> max-y: 86px;
+    property <length> label-y: 94px;
+    // How far from a benchmark the curve starts bending: 28 px, less when the chart is narrow so
+    // that a bend never runs past the next one or out of the plot.
+    property <length> bend: max(0px, min(28px,
+        (root.average-x - root.floor-x) / 2.5,
+        (root.target-x - root.average-x) / 2.5,
+        root.floor-x,
+        root.plot-width - root.target-x));
+    // The floor and the target sit at fixed places; the average falls between them by value.
+    property <float> floor-at: 7 / 32;
+    property <float> target-at: 27 / 32;
+    property <float> span: root.target-at - root.floor-at;
+
+    property <float> average: root.exercise.curve.average;
+    property <int> max-amount: root.exercise.curve.max;
+    property <int> mid-amount: root.exercise.curve.mid;
+    property <color> tone: root.zone-color(root.exercise.zone);
+
+    property <length> floor-x: root.x-of(0);
+    property <length> average-x: root.x-of(root.average);
+    property <length> target-x: root.x-of(1);
+    property <length> mid-y: root.y-of(root.mid-amount);
+    // Slopes of the two falling segments, for the bends.
+    property <float> slope-1: (root.mid-y - root.max-y) / (root.average-x - root.floor-x);
+    property <float> slope-2: (root.zero-y - root.mid-y) / (root.target-x - root.average-x);
+
+    // Gradient stops of the area: `danger` up to just before the floor, `warning` halfway to the
+    // average, `success` just past it.
+    property <float> danger-until: root.floor-x / root.plot-width - 0.05;
+    property <float> warning-at: (root.floor-x + root.average-x) / 2 / root.plot-width;
+    property <float> success-from: root.average-x / root.plot-width + 0.07;
+
+    // The game.
+    property <length> player-x: root.x-of(root.exercise.curve.progress);
+    property <length> player-y: root.y-of(root.exercise.curve.amount);
+
+    // The value under the pointer and what it would cost, once the pointer is close to the
+    // curve (vertically, the curve being shallow). The marker follows the pointer exactly,
+    // except near a marker of the curve (the game's dot, the floor, the average, the target),
+    // where it snaps to that marker's value; only the labels round the value like the stat is
+    // shown.
+    // The hover area reaches `near-distance` past the curve on every side, beyond the plot: the
+    // pointer is read in the plot's coordinates, its x kept within the plot.
+    property <length> near-distance: 32px;
+    property <length> pointer-x: clamp(hover.mouse-x + hover.x, 0px, root.plot-width);
+    property <length> pointer-y: hover.mouse-y + hover.y;
+    property <float> pointer-progress: (root.pointer-x / root.plot-width - root.floor-at) / root.span;
+    property <bool> hovering: hover.has-hover
+        && abs(root.pointer-y - root.y-of(root.amount-of(root.pointer-progress))) <= root.near-distance;
+    property <length> snap-distance: 10px;
+    // What the hover snapped to: 0 nothing, 1 the game's dot, 2 the floor, 3 the average,
+    // 4 the target.
+    property <int> snap: abs(root.pointer-x - root.player-x) <= root.snap-distance ? 1
+        : abs(root.pointer-x - root.floor-x) <= root.snap-distance ? 2
+        : abs(root.pointer-x - root.average-x) <= root.snap-distance ? 3
+        : abs(root.pointer-x - root.target-x) <= root.snap-distance ? 4
+        : 0;
+    property <bool> on-game: root.snap == 1;
+    property <float> hover-progress: root.snap == 1 ? root.exercise.curve.progress
+        : root.snap == 2 ? 0
+        : root.snap == 3 ? root.average
+        : root.snap == 4 ? 1
+        : root.pointer-progress;
+    property <float> hover-value: max(0, root.exercise.curve.floor
+        + root.hover-progress * (root.exercise.curve.target - root.exercise.curve.floor));
+    property <float> hover-amount: root.amount-of(root.hover-progress);
+    // On the game's dot, its value as the row shows it.
+    property <string> hover-label: root.on-game ? root.exercise.value : root.value-text(root.hover-value);
+    property <int> hover-due: ceil(root.hover-amount - 0.000001);
+    property <length> hover-x: root.x-of(root.hover-progress);
+    property <length> hover-y: root.y-of(root.hover-amount);
+    property <int> hover-difference: root.hover-due - root.exercise.due;
+    // What became of the game's amount, for its tooltip: "0/11 · skipped", "8/11 · 3 missing".
+    property <string> game-status: root.exercise.done + root.exercise.unit + "/" + root.exercise.due + root.exercise.unit + " · "
+        + (root.exercise.skipped ? "skipped"
+            : root.exercise.done >= root.exercise.due ? "complete"
+            : (root.exercise.due - root.exercise.done) + root.exercise.unit + " missing");
+    property <StatZone> hover-zone: root.hover-progress <= 0 ? StatZone.floor
+        : root.hover-progress < root.average ? StatZone.below-average
+        : StatZone.average;
+
+    // Curve from the max on the left, bending at the floor, the average and the target, to the
+    // 0 line on the right.
+    property <string> curve-commands: "M 0 " + root.max-y / 1px
+        + " L " + (root.floor-x - root.bend) / 1px + " " + root.max-y / 1px
+        + " Q " + root.floor-x / 1px + " " + root.max-y / 1px
+        + " " + (root.floor-x + root.bend) / 1px + " " + (root.max-y + root.bend * root.slope-1) / 1px
+        + " L " + (root.average-x - root.bend) / 1px + " " + (root.mid-y - root.bend * root.slope-1) / 1px
+        + " Q " + root.average-x / 1px + " " + root.mid-y / 1px
+        + " " + (root.average-x + root.bend) / 1px + " " + (root.mid-y + root.bend * root.slope-2) / 1px
+        + " L " + (root.target-x - root.bend) / 1px + " " + (root.zero-y - root.bend * root.slope-2) / 1px
+        + " Q " + root.target-x / 1px + " " + root.zero-y / 1px
+        + " " + (root.target-x + root.bend) / 1px + " " + root.zero-y / 1px
+        + " L " + root.plot-width / 1px + " " + root.zero-y / 1px;
+
+    height: 112px;
+
+    /// Where `progress` (0 at the floor, 1 at the target) sits, kept within the plot.
+    pure function x-of(progress: float) -> length {
+        return root.plot-width * clamp(root.floor-at + progress * root.span, 0, 1);
+    }
+
+    /// The formula's amount at `progress`, before rounding.
+    pure function amount-of(progress: float) -> float {
+        return progress <= 0 ? root.max-amount
+            : progress < root.average ? root.max-amount - progress / root.average * (root.max-amount - root.mid-amount)
+            : progress < 1 ? root.mid-amount - (progress - root.average) / (1 - root.average) * root.mid-amount
+            : 0;
+    }
+
+    pure function y-of(amount: float) -> length {
+        return root.zero-y + (root.max-y - root.zero-y) * (root.max-amount > 0 ? amount / root.max-amount : 0);
+    }
+
+    pure function zone-color(zone: StatZone) -> color {
+        return zone == StatZone.floor ? Theme.danger
+            : zone == StatZone.below-average ? Theme.warning
+            : Theme.success;
+    }
+
+    /// "27 %", "7.5", "4".
+    pure function value-text(value: float) -> string {
+        return (root.exercise.curve.decimals == 1
+            ? floor(round(value * 10) / 10) + "." + mod(round(value * 10), 10)
+            : "" + round(value)) + root.exercise.curve.suffix;
+    }
+
+    /// "5 burpees", "1 squat", "30 s of plank".
+    pure function amount-text(due: int) -> string {
+        return root.exercise.unit != ""
+            ? due + " " + root.exercise.unit + " of " + root.exercise.unit-label
+            : due + " " + (due == 1 ? root.exercise.unit-label-one : root.exercise.unit-label);
+    }
+
+    /// "−6 vs this game", "+15s vs this game", "Same as this game", for the tooltip's chip.
+    pure function difference-label(difference: int) -> string {
+        return difference == 0 ? "Same as this game"
+            : (difference > 0 ? "+" : "−") + abs(difference) + root.exercise.unit + " vs this game";
+    }
+
+    /// "6 fewer than this game", "15 s more than this game".
+    pure function difference-text(difference: int) -> string {
+        return difference == 0 ? "the same as this game"
+            : abs(difference) + (root.exercise.unit != "" ? " " + root.exercise.unit : "")
+            + (difference > 0 ? " more" : " fewer") + " than this game";
+    }
+
+    // The amount due for every value, between the 0 line and the curve.
+    Path {
+        x: 0px;
+        y: 0px;
+        width: root.plot-width;
+        height: root.height;
+        viewbox-x: 0;
+        viewbox-y: 0;
+        viewbox-width: self.width / 1px;
+        viewbox-height: self.height / 1px;
+        // Drawn at the computed coordinates: the default fit shrinks a stroked path to its box.
+        fit: ImageFit.preserve;
+        commands: root.curve-commands + " L 0 " + root.zero-y / 1px + " Z";
+        fill: @linear-gradient(90deg,
+            Theme.danger.with-alpha(Theme.tint-curve) 0%,
+            Theme.danger.with-alpha(Theme.tint-curve) root.danger-until,
+            Theme.warning.with-alpha(Theme.tint-curve) root.warning-at,
+            Theme.success.with-alpha(Theme.tint-curve) root.success-from,
+            Theme.success.with-alpha(Theme.tint-curve) 100%);
+    }
+
+    // The stat, as a watermark behind the grid, kept within the plot: its name elides on a narrow
+    // chart, and only the pictogram is left on a very narrow one.
+    if root.plot-width >= 120px: HorizontalLayout {
+        x: 20px;
+        y: (root.zero-y + root.max-y - self.height) / 2;
+        width: min(self.preferred-width, root.plot-width - 40px);
+        height: 32px;
+        spacing: 12px;
+        opacity: Theme.watermark-opacity;
+
+        StatIcon {
+            kind: root.exercise.stat;
+            tint: Theme.text-primary;
+            width: 32px;
+            height: 32px;
+        }
+
+        Text {
+            font-family: Theme.font-display;
+            text: root.exercise.stat-label;
+            color: Theme.text-primary;
+            font-size: Theme.font-size-watermark;
+            font-weight: 800;
+            font-italic: true;
+            vertical-alignment: center;
+            overflow: elide;
+        }
+    }
+
+    // The grid: the mid amount (dotted), the 0 line, the x axis and the target.
+    DashedLine {
+        x: 0px;
+        y: root.mid-y;
+        width: root.plot-width;
+        dash: 1px;
+        gap: 3px;
+        tint: Theme.text-secondary.with-alpha(Theme.curve-grid);
+    }
+
+    Rectangle {
+        x: 0px;
+        y: root.zero-y;
+        width: root.plot-width;
+        height: 1px;
+        background: Theme.text-secondary.with-alpha(Theme.curve-zero-line);
+    }
+
+    Rectangle {
+        x: 0px;
+        y: root.max-y;
+        width: root.plot-width;
+        height: 1px;
+        background: Theme.border;
+    }
+
+    Rectangle {
+        x: root.target-x;
+        y: 10px;
+        width: 1px;
+        height: 76px;
+        background: Theme.text-secondary.with-alpha(Theme.curve-target-line);
+    }
+
+    // The game's projections on both axes.
+    DashedLine {
+        x: root.player-x;
+        y: root.player-y;
+        width: root.plot-width - root.player-x;
+        tint: Theme.text-secondary.with-alpha(Theme.curve-projection);
+    }
+
+    DashedLine {
+        vertical: true;
+        x: root.player-x;
+        y: root.player-y;
+        height: root.max-y - root.player-y;
+        tint: Theme.text-secondary.with-alpha(Theme.curve-projection);
+    }
+
+    // The curve.
+    Path {
+        x: 0px;
+        y: 0px;
+        width: root.plot-width;
+        height: root.height;
+        viewbox-x: 0;
+        viewbox-y: 0;
+        viewbox-width: self.width / 1px;
+        viewbox-height: self.height / 1px;
+        // Drawn at the computed coordinates: the default fit shrinks a stroked path to its box,
+        // which left the curve short of both ends.
+        fit: ImageFit.preserve;
+        commands: root.curve-commands;
+        stroke: Theme.text-primary;
+        stroke-width: 2.5px;
+    }
+
+    // The game: a dot with a halo, and its value under it.
+    Rectangle {
+        x: root.player-x - self.width / 2;
+        y: root.player-y - self.height / 2;
+        width: 24px;
+        height: 24px;
+        border-radius: self.width / 2;
+        background: root.tone.with-alpha(Theme.curve-halo);
+    }
+
+    Rectangle {
+        x: root.player-x - self.width / 2;
+        y: root.player-y - self.height / 2;
+        width: 10px + 2 * self.border-width;
+        height: self.width;
+        border-radius: self.width / 2;
+        border-width: 2.5px;
+        border-color: Theme.surface;
+        background: root.tone;
+    }
+
+    Text {
+        // Always centred under the dot, sized to its text, even when the game is off the scale
+        // and the dot sits on the plot's edge: it then reaches into the row's padding (about
+        // 20 px at most), never shifts aside. The tooltip, which opens under the dot and repeats
+        // the value, covers it.
+        x: root.player-x - self.width / 2;
+        y: root.player-y + 12px;
+        font-family: Theme.font-display;
+        text: root.exercise.value;
+        color: root.tone;
+        font-size: Theme.font-size-result;
+        font-weight: 800;
+        horizontal-alignment: center;
+    }
+
+    // The hover marker; on the game's dot, a ring around it.
+    if root.hovering: Rectangle {
+        x: root.hover-x - self.width / 2;
+        y: root.hover-y - self.height / 2;
+        width: root.on-game ? 20px : 14px;
+        height: self.width;
+        border-radius: self.width / 2;
+        border-width: 2px;
+        border-color: Theme.text-primary;
+        background: root.on-game ? transparent : Theme.surface;
+    }
+
+    // The x axis: floor, average and target. On a narrow chart
+    // a label too close to another gives way: the average first, then the floor; the target
+    // always stays.
+    property <bool> show-floor-label: root.target-x - root.floor-x >= 56px;
+    property <bool> show-average-label: root.average-x - root.floor-x >= 40px
+        && root.target-x - root.average-x >= 56px;
+    for label in [
+        { at: root.floor-x, text: root.exercise.curve.floor-label, target: false, shown: root.show-floor-label },
+        { at: root.average-x, text: root.exercise.curve.average-label, target: false, shown: root.show-average-label },
+        { at: root.target-x, text: "target " + root.exercise.curve.target-label, target: true, shown: true },
+    ]: Text {
+        visible: label.shown;
+        x: label.at - self.width / 2;
+        y: root.label-y;
+        width: label.target ? 90px : 60px;
+        font-family: Theme.font-body;
+        text: label.text;
+        color: label.target ? Theme.text-primary : Theme.text-secondary;
+        font-size: Theme.font-size-small;
+        horizontal-alignment: center;
+    }
+
+    // The y axis, on the right: 0, the max and the game's amount (a label too close to the
+    // game's gives way).
+    if abs(root.player-y - root.zero-y) >= 12px: Text {
+        x: root.plot-width + 10px;
+        y: root.zero-y - 7px;
+        width: root.label-width;
+        font-family: Theme.font-body;
+        text: "0";
+        color: Theme.text-primary;
+        font-size: Theme.font-size-small;
+        font-weight: 600;
+    }
+
+    if abs(root.player-y - root.max-y) >= 12px: Text {
+        x: root.plot-width + 10px;
+        y: root.max-y - 7px;
+        width: root.label-width;
+        font-family: Theme.font-body;
+        text: root.max-amount + root.exercise.unit;
+        color: Theme.text-secondary;
+        font-size: Theme.font-size-small;
+    }
+
+    Text {
+        x: root.plot-width + 10px;
+        y: root.player-y - 7px;
+        width: root.label-width;
+        font-family: Theme.font-body;
+        text: root.exercise.due + root.exercise.unit;
+        color: Theme.text-primary;
+        font-size: Theme.font-size-small;
+        font-weight: 700;
+    }
+
+    // Last, so it sees the pointer over everything else.
+    // Reaches past the plot, which does not clip it: a band `near-distance` around the curve,
+    // from the 0 line to the max, and as far beyond both ends.
+    hover := TooltipAnchor {
+        x: -root.near-distance;
+        y: root.zero-y - root.near-distance;
+        width: root.plot-width + 2 * root.near-distance;
+        height: root.max-y - root.zero-y + 2 * root.near-distance;
+        mouse-cursor: root.hovering ? MouseCursor.none : MouseCursor.default;
+        spot: true;
+        spot-x: root.hover-x - self.x;
+        spot-y: root.hover-y - self.y;
+        // The sentence stays as the tooltip's text, for what reads it aloud. Away from the curve,
+        // no tooltip.
+        tooltip: !root.hovering ? "" : (root.on-game ? "This game, " : "At ") + root.hover-label + " " + root.exercise.curve.noun + ": "
+            + root.amount-text(root.hover-due) + ", "
+            + (root.on-game
+                ? root.game-status + (root.exercise.target-gap != "" ? ", " + root.exercise.target-gap : "")
+                : root.difference-text(root.hover-difference)) + ".";
+        has-curve: true;
+        curve: {
+            value: root.hover-label,
+            noun: root.exercise.curve.noun,
+            zone: root.hover-zone,
+            waived: root.hover-progress >= 1,
+            exercise-icon: root.exercise-icon,
+            amount: root.hover-due + root.exercise.unit,
+            unit: root.hover-due == 1 ? root.exercise.unit-label-one : root.exercise.unit-label,
+            difference: root.hover-difference,
+            difference-label: root.difference-label(root.hover-difference),
+            this-game: root.on-game,
+            status: root.game-status,
+            status-color: root.exercise.skipped ? Theme.text-secondary
+                : root.exercise.done >= root.exercise.due ? Theme.success
+                : Theme.warning,
+            target-gap: root.exercise.target-gap,
+        };
+    }
+}

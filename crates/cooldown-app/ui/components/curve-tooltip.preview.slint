@@ -1,0 +1,264 @@
+// Previews of CurveTooltip: `just preview components/curve-tooltip`. In the app, hover a cost
+// curve (`just preview components/cost-curve`, then the gallery's last case).
+
+import { Theme } from "../theme.slint";
+import { CurveTooltip } from "curve-tooltip.slint";
+import { StatZone } from "../models.slint";
+import { PreviewCase } from "../preview-kit/preview-case.slint";
+import { PreviewPlayground } from "../preview-kit/preview-playground.slint";
+
+// Pencil frame `Game row / Details / Exercise / Tooltip`.
+export component GameRowDetailsExerciseTooltip inherits Rectangle {
+    width: 264px;
+    height: tooltip.height + Theme.tooltip-pointer;
+    background: Theme.background;
+
+    // Room above for the pointer, aimed at a marker on the left.
+    tooltip := CurveTooltip {
+        y: Theme.tooltip-pointer;
+        pointer-x: 90px;
+        data: {
+            value: "27 %",
+            noun: "damage share",
+            zone: StatZone.average,
+            waived: false,
+            exercise-icon: @image-url("../images/icons/burpee.svg"),
+            amount: "5",
+            unit: "burpees",
+            difference: -6,
+            difference-label: "−6 vs this game",
+        };
+    }
+}
+
+// Pencil frame `Game row / Details / Exercise / Tooltip / This game`.
+export component GameRowDetailsExerciseTooltipThisGame inherits Rectangle {
+    width: 264px;
+    height: tooltip.height + Theme.tooltip-pointer;
+    background: Theme.background;
+
+    // Room above for the pointer, aimed at the game's dot.
+    tooltip := CurveTooltip {
+        y: Theme.tooltip-pointer;
+        pointer-x: 132px;
+        data: {
+            value: "22 %",
+            noun: "damage share",
+            zone: StatZone.below-average,
+            exercise-icon: @image-url("../images/icons/burpee.svg"),
+            amount: "11",
+            unit: "burpees",
+            this-game: true,
+            status: "0/11 · skipped",
+            status-color: Theme.text-secondary,
+            target-gap: "−9 pts to target 31 %",
+        };
+    }
+}
+
+// Pencil frame `Game row / Details / Exercise / Tooltip / More`.
+export component GameRowDetailsExerciseTooltipMore inherits Rectangle {
+    width: 264px;
+    height: tooltip.height + Theme.tooltip-pointer;
+    background: Theme.background;
+
+    // Room above for the pointer, aimed at a marker on the left.
+    tooltip := CurveTooltip {
+        y: Theme.tooltip-pointer;
+        pointer-x: 90px;
+        data: {
+            value: "15 %",
+            noun: "damage share",
+            zone: StatZone.floor,
+            waived: false,
+            exercise-icon: @image-url("../images/icons/burpee.svg"),
+            amount: "15",
+            unit: "burpees",
+            difference: 4,
+            difference-label: "+4 vs this game",
+        };
+    }
+}
+
+// Pencil frame `Game row / Details / Exercise / Tooltip / Same`.
+export component GameRowDetailsExerciseTooltipSame inherits Rectangle {
+    width: 264px;
+    height: tooltip.height + Theme.tooltip-pointer;
+    background: Theme.background;
+
+    // Room above for the pointer, aimed at a marker on the left.
+    tooltip := CurveTooltip {
+        y: Theme.tooltip-pointer;
+        pointer-x: 90px;
+        data: {
+            value: "22 %",
+            noun: "damage share",
+            zone: StatZone.below-average,
+            waived: false,
+            exercise-icon: @image-url("../images/icons/burpee.svg"),
+            amount: "11",
+            unit: "burpees",
+            difference: 0,
+            difference-label: "Same as this game",
+        };
+    }
+}
+
+// Pencil frame `Game row / Details / Exercise / Tooltip / Waived`.
+export component GameRowDetailsExerciseTooltipWaived inherits Rectangle {
+    width: 264px;
+    height: tooltip.height + Theme.tooltip-pointer;
+    background: Theme.background;
+
+    // Room above for the pointer, aimed at a marker on the left.
+    tooltip := CurveTooltip {
+        y: Theme.tooltip-pointer;
+        pointer-x: 90px;
+        data: {
+            value: "33 %",
+            noun: "damage share",
+            zone: StatZone.average,
+            waived: true,
+            exercise-icon: @image-url("../images/icons/burpee.svg"),
+            amount: "0",
+            unit: "burpees",
+            difference: -11,
+            difference-label: "−11 vs this game",
+        };
+    }
+}
+
+// Pencil frame `Game row / Details / Exercise / Tooltip / Plank`.
+export component GameRowDetailsExerciseTooltipPlank inherits Rectangle {
+    width: 264px;
+    height: tooltip.height + Theme.tooltip-pointer;
+    background: Theme.background;
+
+    // Room above for the pointer, aimed at a marker on the left.
+    tooltip := CurveTooltip {
+        y: Theme.tooltip-pointer;
+        pointer-x: 90px;
+        data: {
+            value: "4",
+            noun: "deaths",
+            zone: StatZone.average,
+            waived: false,
+            exercise-icon: @image-url("../images/icons/plank.svg"),
+            amount: "15s",
+            unit: "plank",
+            difference: -30,
+            difference-label: "−30s vs this game",
+        };
+    }
+}
+
+// Edit the knobs in the live preview's Data tab.
+export component CurveTooltipPlayground inherits Window {
+    in-out property <string> value: "27 %";
+    in-out property <string> noun: "damage share";
+    in-out property <StatZone> zone: StatZone.average;
+    in-out property <bool> waived;
+    in-out property <string> amount: "5";
+    in-out property <string> unit: "burpees";
+    in-out property <int> difference: -6;
+    in-out property <string> difference-label: "−6 vs this game";
+
+    background: Theme.background;
+    preferred-width: 320px;
+
+    PreviewPlayground {
+        HorizontalLayout {
+            alignment: start;
+
+            CurveTooltip {
+                data: {
+                    value: root.value,
+                    noun: root.noun,
+                    zone: root.zone,
+                    waived: root.waived,
+                    exercise-icon: @image-url("../images/icons/burpee.svg"),
+                    amount: root.amount,
+                    unit: root.unit,
+                    difference: root.difference,
+                    difference-label: root.difference-label,
+                };
+            }
+        }
+    }
+}
+
+// Gallery of every variant (default component of the file).
+export component Preview inherits Window {
+    title: "CurveTooltip";
+    background: Theme.background;
+
+    VerticalLayout {
+        padding: Theme.space-m;
+        spacing: Theme.space-m;
+        alignment: start;
+
+        PreviewCase {
+            label: "Fewer than the game, average or better";
+            GameRowDetailsExerciseTooltip { }
+        }
+
+        PreviewCase {
+            label: "This game (on its dot): status and gap to target";
+            GameRowDetailsExerciseTooltipThisGame { }
+        }
+
+        PreviewCase {
+            label: "This game, complete and on target";
+            CurveTooltip {
+                data: {
+                    value: "33 %",
+                    noun: "damage share",
+                    zone: StatZone.average,
+                    waived: true,
+                    exercise-icon: @image-url("../images/icons/squat.svg"),
+                    amount: "0",
+                    unit: "squats",
+                    this-game: true,
+                    status: "0/0 · complete",
+                    status-color: Theme.success,
+                };
+            }
+        }
+
+        PreviewCase {
+            label: "More than the game, at the floor or worse";
+            GameRowDetailsExerciseTooltipMore { }
+        }
+
+        PreviewCase {
+            label: "Same as the game, below average";
+            GameRowDetailsExerciseTooltipSame { }
+        }
+
+        PreviewCase {
+            label: "Target reached: waived";
+            GameRowDetailsExerciseTooltipWaived { }
+        }
+
+        PreviewCase {
+            label: "Plank (deaths)";
+            GameRowDetailsExerciseTooltipPlank { }
+        }
+
+        PreviewCase {
+            label: "One squat";
+            CurveTooltip {
+                data: {
+                    value: "7.9",
+                    noun: "CS per minute",
+                    zone: StatZone.average,
+                    exercise-icon: @image-url("../images/icons/squat.svg"),
+                    amount: "1",
+                    unit: "squat",
+                    difference: -25,
+                    difference-label: "−25 vs this game",
+                };
+            }
+        }
+    }
+}
