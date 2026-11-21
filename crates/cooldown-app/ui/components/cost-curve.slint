@@ -52,16 +52,13 @@ export component CostCurve inherits Rectangle {
     property <length> player-x: root.x-of(root.exercise.curve.progress);
     property <length> player-y: root.y-of(root.exercise.curve.amount);
 
-    // The value under the pointer, rounded like the stat is shown, and what it would cost.
+    // The value under the pointer and what it would cost. The marker follows the pointer
+    // exactly; only the labels round the value like the stat is shown.
     property <bool> hovering: hover.has-hover;
-    property <float> hover-raw: root.exercise.curve.floor
-        + (clamp(hover.mouse-x / root.plot-width, 0, 1) - root.floor-at) / root.span
-        * (root.exercise.curve.target - root.exercise.curve.floor);
-    property <float> hover-value: max(0, root.exercise.curve.decimals == 1
-        ? round(root.hover-raw * 10) / 10
-        : round(root.hover-raw));
-    property <float> hover-progress: (root.hover-value - root.exercise.curve.floor)
-        / (root.exercise.curve.target - root.exercise.curve.floor);
+    property <float> hover-progress: (clamp(hover.mouse-x / root.plot-width, 0, 1) - root.floor-at)
+        / root.span;
+    property <float> hover-value: max(0, root.exercise.curve.floor
+        + root.hover-progress * (root.exercise.curve.target - root.exercise.curve.floor));
     property <float> hover-amount: root.amount-of(root.hover-progress);
     property <int> hover-due: ceil(root.hover-amount - 0.000001);
     property <length> hover-x: root.x-of(root.hover-progress);
