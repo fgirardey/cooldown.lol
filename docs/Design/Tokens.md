@@ -46,7 +46,7 @@ Tints of a session panel ([[History#Session summary]]): the session's colour (`t
 
 | Token | Value | Usage |
 |---|---|---|
-| `tint-header` | 0.12 | Summary header background |
+| `tint-header` | 0.12 | Summary header background; the difference chip of a cost curve's tooltip |
 | `tint-line` | 0.4 | Line under the summary header |
 | `tint-games` | 0.04 | Games area background |
 | `muted-opacity` | 0.75 | "No workout" card |
@@ -118,6 +118,7 @@ Timing and placement follow Material Design's tooltip (MDC Web values):
 | `tooltip-gap` | 4px | Between the control and the tooltip |
 | `tooltip-window-margin` | 8px | The tooltip keeps this far from the window edges |
 | `tooltip-max-width` | 220px | Width of the text before it wraps |
+| `tooltip-pointer` | 7px | How far the pointer of a cost curve's tooltip sticks out toward its marker (a triangle twice as wide); the gap grows by as much |
 
 Placement:
 - **Vertically:** under the control; above it when there is no room below, keeping `tooltip-window-margin` from the edges.

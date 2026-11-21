@@ -2,10 +2,13 @@
 // gives for every value of its stat, from the worst value on the left to the best on the right.
 // The y axis runs down from 0 (top) to the max, so improving reads as climbing. The area
 // between the 0 line and the curve is tinted from `danger` to `success` at the benchmarks; the
-// game is a dot in its zone's colour. Hovering shows what another value would have cost.
+// game is a dot in its zone's colour. Hovering shows what another value would have cost, in a
+// structured tooltip (`CurveTooltip`). The hover only takes over near the curve: there the
+// system cursor is hidden and the hover marker stands for it. Near a marker of the curve the
+// hover snaps to it and that marker's axis labels turn bold.
 //
 // `Cost curve` of the `Game row / Details / Exercise` component in design/cooldown.pen, and
-// `Game row / Details / Exercise / Hover` for the hover.
+// `Game row / Details / Exercise / Hover` for the hover, `/ Hover snapped` once it snaps.
 
 import { Theme } from "../theme.slint";
 import { ExerciseData, StatZone } from "../models.slint";
@@ -15,6 +18,8 @@ import { TooltipAnchor } from "tooltip-anchor.slint";
 
 export component CostCurve inherits Rectangle {
     in property <ExerciseData> exercise;
+    /// Burpee, squat or plank pictogram, for the hover's tooltip.
+    in property <image> exercise-icon;
 
     // The plot, then a 10 px gap and the column of the y labels.
     property <length> label-width: 40px;
@@ -52,17 +57,42 @@ export component CostCurve inherits Rectangle {
     property <length> player-x: root.x-of(root.exercise.curve.progress);
     property <length> player-y: root.y-of(root.exercise.curve.amount);
 
-    // The value under the pointer and what it would cost. The marker follows the pointer
-    // exactly; only the labels round the value like the stat is shown.
-    property <bool> hovering: hover.has-hover;
-    property <float> hover-progress: (clamp(hover.mouse-x / root.plot-width, 0, 1) - root.floor-at)
-        / root.span;
+    // The value under the pointer and what it would cost, once the pointer is close to the
+    // curve (vertically, the curve being shallow). The marker follows the pointer exactly,
+    // except near a marker of the curve (the game's dot, the floor, the average, the target),
+    // where it snaps to that marker's value; only the labels round the value like the stat is
+    // shown.
+    property <length> pointer-x: clamp(hover.mouse-x, 0px, root.plot-width);
+    property <float> pointer-progress: (root.pointer-x / root.plot-width - root.floor-at) / root.span;
+    property <length> near-distance: 32px;
+    property <bool> hovering: hover.has-hover
+        && abs(hover.mouse-y - root.y-of(root.amount-of(root.pointer-progress))) <= root.near-distance;
+    property <length> snap-distance: 10px;
+    // What the hover snapped to: 0 nothing, 1 the game's dot, 2 the floor, 3 the average,
+    // 4 the target.
+    property <int> snap: abs(root.pointer-x - root.player-x) <= root.snap-distance ? 1
+        : abs(root.pointer-x - root.floor-x) <= root.snap-distance ? 2
+        : abs(root.pointer-x - root.average-x) <= root.snap-distance ? 3
+        : abs(root.pointer-x - root.target-x) <= root.snap-distance ? 4
+        : 0;
+    property <bool> on-game: root.snap == 1;
+    property <float> hover-progress: root.snap == 1 ? root.exercise.curve.progress
+        : root.snap == 2 ? 0
+        : root.snap == 3 ? root.average
+        : root.snap == 4 ? 1
+        : root.pointer-progress;
     property <float> hover-value: max(0, root.exercise.curve.floor
         + root.hover-progress * (root.exercise.curve.target - root.exercise.curve.floor));
     property <float> hover-amount: root.amount-of(root.hover-progress);
+    // On the game's dot, its value as the row shows it.
+    property <string> hover-label: root.on-game ? root.exercise.value : root.value-text(root.hover-value);
     property <int> hover-due: ceil(root.hover-amount - 0.000001);
     property <length> hover-x: root.x-of(root.hover-progress);
     property <length> hover-y: root.y-of(root.hover-amount);
+    property <int> hover-difference: root.hover-due - root.exercise.due;
+    property <StatZone> hover-zone: root.hover-progress <= 0 ? StatZone.floor
+        : root.hover-progress < root.average ? StatZone.below-average
+        : StatZone.average;
 
     // Curve from the max on the left, bending at the floor, the average and the target, to the
     // 0 line on the right.
@@ -115,6 +145,12 @@ export component CostCurve inherits Rectangle {
         return root.exercise.unit != ""
             ? due + " " + root.exercise.unit + " of " + root.exercise.unit-label
             : due + " " + (due == 1 ? root.exercise.unit-label-one : root.exercise.unit-label);
+    }
+
+    /// "−6 vs this game", "+15s vs this game", "Same as this game", for the tooltip's chip.
+    pure function difference-label(difference: int) -> string {
+        return difference == 0 ? "Same as this game"
+            : (difference > 0 ? "+" : "−") + abs(difference) + root.exercise.unit + " vs this game";
     }
 
     /// "6 fewer than this game", "15 s more than this game".
@@ -219,14 +255,14 @@ export component CostCurve inherits Rectangle {
         tint: Theme.text-secondary.with-alpha(Theme.curve-projection);
     }
 
-    if root.hovering: DashedLine {
+    if root.hovering && !root.on-game: DashedLine {
         x: root.hover-x;
         y: root.hover-y;
         width: root.plot-width - root.hover-x;
         tint: Theme.text-primary;
     }
 
-    if root.hovering: DashedLine {
+    if root.hovering && !root.on-game: DashedLine {
         vertical: true;
         x: root.hover-x;
         y: root.hover-y;
@@ -271,7 +307,8 @@ export component CostCurve inherits Rectangle {
     }
 
     Text {
-        x: root.player-x - self.width / 2;
+        // Centred on the dot, kept inside the plot when the game is off the scale.
+        x: clamp(root.player-x - self.width / 2, 0px, root.plot-width - self.width);
         y: root.player-y - 38px >= 0px ? root.player-y - 38px : root.player-y + 12px;
         width: 64px;
         font-family: Theme.font-display;
@@ -282,39 +319,42 @@ export component CostCurve inherits Rectangle {
         horizontal-alignment: center;
     }
 
+    // The hover marker; on the game's dot, a ring around it.
     if root.hovering: Rectangle {
         x: root.hover-x - self.width / 2;
         y: root.hover-y - self.height / 2;
-        width: 14px;
-        height: 14px;
+        width: root.on-game ? 20px : 14px;
+        height: self.width;
         border-radius: self.width / 2;
         border-width: 2px;
         border-color: Theme.text-primary;
-        background: Theme.surface;
+        background: root.on-game ? transparent : Theme.surface;
     }
 
     // The x axis: floor, average and target, and the value under the pointer.
     for label in [
-        { at: root.floor-x, text: root.exercise.curve.floor-label, target: false },
-        { at: root.average-x, text: root.exercise.curve.average-label, target: false },
-        { at: root.target-x, text: "target " + root.exercise.curve.target-label, target: true },
+        { at: root.floor-x, text: root.exercise.curve.floor-label, target: false, snap: 2 },
+        { at: root.average-x, text: root.exercise.curve.average-label, target: false, snap: 3 },
+        { at: root.target-x, text: "target " + root.exercise.curve.target-label, target: true, snap: 4 },
     ]: Text {
         x: label.at - self.width / 2;
         y: root.label-y;
         width: label.target ? 90px : 60px;
         font-family: Theme.font-body;
         text: label.text;
-        color: label.target ? Theme.text-primary : Theme.text-secondary;
+        color: label.target || (root.hovering && root.snap == label.snap) ? Theme.text-primary : Theme.text-secondary;
         font-size: Theme.font-size-small;
+        font-weight: root.hovering && root.snap == label.snap ? 700 : 400;
         horizontal-alignment: center;
     }
 
-    if root.hovering: Text {
+    // Snapped to a benchmark, its own label stands for this one.
+    if root.hovering && root.snap <= 1: Text {
         x: root.hover-x - self.width / 2;
         y: root.label-y;
         width: 60px;
         font-family: Theme.font-body;
-        text: root.value-text(root.hover-value);
+        text: root.hover-label;
         color: Theme.text-primary;
         font-size: Theme.font-size-small;
         font-weight: 700;
@@ -331,7 +371,7 @@ export component CostCurve inherits Rectangle {
         text: "0";
         color: Theme.text-primary;
         font-size: Theme.font-size-small;
-        font-weight: 600;
+        font-weight: root.hovering && root.snap == 4 ? 700 : 600;
     }
 
     if abs(root.player-y - root.max-y) >= 12px: Text {
@@ -340,8 +380,9 @@ export component CostCurve inherits Rectangle {
         width: root.label-width;
         font-family: Theme.font-body;
         text: root.max-amount + root.exercise.unit;
-        color: Theme.text-secondary;
+        color: root.hovering && root.snap == 2 ? Theme.text-primary : Theme.text-secondary;
         font-size: Theme.font-size-small;
+        font-weight: root.hovering && root.snap == 2 ? 700 : 400;
     }
 
     Text {
@@ -355,7 +396,8 @@ export component CostCurve inherits Rectangle {
         font-weight: 700;
     }
 
-    if root.hovering: Text {
+    // At the floor, the target or the game's dot, the max, 0 or the game's amount stands for it.
+    if root.hovering && (root.snap == 0 || root.snap == 3): Text {
         x: root.plot-width + 10px;
         y: root.hover-y - 7px;
         width: root.label-width;
@@ -366,17 +408,33 @@ export component CostCurve inherits Rectangle {
         font-weight: 700;
     }
 
-    // Last, so it sees the pointer over everything else.
+    // Last, so it sees the pointer over everything else. On the game's dot, the dot, its
+    // projections and its labels stand for the hover's.
     hover := TooltipAnchor {
         x: 0px;
         y: 0px;
         width: root.plot-width;
         height: root.height;
+        mouse-cursor: root.hovering ? MouseCursor.none : MouseCursor.default;
         spot: true;
         spot-x: root.hover-x;
         spot-y: root.hover-y;
-        tooltip: "At " + root.value-text(root.hover-value) + " " + root.exercise.curve.noun + ": "
+        // The sentence stays as the tooltip's text, for what reads it aloud. Away from the curve,
+        // no tooltip.
+        tooltip: !root.hovering ? "" : "At " + root.hover-label + " " + root.exercise.curve.noun + ": "
             + root.amount-text(root.hover-due) + ", "
-            + root.difference-text(root.hover-due - root.exercise.due) + ".";
+            + root.difference-text(root.hover-difference) + ".";
+        has-curve: true;
+        curve: {
+            value: root.hover-label,
+            noun: root.exercise.curve.noun,
+            zone: root.hover-zone,
+            waived: root.hover-progress >= 1,
+            exercise-icon: root.exercise-icon,
+            amount: root.hover-due + root.exercise.unit,
+            unit: root.hover-due == 1 ? root.exercise.unit-label-one : root.exercise.unit-label,
+            difference: root.hover-difference,
+            difference-label: root.difference-label(root.hover-difference),
+        };
     }
 }

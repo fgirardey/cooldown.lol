@@ -5,6 +5,8 @@ import { Theme } from "../theme.slint";
 import { CostCurve } from "cost-curve.slint";
 import { Fixtures } from "../preview-kit/fixtures.slint";
 import { PreviewCase } from "../preview-kit/preview-case.slint";
+import { TooltipLayer } from "../shell/tooltip-layer.slint";
+import { Tooltips } from "../tooltips.slint";
 
 // `Cost curve` of `Game row / Details / Exercise`: Mid, damage share below the average.
 export component CostCurveBelowAverage inherits Rectangle {
@@ -15,6 +17,7 @@ export component CostCurveBelowAverage inherits Rectangle {
     CostCurve {
         width: parent.width;
         exercise: Fixtures.game-ahri-no-image.exercises[0];
+        exercise-icon: @image-url("../images/icons/burpee.svg");
     }
 }
 
@@ -39,7 +42,7 @@ export component Preview inherits Window {
                 width: 947px;
                 height: 112px;
                 background: Theme.surface;
-                CostCurve { width: parent.width; exercise: Fixtures.game-jinx.exercises[0]; }
+                CostCurve { width: parent.width; exercise: Fixtures.game-jinx.exercises[0]; exercise-icon: @image-url("../images/icons/burpee.svg"); }
             }
         }
 
@@ -49,7 +52,7 @@ export component Preview inherits Window {
                 width: 947px;
                 height: 112px;
                 background: Theme.surface;
-                CostCurve { width: parent.width; exercise: Fixtures.game-kaisa.exercises[1]; }
+                CostCurve { width: parent.width; exercise: Fixtures.game-kaisa.exercises[1]; exercise-icon: @image-url("../images/icons/squat.svg"); }
             }
         }
 
@@ -59,7 +62,7 @@ export component Preview inherits Window {
                 width: 947px;
                 height: 112px;
                 background: Theme.surface;
-                CostCurve { width: parent.width; exercise: Fixtures.game-garen.exercises[2]; }
+                CostCurve { width: parent.width; exercise: Fixtures.game-garen.exercises[2]; exercise-icon: @image-url("../images/icons/plank.svg"); }
             }
         }
 
@@ -69,8 +72,17 @@ export component Preview inherits Window {
                 width: 600px;
                 height: 112px;
                 background: Theme.surface;
-                CostCurve { width: parent.width; exercise: Fixtures.game-miss-fortune.exercises[1]; }
+                CostCurve { width: parent.width; exercise: Fixtures.game-miss-fortune.exercises[1]; exercise-icon: @image-url("../images/icons/squat.svg"); }
             }
         }
+    }
+
+    // As in app-window.slint: hover a curve for its tooltip.
+    TooltipLayer {
+        width: root.width;
+        height: root.height;
+        hovering: Tooltips.hovering;
+        dismissed: Tooltips.dismissed;
+        request: Tooltips.request;
     }
 }

@@ -1,0 +1,190 @@
+// The tooltip of a cost curve's hover: the value under the pointer in its zone's colour with
+// the stat, its zone, then under a divider the exercise's amount at that value and a chip with
+// the difference with the game. A pointer on its edge aims at the marker it explains. The
+// window's `TooltipLayer` draws it; the curve asks for it with `TooltipAnchor`.
+//
+// `Game row / Details / Exercise / Tooltip` (and `/ More`, `/ Same`, `/ Waived`, `/ Plank`) in
+// design/cooldown.pen.
+
+import { Theme } from "../theme.slint";
+import { CurveTooltipData, StatZone } from "../models.slint";
+import { Icon } from "icon.slint";
+
+export component CurveTooltip inherits Rectangle {
+    in property <CurveTooltipData> data;
+    /// The pointer: on the top edge (the tooltip is under its marker) or the bottom one, centred
+    /// on `pointer-x` from the left edge, kept off the corners.
+    in property <bool> pointer-on-top: true;
+    in property <length> pointer-x: root.width / 2;
+
+    property <length> pointer-center: clamp(root.pointer-x, 12px, root.width - 12px);
+
+    property <color> tone: root.data.waived ? Theme.success
+        : root.data.zone == StatZone.floor ? Theme.danger
+        : root.data.zone == StatZone.below-average ? Theme.warning
+        : Theme.success;
+    property <color> difference-tone: root.data.difference < 0 ? Theme.success
+        : root.data.difference > 0 ? Theme.danger
+        : Theme.text-secondary;
+
+    background: Theme.surface;
+    border-width: 1px;
+    border-color: Theme.border;
+    border-radius: Theme.radius-chip;
+    width: 264px;
+    height: content.preferred-height;
+
+    content := VerticalLayout {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 12px;
+        padding-right: 12px;
+        spacing: Theme.space-s;
+
+        HorizontalLayout {
+            spacing: 6px;
+            alignment: start;
+
+            Text {
+                font-family: Theme.font-display;
+                text: root.data.value;
+                color: root.tone;
+                font-size: Theme.font-size-title;
+                font-weight: 800;
+                font-italic: true;
+                vertical-alignment: bottom;
+            }
+
+            Text {
+                font-family: Theme.font-body;
+                text: root.data.noun;
+                color: Theme.text-secondary;
+                font-size: Theme.font-size-caption;
+                vertical-alignment: bottom;
+            }
+        }
+
+        HorizontalLayout {
+            spacing: 6px;
+            alignment: start;
+
+            Rectangle {
+                width: 6px;
+                height: 6px;
+                y: (parent.height - self.height) / 2;
+                border-radius: self.width / 2;
+                background: root.tone;
+            }
+
+            Text {
+                font-family: Theme.font-body;
+                text: root.data.waived ? "Target reached"
+                    : root.data.zone == StatZone.floor ? "At the floor or worse"
+                    : root.data.zone == StatZone.below-average ? "Below average"
+                    : "Average or better";
+                color: Theme.text-secondary;
+                font-size: Theme.font-size-small;
+                vertical-alignment: center;
+            }
+        }
+
+        Rectangle {
+            height: 1px;
+            background: Theme.border;
+        }
+
+        HorizontalLayout {
+            spacing: Theme.space-s;
+
+            Icon {
+                source: root.data.exercise-icon;
+                width: 28px;
+                height: 28px;
+                colorize: Theme.text-primary;
+                y: (parent.height - self.height) / 2;
+            }
+
+            HorizontalLayout {
+                spacing: Theme.space-xs;
+                alignment: start;
+
+                Text {
+                    font-family: Theme.font-display;
+                    text: root.data.amount;
+                    color: Theme.text-primary;
+                    font-size: Theme.font-size-result;
+                    font-weight: 800;
+                    font-italic: true;
+                    vertical-alignment: center;
+                }
+
+                Text {
+                    font-family: Theme.font-body;
+                    text: root.data.unit;
+                    color: Theme.text-primary;
+                    font-size: Theme.font-size-label;
+                    font-weight: 600;
+                    vertical-alignment: center;
+                }
+            }
+
+            Rectangle {
+                horizontal-stretch: 1;
+            }
+
+            // The difference with the game: filled in its colour, outlined when the same.
+            VerticalLayout {
+                alignment: center;
+
+                Rectangle {
+                    border-radius: Theme.radius-chip;
+                    background: root.data.difference == 0 ? transparent : root.difference-tone.with-alpha(Theme.tint-header);
+                    border-width: root.data.difference == 0 ? 1px : 0px;
+                    border-color: Theme.border;
+
+                    HorizontalLayout {
+                        padding-top: 2px;
+                        padding-bottom: 2px;
+                        padding-left: 6px;
+                        padding-right: 6px;
+
+                        Text {
+                            font-family: Theme.font-body;
+                            text: root.data.difference-label;
+                            color: root.difference-tone;
+                            font-size: Theme.font-size-small;
+                            font-weight: 600;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // The pointer: a triangle on the edge, twice as wide as it sticks out, the panel's border
+    // cut under it.
+    Rectangle {
+        x: root.pointer-center - self.width / 2;
+        y: root.pointer-on-top ? 0px : root.height - self.height;
+        width: Theme.tooltip-pointer * 2 - 2px;
+        height: 1px;
+        background: Theme.surface;
+    }
+
+    Path {
+        x: root.pointer-center - self.width / 2;
+        y: root.pointer-on-top ? 1px - self.height : root.height - 1px;
+        width: Theme.tooltip-pointer * 2;
+        height: Theme.tooltip-pointer;
+        viewbox-x: 0;
+        viewbox-y: 0;
+        viewbox-width: self.width / 1px;
+        viewbox-height: self.height / 1px;
+        commands: root.pointer-on-top
+            ? "M 0 " + self.height / 1px + " L " + self.width / 2px + " 0.5 L " + self.width / 1px + " " + self.height / 1px
+            : "M 0 0 L " + self.width / 2px + " " + (self.height / 1px - 0.5) + " L " + self.width / 1px + " 0";
+        fill: Theme.surface;
+        stroke: Theme.border;
+        stroke-width: 1px;
+    }
+}

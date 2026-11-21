@@ -22004,15 +22004,6 @@
                       "fill": "$text-primary"
                     },
                     {
-                      "id": "EjBWe",
-                      "type": "ref",
-                      "ref": "fWzkj",
-                      "name": "Hover tooltip",
-                      "x": 0,
-                      "y": 0,
-                      "enabled": false
-                    },
-                    {
                       "type": "text",
                       "id": "dsAtK",
                       "x": 468.09375,
@@ -22026,6 +22017,15 @@
                       "fontFamily": "$font-body",
                       "fontSize": 11,
                       "fontWeight": "normal"
+                    },
+                    {
+                      "id": "EjBWe",
+                      "type": "ref",
+                      "ref": "fWzkj",
+                      "name": "Hover tooltip",
+                      "x": 0,
+                      "y": 0,
+                      "enabled": false
                     }
                   ]
                 }
@@ -22308,21 +22308,21 @@
               "content": "27 %"
             },
             "R1Ux9v": {
-              "enabled": true,
+              "enabled": false,
               "x": 587.34375,
               "y": 39.4
-            },
-            "EjBWe": {
-              "enabled": true,
-              "x": 598.34375,
-              "y": 40
-            },
-            "EjBWe/xp1r8": {
-              "content": "At 27 % damage share: 5 burpees, 6 fewer than this game."
             },
             "dsAtK": {
               "x": 468.09375,
               "content": "25 %"
+            },
+            "EjBWe": {
+              "id": "Ejey0",
+              "type": "ref",
+              "ref": "gyy5a",
+              "name": "Hover tooltip",
+              "x": 452.34375,
+              "y": 52.4
             },
             "LlG4t": {
               "content": "11",
@@ -22342,6 +22342,78 @@
             "yZHqp": {
               "content": "complete",
               "fill": "$success"
+            }
+          }
+        },
+        {
+          "id": "RjFPc",
+          "type": "ref",
+          "ref": "rZjn4",
+          "name": "Game row / Details / Exercise / Hover snapped",
+          "descendants": {
+            "zkJxF": {
+              "enabled": true
+            },
+            "x9nJy": {
+              "type": "rectangle",
+              "id": "Gdf2Q",
+              "x": 368.21875,
+              "y": 0,
+              "name": "Snap guide",
+              "enabled": false,
+              "fill": "$text-primary",
+              "width": 1,
+              "height": 86
+            },
+            "NnR8S": {
+              "x": 358.71875,
+              "y": 54.05714285714285,
+              "width": 20,
+              "height": 20,
+              "fill": "#00000000"
+            },
+            "FycLY": {
+              "enabled": false
+            },
+            "bCF4w": {
+              "enabled": true,
+              "x": 338.71875,
+              "content": "22 %"
+            },
+            "R1Ux9v": {
+              "enabled": false
+            },
+            "Ejey0": {
+              "id": "BqHgl",
+              "type": "ref",
+              "ref": "gyy5a",
+              "name": "Hover tooltip",
+              "x": 236.71875,
+              "y": 80.05714285714285,
+              "descendants": {
+                "ewiAm": {
+                  "content": "22 %",
+                  "fill": "$warning"
+                },
+                "L21dt": {
+                  "fill": "$warning"
+                },
+                "rNjBw": {
+                  "content": "Below average"
+                },
+                "SQ0m4": {
+                  "content": "11"
+                },
+                "Fj2f9": {
+                  "fill": "#00000000",
+                  "stroke": "$border",
+                  "strokeWidth": 1
+                },
+                "HfPMz": {
+                  "content": "Same as this game",
+                  "fill": "$text-secondary"
+                }
+              }
             }
           }
         },
@@ -23528,6 +23600,309 @@
                   }
                 }
               ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "B97fUJ",
+          "name": "Cost curve tooltips",
+          "gap": 32,
+          "children": [
+            {
+              "type": "frame",
+              "id": "gyy5a",
+              "name": "Game row / Details / Exercise / Tooltip",
+              "reusable": true,
+              "width": 264,
+              "fill": "$surface",
+              "cornerRadius": "$radius-chip",
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 8,
+              "padding": [
+                10,
+                12
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "AtURE",
+                  "name": "Header",
+                  "gap": 6,
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ewiAm",
+                      "name": "Value",
+                      "fill": "$success",
+                      "content": "27 %",
+                      "lineHeight": 1,
+                      "fontFamily": "$font-display",
+                      "fontSize": 20,
+                      "fontWeight": "800",
+                      "fontStyle": "italic"
+                    },
+                    {
+                      "type": "text",
+                      "id": "W44Mr5",
+                      "name": "Stat",
+                      "fill": "$text-secondary",
+                      "content": "damage share",
+                      "fontFamily": "$font-body",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "DDubf",
+                  "name": "Zone",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "L21dt",
+                      "name": "Zone dot",
+                      "fill": "$success",
+                      "width": 6,
+                      "height": 6
+                    },
+                    {
+                      "type": "text",
+                      "id": "rNjBw",
+                      "name": "Zone label",
+                      "fill": "$text-secondary",
+                      "content": "Average or better",
+                      "fontFamily": "$font-body",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "rectangle",
+                  "id": "Dh0zd",
+                  "name": "Divider",
+                  "fill": "$border",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "frame",
+                  "id": "G6z9wu",
+                  "name": "Amount row",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "x3uzFc",
+                      "type": "ref",
+                      "ref": "H3uxfi",
+                      "name": "Exercise icon"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "c08QaX",
+                      "name": "Amount",
+                      "gap": 4,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "SQ0m4",
+                          "name": "Number",
+                          "fill": "$text-primary",
+                          "content": "5",
+                          "lineHeight": 1,
+                          "fontFamily": "$font-display",
+                          "fontSize": 22,
+                          "fontWeight": "800",
+                          "fontStyle": "italic"
+                        },
+                        {
+                          "type": "text",
+                          "id": "tvk3Z",
+                          "name": "Unit",
+                          "fill": "$text-primary",
+                          "content": "burpees",
+                          "fontFamily": "$font-body",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Hqptd",
+                      "name": "Push",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Fj2f9",
+                      "name": "Chip",
+                      "fill": "#3FB9501F",
+                      "cornerRadius": "$radius-chip",
+                      "padding": [
+                        2,
+                        6
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "HfPMz",
+                          "name": "Chip label",
+                          "fill": "$success",
+                          "content": "−6 vs this game",
+                          "fontFamily": "$font-body",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "rectangle",
+                  "id": "Kg7cV",
+                  "layoutPosition": "absolute",
+                  "x": 126,
+                  "y": 0,
+                  "name": "Pointer cover",
+                  "fill": "$surface",
+                  "width": 12,
+                  "height": 1
+                },
+                {
+                  "type": "path",
+                  "id": "RNfyy",
+                  "layoutPosition": "absolute",
+                  "x": 125,
+                  "y": -6,
+                  "name": "Pointer",
+                  "geometry": "M0 7l7-6.5 7 6.5",
+                  "fill": "$surface",
+                  "width": 14,
+                  "height": 7,
+                  "stroke": "$border",
+                  "strokeWidth": 1
+                }
+              ]
+            },
+            {
+              "id": "H5JJ09",
+              "type": "ref",
+              "ref": "gyy5a",
+              "name": "Game row / Details / Exercise / Tooltip / More",
+              "descendants": {
+                "ewiAm": {
+                  "content": "15 %",
+                  "fill": "$danger"
+                },
+                "L21dt": {
+                  "fill": "$danger"
+                },
+                "rNjBw": {
+                  "content": "At the floor or worse"
+                },
+                "SQ0m4": {
+                  "content": "15"
+                },
+                "Fj2f9": {
+                  "fill": "#F851491F"
+                },
+                "HfPMz": {
+                  "content": "+4 vs this game",
+                  "fill": "$danger"
+                }
+              }
+            },
+            {
+              "id": "EQR45",
+              "type": "ref",
+              "ref": "gyy5a",
+              "name": "Game row / Details / Exercise / Tooltip / Same",
+              "descendants": {
+                "ewiAm": {
+                  "content": "22 %",
+                  "fill": "$warning"
+                },
+                "L21dt": {
+                  "fill": "$warning"
+                },
+                "rNjBw": {
+                  "content": "Below average"
+                },
+                "SQ0m4": {
+                  "content": "11"
+                },
+                "Fj2f9": {
+                  "fill": "#00000000",
+                  "stroke": "$border",
+                  "strokeWidth": 1
+                },
+                "HfPMz": {
+                  "content": "Same as this game",
+                  "fill": "$text-secondary"
+                }
+              }
+            },
+            {
+              "id": "zGE7A",
+              "type": "ref",
+              "ref": "gyy5a",
+              "name": "Game row / Details / Exercise / Tooltip / Waived",
+              "descendants": {
+                "ewiAm": {
+                  "content": "33 %"
+                },
+                "rNjBw": {
+                  "content": "Target reached"
+                },
+                "SQ0m4": {
+                  "content": "0"
+                },
+                "HfPMz": {
+                  "content": "−11 vs this game"
+                }
+              }
+            },
+            {
+              "id": "ezEAC",
+              "type": "ref",
+              "ref": "gyy5a",
+              "name": "Game row / Details / Exercise / Tooltip / Plank",
+              "descendants": {
+                "ewiAm": {
+                  "content": "4"
+                },
+                "W44Mr5": {
+                  "content": "deaths"
+                },
+                "x3uzFc": {
+                  "id": "ZZK5I",
+                  "type": "ref",
+                  "ref": "Q0TVW",
+                  "name": "Exercise icon"
+                },
+                "SQ0m4": {
+                  "content": "15s"
+                },
+                "tvk3Z": {
+                  "content": "plank"
+                },
+                "HfPMz": {
+                  "content": "−30s vs this game"
+                }
+              }
             }
           ]
         }

@@ -11,13 +11,16 @@
 //     }
 //
 // With `spot`, the tooltip explains a point inside the anchor instead of the whole of it (the
-// value under the pointer on a chart): it sits under `spot-x`, `spot-y` and follows it.
+// value under the pointer on a chart): it sits under `spot-x`, `spot-y` and follows it. With
+// `has-curve`, it shows `curve` as a cost curve's structured tooltip (`tooltip` then says the
+// same in a sentence).
 //
 // It only watches the pointer: clicks and hover still reach the control, disabled or not.
 // It writes the `Tooltips` UI global (docs/Decisions/ADR-0017), the one exception to pure
 // components.
 
 import { Tooltips } from "../tooltips.slint";
+import { CurveTooltipData } from "../models.slint";
 
 export component TooltipAnchor inherits TouchArea {
     /// Empty: no tooltip.
@@ -27,45 +30,65 @@ export component TooltipAnchor inherits TouchArea {
     in property <bool> spot;
     in property <length> spot-x;
     in property <length> spot-y;
+    /// A cost curve's structured tooltip instead of the text.
+    in property <bool> has-curve;
+    in property <CurveTooltipData> curve;
 
     property <int> ticket;
+    // This anchor's tooltip is asked for: hovered with a text.
+    property <bool> shown;
     // The spot as a small square, so the tooltip clears a marker drawn on it.
     property <length> spot-size: 10px;
     property <length> target-x: root.absolute-position.x + (root.spot ? root.spot-x - root.spot-size / 2 : 0px);
     property <length> target-y: root.absolute-position.y + (root.spot ? root.spot-y - root.spot-size / 2 : 0px);
 
-    changed has-hover => {
+    /// Asks for the tooltip while the anchor is hovered and has a text, follows its changes, and
+    /// lets it go otherwise. A text that appears while hovered (the pointer reaches a chart's
+    /// curve, a state starts needing a reason) opens the tooltip then.
+    function sync() {
         if self.has-hover && root.tooltip != "" {
-            root.ticket = Tooltips.enter({
-                text: root.tooltip,
-                x: root.target-x,
-                y: root.target-y,
-                width: root.spot ? root.spot-size : root.width,
-                height: root.spot ? root.spot-size : root.height,
-            });
-        } else {
+            if !root.shown {
+                root.shown = true;
+                root.ticket = Tooltips.enter({
+                    text: root.tooltip,
+                    x: root.target-x,
+                    y: root.target-y,
+                    width: root.spot ? root.spot-size : root.width,
+                    height: root.spot ? root.spot-size : root.height,
+                    has-curve: root.has-curve,
+                    curve: root.curve,
+                });
+            } else if root.has-curve {
+                Tooltips.update-curve(root.ticket, root.tooltip, root.curve);
+            } else {
+                Tooltips.update(root.ticket, root.tooltip);
+            }
+        } else if root.shown {
+            root.shown = false;
             Tooltips.leave(root.ticket);
         }
     }
 
+    changed has-hover => { root.sync(); }
+
+    // A state change under the pointer (a refresh starts): the shown text follows.
+    changed tooltip => { root.sync(); }
+
+    changed curve => {
+        if root.shown && root.has-curve {
+            Tooltips.update-curve(root.ticket, root.tooltip, root.curve);
+        }
+    }
+
     changed target-x => {
-        if root.spot && self.has-hover {
+        if root.shown && root.spot {
             Tooltips.move(root.ticket, root.target-x, root.target-y);
         }
     }
 
     changed target-y => {
-        if root.spot && self.has-hover {
+        if root.shown && root.spot {
             Tooltips.move(root.ticket, root.target-x, root.target-y);
-        }
-    }
-
-    // A state change under the pointer (a refresh starts): the shown text follows.
-    changed tooltip => {
-        if root.tooltip == "" {
-            Tooltips.leave(root.ticket);
-        } else {
-            Tooltips.update(root.ticket, root.tooltip);
         }
     }
 

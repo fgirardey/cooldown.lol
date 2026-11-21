@@ -6,11 +6,15 @@
 // a neighbour switches the text at once), centered under the control with a 4px gap, above it
 // when there is no room below, 8px from the window edges, narrowed to fit a narrow window.
 //
+// It draws a text (`TooltipText`), or a cost curve's structured tooltip (`CurveTooltip`) when
+// the request carries one.
+//
 // Pencil frames `History refresh / Tooltip / *` (placement under the History refresh).
 
 import { Theme } from "../theme.slint";
 import { TooltipRequest } from "../models.slint";
 import { TooltipText } from "../components/tooltip-text.slint";
+import { CurveTooltip } from "../components/curve-tooltip.slint";
 
 export component TooltipLayer inherits Rectangle {
     in property <bool> hovering;
@@ -21,13 +25,16 @@ export component TooltipLayer inherits Rectangle {
 
     property <bool> open: root.always-open;
 
-    property <length> w: panel.width;
-    property <length> h: panel.height;
+    property <length> w: root.request.has-curve ? curve-panel.width : panel.width;
+    property <length> h: root.request.has-curve ? curve-panel.height : panel.height;
     property <length> margin: Theme.tooltip-window-margin;
 
+    // A cost curve's tooltip has a pointer: the gap grows by as much as it sticks out.
+    property <length> gap: root.request.has-curve ? Theme.tooltip-gap + Theme.tooltip-pointer : Theme.tooltip-gap;
+
     // Below the control when it fits, else above when that fits, else below.
-    property <length> below-y: root.request.y + root.request.height + Theme.tooltip-gap;
-    property <length> above-y: root.request.y - Theme.tooltip-gap - root.h;
+    property <length> below-y: root.request.y + root.request.height + root.gap;
+    property <length> above-y: root.request.y - root.gap - root.h;
     property <bool> above: root.below-y + root.h + root.margin > root.height && root.above-y >= root.margin;
 
     // Centered on the control, else aligned with its start, then its end, else kept off the edges.
@@ -54,16 +61,20 @@ export component TooltipLayer inherits Rectangle {
         }
     }
 
+    // Where the shown panel goes.
+    property <length> panel-x: root.center-x >= root.margin && root.center-x <= root.max-x ? root.center-x
+        : root.start-x >= root.margin && root.start-x <= root.max-x ? root.start-x
+        : root.end-x >= root.margin && root.end-x <= root.max-x ? root.end-x
+        : max(root.margin, min(root.center-x, root.max-x));
+    property <length> panel-y: root.above ? root.above-y : root.below-y;
+
     panel := TooltipText {
-        x: root.center-x >= root.margin && root.center-x <= root.max-x ? root.center-x
-            : root.start-x >= root.margin && root.start-x <= root.max-x ? root.start-x
-            : root.end-x >= root.margin && root.end-x <= root.max-x ? root.end-x
-            : max(root.margin, min(root.center-x, root.max-x));
-        y: root.above ? root.above-y : root.below-y;
+        x: root.panel-x;
+        y: root.panel-y;
         text: root.request.text;
         // A window narrower than the tooltip: it wraps to fit between the margins.
         max-content-width: max(0px, min(Theme.tooltip-max-width, root.width - 2 * root.margin - 2 * self.horizontal-padding));
-        visible: self.opacity > 0;
+        visible: !root.request.has-curve && self.opacity > 0;
         opacity: root.open ? 1 : 0;
         // Grows from the control's side while it fades in; only fades out.
         transform-origin: { x: self.width / 2, y: root.above ? self.height : 0 };
@@ -72,6 +83,28 @@ export component TooltipLayer inherits Rectangle {
         animate opacity {
             duration: root.open ? Theme.tooltip-enter : Theme.tooltip-exit;
             // Material's deceleration curve in, acceleration curve out.
+            easing: root.open ? cubic-bezier(0, 0, 0.2, 1) : cubic-bezier(0.4, 0, 1, 1);
+        }
+        animate transform-scale {
+            duration: root.open ? Theme.tooltip-enter : 0ms;
+            delay: root.open ? 0ms : Theme.tooltip-exit;
+            easing: cubic-bezier(0, 0, 0.2, 1);
+        }
+    }
+
+    curve-panel := CurveTooltip {
+        x: root.panel-x;
+        y: root.panel-y;
+        data: root.request.curve;
+        pointer-on-top: !root.above;
+        pointer-x: root.request.x + root.request.width / 2 - root.panel-x;
+        visible: root.request.has-curve && self.opacity > 0;
+        opacity: root.open ? 1 : 0;
+        transform-origin: { x: self.width / 2, y: root.above ? self.height : 0 };
+        transform-scale: root.open ? 1 : Theme.tooltip-enter-scale;
+
+        animate opacity {
+            duration: root.open ? Theme.tooltip-enter : Theme.tooltip-exit;
             easing: root.open ? cubic-bezier(0, 0, 0.2, 1) : cubic-bezier(0.4, 0, 1, 1);
         }
         animate transform-scale {

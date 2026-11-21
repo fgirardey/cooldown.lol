@@ -17,7 +17,7 @@ Slint 1.18 cannot do this with a popup:
 - The window draws its **one tooltip** itself: `TooltipLayer` (`ui/shell/tooltip-layer.slint`), the last child of `app-window.slint`, so it is above everything, never clipped by a scroll view, and click-through (it has no `TouchArea`). The layer handles the timing and placement.
 - A control asks for a tooltip by being wrapped in **`TooltipAnchor`** (`ui/components/tooltip-anchor.slint`). It is a `TouchArea` that only watches the pointer: it reports its text and its place in the window (`absolute-position`, size) to the `Tooltips` **UI global** (`ui/tooltips.slint`), which `app-window.slint` passes to the layer.
 - `TooltipAnchor` writing `Tooltips` is the **one exception** to pure components (`.claude/rules/slint.md`). `Tooltips` holds what is drawn under the pointer, never app state, and only `TooltipAnchor` writes it.
-- The tooltip stays **inside the window**. Its content is data: a text today (`TooltipText`), and a richer layout in `TooltipPanel` when a feature describes one.
+- The tooltip stays **inside the window**. Its content is data: a text (`TooltipText`), or a structured layout the request carries as a struct, like a cost curve's tooltip (`CurveTooltip`, from `TooltipRequest.curve`). A chart's tooltip can follow a point inside its anchor (`TooltipAnchor.spot`) instead of sitting under the whole anchor.
 
 ## Alternatives considered
 - **Slint's built-in `Tooltip`**: any content and no plumbing, but placed at the pointer with a fixed delay, so no Material placement and no hide delay.

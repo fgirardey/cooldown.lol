@@ -2,7 +2,7 @@
 // `TooltipAnchor` (components/) writes it, the `TooltipLayer` of app-window.slint (shell/) draws
 // it above everything. A UI global, not app state: see docs/Decisions/ADR-0017.
 
-import { TooltipRequest } from "models.slint";
+import { TooltipRequest, CurveTooltipData } from "models.slint";
 
 export global Tooltips {
     /// The pointer is on a control that has a tooltip.
@@ -26,6 +26,15 @@ export global Tooltips {
     public function update(ticket: int, text: string) {
         if ticket == self.last-ticket {
             self.request.text = text;
+        }
+    }
+
+    /// The structured tooltip of the control holding `ticket` changed while the pointer is on it
+    /// (the value under the pointer on a cost curve).
+    public function update-curve(ticket: int, text: string, curve: CurveTooltipData) {
+        if ticket == self.last-ticket {
+            self.request.text = text;
+            self.request.curve = curve;
         }
     }
 
