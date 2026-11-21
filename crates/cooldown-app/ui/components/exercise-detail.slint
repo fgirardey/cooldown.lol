@@ -1,6 +1,8 @@
 // One line of a History row's details: the cost curve of the exercise's stat, then the result
 // in a fixed-width column so the lines align: the exercise's pictogram, the number done over
-// due, the exercise, and its status as a symbol (complete, missing some, skipped).
+// due, the exercise, and its status as a symbol (complete, missing some, skipped). On a narrow
+// row the result compacts (no pictogram) so the curve keeps room; below its minimum width the
+// row clips rather than squeezing it.
 //
 // `Game row / Details / Exercise` in design/cooldown.pen (`/ Hover` for the curve's hover).
 
@@ -15,71 +17,82 @@ export component ExerciseDetail inherits HorizontalLayout {
     in property <image> exercise-icon;
 
     property <bool> complete: !root.exercise.skipped && root.exercise.done >= root.exercise.due;
+    property <bool> compact: result.width < 262px;
 
     spacing: 20px;
 
     CostCurve {
         horizontal-stretch: 1;
+        min-width: 280px;
         exercise: root.exercise;
         exercise-icon: root.exercise-icon;
     }
 
-    HorizontalLayout {
-        width: 262px;
-        padding-left: 12px;
-        spacing: 14px;
-        alignment: start;
+    // The result: fixed limits for the row's layout, its parts placed by hand (a layout child
+    // would feed its size back), so it can compact (no pictogram) from the width it gets.
+    result := Rectangle {
+        min-width: 170px;
+        preferred-width: 262px;
+        max-width: 262px;
+        horizontal-stretch: 0;
 
-        Icon {
+        if !root.compact: Icon {
+            x: 12px;
+            y: (parent.height - self.height) / 2;
             source: root.exercise-icon;
             width: 56px;
             height: 56px;
             colorize: Theme.text-primary;
-            y: (parent.height - self.height) / 2;
         }
 
-        VerticalLayout {
+        texts := Rectangle {
+            x: root.compact ? 12px : 12px + 56px + 14px;
             width: 104px;
-            spacing: Theme.space-xs;
-            alignment: center;
 
-            HorizontalLayout {
+            VerticalLayout {
                 spacing: Theme.space-xs;
-                alignment: start;
+                alignment: center;
+
+                HorizontalLayout {
+                    spacing: Theme.space-xs;
+                    alignment: start;
+
+                    Text {
+                        font-family: Theme.font-display;
+                        text: root.exercise.done + root.exercise.unit;
+                        color: root.exercise.skipped ? Theme.text-secondary : Theme.text-primary;
+                        font-size: Theme.font-size-display;
+                        font-weight: 800;
+                        font-italic: true;
+                        vertical-alignment: bottom;
+                    }
+
+                    Text {
+                        font-family: Theme.font-display;
+                        text: "/" + root.exercise.due + root.exercise.unit;
+                        color: Theme.text-secondary;
+                        font-size: Theme.font-size-result;
+                        font-weight: 700;
+                        font-italic: true;
+                        vertical-alignment: bottom;
+                    }
+                }
 
                 Text {
                     font-family: Theme.font-display;
-                    text: root.exercise.done + root.exercise.unit;
+                    text: root.exercise.name;
                     color: root.exercise.skipped ? Theme.text-secondary : Theme.text-primary;
-                    font-size: Theme.font-size-display;
+                    font-size: Theme.font-size-result;
                     font-weight: 800;
                     font-italic: true;
-                    vertical-alignment: bottom;
+                    letter-spacing: 1px;
                 }
-
-                Text {
-                    font-family: Theme.font-display;
-                    text: "/" + root.exercise.due + root.exercise.unit;
-                    color: Theme.text-secondary;
-                    font-size: Theme.font-size-result;
-                    font-weight: 700;
-                    font-italic: true;
-                    vertical-alignment: bottom;
-                }
-            }
-
-            Text {
-                font-family: Theme.font-display;
-                text: root.exercise.name;
-                color: root.exercise.skipped ? Theme.text-secondary : Theme.text-primary;
-                font-size: Theme.font-size-result;
-                font-weight: 800;
-                font-italic: true;
-                letter-spacing: 1px;
             }
         }
 
         Icon {
+            x: texts.x + texts.width + 14px;
+            y: (parent.height - self.height) / 2;
             source: root.exercise.skipped ? @image-url("../images/icons/circle-x.svg")
                 : root.complete ? @image-url("../images/icons/circle-check.svg")
                 : @image-url("../images/icons/circle-dot.svg");
@@ -88,7 +101,6 @@ export component ExerciseDetail inherits HorizontalLayout {
             colorize: root.exercise.skipped ? Theme.text-secondary
                 : root.complete ? Theme.success
                 : Theme.warning;
-            y: (parent.height - self.height) / 2;
         }
     }
 }

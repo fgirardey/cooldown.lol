@@ -60,6 +60,8 @@ export component TooltipSurface inherits Rectangle {
         viewbox-y: 0;
         viewbox-width: self.width / 1px;
         viewbox-height: self.height / 1px;
+        // Drawn at the computed coordinates: the default fit shrinks a stroked path to its box.
+        fit: ImageFit.preserve;
         fill: root.fill;
         stroke: root.outline;
         stroke-width: 1px;

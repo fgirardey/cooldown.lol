@@ -3,9 +3,9 @@
 // The y axis runs down from 0 (top) to the max, so improving reads as climbing. The area
 // between the 0 line and the curve is tinted from `danger` to `success` at the benchmarks; the
 // game is a dot in its zone's colour. Hovering shows what another value would have cost, in a
-// structured tooltip (`CurveTooltip`). The hover only takes over near the curve: there the
-// system cursor is hidden and the hover marker stands for it. Near a marker of the curve the
-// hover snaps to it and that marker's axis labels turn bold.
+// structured tooltip (`CurveTooltip`) that holds everything about it: no projection or readout
+// on the axes. The hover only takes over near the curve: there the system cursor is hidden and
+// the hover marker stands for it. Near a marker of the curve the hover snaps to it.
 //
 // `Cost curve` of the `Game row / Details / Exercise` component in design/cooldown.pen, and
 // `Game row / Details / Exercise / Hover` for the hover, `/ Hover snapped` once it snaps.
@@ -27,8 +27,13 @@ export component CostCurve inherits Rectangle {
     property <length> zero-y: 14px;
     property <length> max-y: 86px;
     property <length> label-y: 94px;
-    // How far from a benchmark the curve starts bending.
-    property <length> bend: 28px;
+    // How far from a benchmark the curve starts bending: 28 px, less when the chart is narrow so
+    // that a bend never runs past the next one or out of the plot.
+    property <length> bend: max(0px, min(28px,
+        (root.average-x - root.floor-x) / 2.5,
+        (root.target-x - root.average-x) / 2.5,
+        root.floor-x,
+        root.plot-width - root.target-x));
     // The floor and the target sit at fixed places; the average falls between them by value.
     property <float> floor-at: 7 / 32;
     property <float> target-at: 27 / 32;
@@ -178,6 +183,8 @@ export component CostCurve inherits Rectangle {
         viewbox-y: 0;
         viewbox-width: self.width / 1px;
         viewbox-height: self.height / 1px;
+        // Drawn at the computed coordinates: the default fit shrinks a stroked path to its box.
+        fit: ImageFit.preserve;
         commands: root.curve-commands + " L 0 " + root.zero-y / 1px + " Z";
         fill: @linear-gradient(90deg,
             Theme.danger.with-alpha(Theme.tint-curve) 0%,
@@ -187,10 +194,12 @@ export component CostCurve inherits Rectangle {
             Theme.success.with-alpha(Theme.tint-curve) 100%);
     }
 
-    // The stat, as a watermark behind the grid.
-    HorizontalLayout {
+    // The stat, as a watermark behind the grid, kept within the plot: its name elides on a narrow
+    // chart, and only the pictogram is left on a very narrow one.
+    if root.plot-width >= 120px: HorizontalLayout {
         x: 20px;
         y: (root.zero-y + root.max-y - self.height) / 2;
+        width: min(self.preferred-width, root.plot-width - 40px);
         height: 32px;
         spacing: 12px;
         opacity: Theme.watermark-opacity;
@@ -210,6 +219,7 @@ export component CostCurve inherits Rectangle {
             font-weight: 800;
             font-italic: true;
             vertical-alignment: center;
+            overflow: elide;
         }
     }
 
@@ -263,21 +273,6 @@ export component CostCurve inherits Rectangle {
         tint: Theme.text-secondary.with-alpha(Theme.curve-projection);
     }
 
-    if root.hovering && !root.on-game: DashedLine {
-        x: root.hover-x;
-        y: root.hover-y;
-        width: root.plot-width - root.hover-x;
-        tint: Theme.text-primary;
-    }
-
-    if root.hovering && !root.on-game: DashedLine {
-        vertical: true;
-        x: root.hover-x;
-        y: root.hover-y;
-        height: root.max-y - root.hover-y;
-        tint: Theme.text-primary;
-    }
-
     // The curve.
     Path {
         x: 0px;
@@ -288,12 +283,15 @@ export component CostCurve inherits Rectangle {
         viewbox-y: 0;
         viewbox-width: self.width / 1px;
         viewbox-height: self.height / 1px;
+        // Drawn at the computed coordinates: the default fit shrinks a stroked path to its box,
+        // which left the curve short of both ends.
+        fit: ImageFit.preserve;
         commands: root.curve-commands;
         stroke: Theme.text-primary;
         stroke-width: 2.5px;
     }
 
-    // The game: a dot with a halo, and its value above it (below when there is no room).
+    // The game: a dot with a halo, and its value under it.
     Rectangle {
         x: root.player-x - self.width / 2;
         y: root.player-y - self.height / 2;
@@ -315,10 +313,12 @@ export component CostCurve inherits Rectangle {
     }
 
     Text {
-        // Centred on the dot, kept inside the plot when the game is off the scale.
-        x: clamp(root.player-x - self.width / 2, 0px, root.plot-width - self.width);
-        y: root.player-y - 38px >= 0px ? root.player-y - 38px : root.player-y + 12px;
-        width: 64px;
+        // Always centred under the dot, sized to its text, even when the game is off the scale
+        // and the dot sits on the plot's edge: it then reaches into the row's padding (about
+        // 20 px at most), never shifts aside. The tooltip, which opens under the dot and repeats
+        // the value, covers it.
+        x: root.player-x - self.width / 2;
+        y: root.player-y + 12px;
         font-family: Theme.font-display;
         text: root.exercise.value;
         color: root.tone;
@@ -339,38 +339,30 @@ export component CostCurve inherits Rectangle {
         background: root.on-game ? transparent : Theme.surface;
     }
 
-    // The x axis: floor, average and target, and the value under the pointer.
+    // The x axis: floor, average and target. On a narrow chart
+    // a label too close to another gives way: the average first, then the floor; the target
+    // always stays.
+    property <bool> show-floor-label: root.target-x - root.floor-x >= 56px;
+    property <bool> show-average-label: root.average-x - root.floor-x >= 40px
+        && root.target-x - root.average-x >= 56px;
     for label in [
-        { at: root.floor-x, text: root.exercise.curve.floor-label, target: false, snap: 2 },
-        { at: root.average-x, text: root.exercise.curve.average-label, target: false, snap: 3 },
-        { at: root.target-x, text: "target " + root.exercise.curve.target-label, target: true, snap: 4 },
+        { at: root.floor-x, text: root.exercise.curve.floor-label, target: false, shown: root.show-floor-label },
+        { at: root.average-x, text: root.exercise.curve.average-label, target: false, shown: root.show-average-label },
+        { at: root.target-x, text: "target " + root.exercise.curve.target-label, target: true, shown: true },
     ]: Text {
+        visible: label.shown;
         x: label.at - self.width / 2;
         y: root.label-y;
         width: label.target ? 90px : 60px;
         font-family: Theme.font-body;
         text: label.text;
-        color: label.target || (root.hovering && root.snap == label.snap) ? Theme.text-primary : Theme.text-secondary;
+        color: label.target ? Theme.text-primary : Theme.text-secondary;
         font-size: Theme.font-size-small;
-        font-weight: root.hovering && root.snap == label.snap ? 700 : 400;
-        horizontal-alignment: center;
-    }
-
-    // Snapped to a benchmark, its own label stands for this one.
-    if root.hovering && root.snap <= 1: Text {
-        x: root.hover-x - self.width / 2;
-        y: root.label-y;
-        width: 60px;
-        font-family: Theme.font-body;
-        text: root.hover-label;
-        color: Theme.text-primary;
-        font-size: Theme.font-size-small;
-        font-weight: 700;
         horizontal-alignment: center;
     }
 
     // The y axis, on the right: 0, the max and the game's amount (a label too close to the
-    // game's gives way), and the amount under the pointer.
+    // game's gives way).
     if abs(root.player-y - root.zero-y) >= 12px: Text {
         x: root.plot-width + 10px;
         y: root.zero-y - 7px;
@@ -379,7 +371,7 @@ export component CostCurve inherits Rectangle {
         text: "0";
         color: Theme.text-primary;
         font-size: Theme.font-size-small;
-        font-weight: root.hovering && root.snap == 4 ? 700 : 600;
+        font-weight: 600;
     }
 
     if abs(root.player-y - root.max-y) >= 12px: Text {
@@ -388,9 +380,8 @@ export component CostCurve inherits Rectangle {
         width: root.label-width;
         font-family: Theme.font-body;
         text: root.max-amount + root.exercise.unit;
-        color: root.hovering && root.snap == 2 ? Theme.text-primary : Theme.text-secondary;
+        color: Theme.text-secondary;
         font-size: Theme.font-size-small;
-        font-weight: root.hovering && root.snap == 2 ? 700 : 400;
     }
 
     Text {
@@ -404,20 +395,7 @@ export component CostCurve inherits Rectangle {
         font-weight: 700;
     }
 
-    // At the floor, the target or the game's dot, the max, 0 or the game's amount stands for it.
-    if root.hovering && (root.snap == 0 || root.snap == 3): Text {
-        x: root.plot-width + 10px;
-        y: root.hover-y - 7px;
-        width: root.label-width;
-        font-family: Theme.font-body;
-        text: root.hover-due + root.exercise.unit;
-        color: Theme.text-primary;
-        font-size: Theme.font-size-small;
-        font-weight: 700;
-    }
-
-    // Last, so it sees the pointer over everything else. On the game's dot, the dot, its
-    // projections and its labels stand for the hover's.
+    // Last, so it sees the pointer over everything else.
     // Reaches past the plot, which does not clip it: a band `near-distance` around the curve,
     // from the 0 line to the max, and as far beyond both ends.
     hover := TooltipAnchor {

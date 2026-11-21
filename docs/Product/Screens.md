@@ -120,7 +120,7 @@ The canvas is a stack of three parts, each opening on a huge `Section / <number>
 | `Game row / Games / Done expanded` | Same row opened on its details |
 | `Game row / Details` | The details of an expanded row: one `Exercise` line per exercise and the game's details line ([[History#Game rows]]) |
 | `Game row / Details / Exercise` | One exercise: pictogram and what it pays for, its cost curve, and the result |
-| `Game row / Details / Exercise / Hover` | Same line with the pointer on the curve: marker (the system cursor is hidden), its value on both axes and the tooltip |
+| `Game row / Details / Exercise / Hover` | Same line with the pointer on the curve: marker (the system cursor is hidden) and the tooltip, which holds the value and its cost (no projection or readout on the axes) |
 | `Game row / Details / Exercise / Hover snapped` | The hover snapped to the game's dot: ring around the dot, the "THIS GAME" tooltip |
 | `Game row / Details / Exercise / Tooltip` (+ `/ This game`, `/ More`, `/ Same`, `/ Waived`, `/ Plank`), board `Cost curve tooltips` | The cost curve's hover tooltip, "WHAT IF" for any value: the value and the stat, its zone, then the exercise's amount and the difference with the game; `/ This game` on the game's dot: the status of the amount due and the gap to target instead of the difference. A pointer aims at the marker |
 | `Game row / Workouts / <Pending, Done, Partial, Skipped>` | Game row of the Workouts view: one column per exercise |

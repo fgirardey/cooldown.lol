@@ -33,6 +33,32 @@ export component Preview inherits Window {
         }
 
         PreviewCase {
+            label: "Narrow row (700 px): the curve narrows, the result keeps its width";
+            Rectangle {
+                width: 700px;
+                height: 112px;
+                background: Theme.surface;
+                ExerciseDetail {
+                    exercise: Fixtures.game-miss-fortune.exercises[0];
+                    exercise-icon: @image-url("../images/icons/burpee.svg");
+                }
+            }
+        }
+
+        PreviewCase {
+            label: "Very narrow row (480 px): the result compacts, smaller bends, watermark elides";
+            Rectangle {
+                width: 480px;
+                height: 112px;
+                background: Theme.surface;
+                ExerciseDetail {
+                    exercise: Fixtures.game-ahri-no-image.exercises[0];
+                    exercise-icon: @image-url("../images/icons/burpee.svg");
+                }
+            }
+        }
+
+        PreviewCase {
             label: "Complete";
             Rectangle {
                 width: 1177px;
